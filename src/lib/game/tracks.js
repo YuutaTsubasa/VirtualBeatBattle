@@ -1,17 +1,56 @@
-// 可以玩的曲子：每一首都是一隻魔王。曲子本身在 src/lib/audio/songs.js（PC-98 FM 音源），
+// 可以玩的曲子：收錄系列四款遊戲的曲子（虛擬台麻館、虛擬排球王、虛擬闖天下、虛擬跑跑樂），每一首都是一隻魔王。
+// 曲子本身在 src/lib/audio/library/（照搬各遊戲的 songs.js）與 src/lib/audio/songs.js（跑跑樂，也是本作選單的曲子），
 // 譜面由 chartgen.js 從曲子的旋律與鼓點自動產生，存在 crates/beat-core/charts.json（npm run charts）。
-// 魔王的圖與名字沿用虛擬闖天下的六大關（stages.js 的 WORLDS）。
+// 魔王的圖與名字沿用虛擬闖天下的六大關（stages.js 的 WORLDS），world 決定這首是哪一隻魔王、用哪一張背景。
+// 曲子會整首重複到大約一分半（repeat 由 chartgen.js 依長度算）。
 
+import { SONGS as RUNNERS } from '../audio/songs.js';
+import { compile } from '../audio/music.js';
+import { SONGS as MAHJONG } from '../audio/library/mahjong.js';
+import { SONGS as VOLLEYBALL } from '../audio/library/volleyball.js';
+import { SONGS as QUEST } from '../audio/library/quest.js';
+
+/** 來源的遊戲：名稱、Logo（public/games/）、曲庫 */
+export const GAMES = [
+  { id: 'mahjong', name: '虛擬台麻館', short: '台麻館', logo: 'games/mahjong.webp', songs: MAHJONG },
+  { id: 'volleyball', name: '虛擬排球王', short: '排球王', logo: 'games/volleyball.webp', songs: VOLLEYBALL },
+  { id: 'quest', name: '虛擬闖天下', short: '闖天下', logo: 'games/quest.webp', songs: QUEST },
+  { id: 'runners', name: '虛擬跑跑樂', short: '跑跑樂', logo: 'games/runners.webp', songs: RUNNERS },
+];
+export const gameOf = (id) => GAMES.find((g) => g.id === id) ?? GAMES[0];
+
+// id、來源遊戲、那款遊戲裡的曲子 key、曲名、魔王（WORLDS 的編號 0 都市 1 森林 2 海 3 冰 4 礦坑 5 城堡）
 export const TRACKS = [
-  { id: 'city', song: 'stage-city', title: '白色大道', world: 0, repeat: 4 },
-  { id: 'forest', song: 'stage-forest', title: '風之草原', world: 1, repeat: 4 },
-  { id: 'sea', song: 'stage-sea', title: '深海神殿', world: 2, repeat: 3 },
-  { id: 'ice', song: 'stage-ice', title: '極光山道', world: 3, repeat: 4 },
-  { id: 'mine', song: 'stage-mine', title: '火炎礦坑', world: 4, repeat: 4 },
-  { id: 'castle', song: 'stage-castle', title: '邪惡城堡', world: 5, repeat: 4 },
+  { id: 'mj-title', game: 'mahjong', song: 'title', title: '夜晚的雀館', world: 0 },
+  { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1 },
+  { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2 },
+  { id: 'mj-tension', game: 'mahjong', song: 'tension', title: '海底撈月', world: 4 },
+  { id: 'vb-title', game: 'volleyball', song: 'title', title: '晴天的海灘', world: 2 },
+  { id: 'vb-menu', game: 'volleyball', song: 'menu', title: '海邊的午後', world: 1 },
+  { id: 'vb-match', game: 'volleyball', song: 'match', title: '全力扣殺', world: 0 },
+  { id: 'vb-tension', game: 'volleyball', song: 'tension', title: '賽末點', world: 3 },
+  { id: 'vq-title', game: 'quest', song: 'title', title: '踏上旅程', world: 0 },
+  { id: 'vq-menu', game: 'quest', song: 'menu', title: '集合時間', world: 1 },
+  { id: 'vq-city', game: 'quest', song: 'stage-city', title: '白色都市', world: 0 },
+  { id: 'vq-forest', game: 'quest', song: 'stage-forest', title: '草原森林', world: 1 },
+  { id: 'vq-sea', game: 'quest', song: 'stage-sea', title: '水下世界', world: 2 },
+  { id: 'vq-ice', game: 'quest', song: 'stage-ice', title: '冰山', world: 3 },
+  { id: 'vq-mine', game: 'quest', song: 'stage-mine', title: '火炎礦坑', world: 4 },
+  { id: 'vq-castle', game: 'quest', song: 'stage-castle', title: '邪惡城堡', world: 5 },
+  { id: 'vq-boss', game: 'quest', song: 'boss', title: '魔王戰', world: 4 },
+  { id: 'vq-final', game: 'quest', song: 'final', title: '最後的魔王', world: 5 },
+  { id: 'vr-title', game: 'runners', song: 'title', title: '晴空跑道', world: 0 },
+  { id: 'vr-menu', game: 'runners', song: 'menu', title: '晴天午後', world: 1 },
+  { id: 'vr-city', game: 'runners', song: 'stage-city', title: '白色大道', world: 0 },
+  { id: 'vr-forest', game: 'runners', song: 'stage-forest', title: '風之草原', world: 1 },
+  { id: 'vr-sea', game: 'runners', song: 'stage-sea', title: '深海神殿', world: 2 },
+  { id: 'vr-ice', game: 'runners', song: 'stage-ice', title: '極光山道', world: 3 },
+  { id: 'vr-mine', game: 'runners', song: 'stage-mine', title: '火炎礦坑', world: 4 },
+  { id: 'vr-castle', game: 'runners', song: 'stage-castle', title: '邪惡城堡', world: 5 },
+  { id: 'vr-tension', game: 'runners', song: 'tension', title: '魔王關', world: 5 },
 ];
 
-/** 難度：id、名稱、譜面等級（給玩家看的數字） */
+/** 難度：id、名稱 */
 export const LEVELS = [
   { id: 'easy', name: 'EASY' },
   { id: 'normal', name: 'NORMAL' },
@@ -19,3 +58,18 @@ export const LEVELS = [
 ];
 
 export const trackOf = (id) => TRACKS.find((t) => t.id === id) ?? TRACKS[0];
+
+/** 這一首的曲子資料（bpm、音軌） */
+export const songOf = (track) => gameOf(track.game).songs[track.song];
+
+// 曲子整首重複幾次：重複到大約一分半（太短的循環最多重複 24 次）
+const TARGET_SECONDS = 92;
+const repeats = new Map();
+export function repeatOf(track) {
+  if (!repeats.has(track.id)) {
+    const song = songOf(track);
+    const sec = (compile(song).length * 60) / song.bpm;
+    repeats.set(track.id, Math.max(1, Math.min(24, Math.round(TARGET_SECONDS / sec))));
+  }
+  return repeats.get(track.id);
+}

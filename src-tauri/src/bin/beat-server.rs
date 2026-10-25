@@ -1,6 +1,6 @@
 //! 不開視窗、只跑伺服器（放在主機上，或測試用）。
 //!
-//! 用法：beat-server [--port 7822] [--dist ../dist] [--song city]
+//! 用法：beat-server [--port 7822] [--dist ../dist] [--song vr-city]
 //! 房主金鑰會印在終端機上，在網頁的「開設房間」輸入金鑰就能當房主。
 
 use virtual_beat_lib::server;
@@ -32,7 +32,7 @@ async fn main() {
         ["dist", "../dist"].iter().map(PathBuf::from).find(|p| p.join("index.html").exists())
     });
     let mut settings = Settings::default();
-    // 一開始選哪一首（city、forest、sea、ice、mine、castle）
+    // 一開始選哪一首（id 見 src/lib/game/tracks.js，例如 vr-city、vq-boss、mj-title）
     if let Some(song) = get("--song") {
         settings.song = song;
     }

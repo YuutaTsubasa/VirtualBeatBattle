@@ -6,7 +6,7 @@
   import { WEB_URL, shareLink } from '../site.js';
   import { CHARACTERS, getCharacter } from '../game/characters.js';
   import { DIFFICULTIES, SLOT_COLORS } from '../game/constants.js';
-  import { TRACKS, LEVELS } from '../game/tracks.js';
+  import { TRACKS, LEVELS, gameOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { asset } from '../art-style.svelte.js';
   import { play } from '../game/audio.js';
@@ -17,7 +17,7 @@
   import Stepper from './Stepper.svelte';
 
   const room = $derived(net.room);
-  const songOptions = TRACKS.map((tr) => ({ value: tr.id, label: `${t(tr.title)} / ${t(WORLDS[tr.world].boss.name)}` }));
+  const songOptions = TRACKS.map((tr) => ({ value: tr.id, label: `${t(tr.title)} / ${t(gameOf(tr.game).short)}` }));
   const levelOptions = LEVELS.map((l) => ({ value: l.id, label: l.name }));
   const track = $derived(TRACKS.find((tr) => tr.id === room.settings.song) ?? TRACKS[0]);
   const filled = $derived(room.seats.filter(Boolean).length);

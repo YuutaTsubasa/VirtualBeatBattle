@@ -43,7 +43,7 @@ mod tests {
     /// 每份譜面都讀得到、長押裡面不會再疊音符、照時間按就是全 Perfect
     #[test]
     fn every_chart_loads_and_is_playable() {
-        assert_eq!(songs().len(), 6);
+        assert_eq!(songs().len(), 27);
         for s in songs() {
             for level in [Level::Easy, Level::Normal, Level::Hard] {
                 let notes = &s.chart(level).notes;
@@ -67,32 +67,32 @@ mod tests {
     /// 初始等級全 Perfect 打不倒魔王（大約七成五），練到夠高的等級就打得倒
     #[test]
     fn boss_needs_levels() {
-        let p = perfect_play("city", Level::Normal, "yuehua", 1);
+        let p = perfect_play("vr-city", Level::Normal, "yuehua", 1);
         let ratio = p.dmg as f64 / p.boss_max as f64;
         assert!((0.7..0.8).contains(&ratio), "初始等級全 Perfect 打掉 {:.2}", ratio);
         assert!(!p.killed);
-        let strong = perfect_play("city", Level::Normal, "yuehua", 6);
+        let strong = perfect_play("vr-city", Level::Normal, "yuehua", 6);
         assert!(strong.killed, "等級 6 全 Perfect 應該打得倒");
-        assert_eq!(boss_hp("city", Level::Normal), p.boss_max);
+        assert_eq!(boss_hp("vr-city", Level::Normal), p.boss_max);
     }
 
     #[test]
     fn judgments_and_mines() {
-        let notes = Play::new("forest", Level::Hard, "xiaocui", 1).song.chart(Level::Hard).notes.clone();
+        let notes = Play::new("vr-forest", Level::Hard, "xiaocui", 1).song.chart(Level::Hard).notes.clone();
         let first = *notes.iter().find(|n| n.kind == Kind::Tap && n.len == 0).unwrap();
         // 晚 60ms：Great
-        let mut p = Play::new("forest", Level::Hard, "xiaocui", 1);
+        let mut p = Play::new("vr-forest", Level::Hard, "xiaocui", 1);
         p.press(first.lane, first.t + 60);
         assert_eq!(p.view()["events"][0]["j"], "G");
         // 地雷：按下去會受傷
         let mine = *notes.iter().find(|n| n.kind == Kind::Mine).expect("困難譜面要有地雷");
-        let mut q = Play::new("forest", Level::Hard, "xiaocui", 1);
+        let mut q = Play::new("vr-forest", Level::Hard, "xiaocui", 1);
         q.update(mine.t - 200);
         q.events.clear();
         q.press(mine.lane, mine.t);
         assert!(q.view()["events"].as_array().unwrap().iter().any(|e| e["type"] == "mine"), "踩到地雷");
         // 不按：錯過的音符變 Miss、被反擊
-        let mut r = Play::new("forest", Level::Hard, "lanjie", 1);
+        let mut r = Play::new("vr-forest", Level::Hard, "lanjie", 1);
         r.update(first.t + GOOD + 5);
         let expect: u32 = notes.iter().filter(|n| n.kind == Kind::Tap && n.t <= first.t).map(|n| if n.len > 0 { 2 } else { 1 }).sum();
         assert_eq!(r.counts[3], expect);
@@ -102,7 +102,7 @@ mod tests {
     /// 體力歸零不會中斷曲子，只是之後沒有傷害
     #[test]
     fn running_out_of_hp_does_not_stop_the_song() {
-        let mut p = Play::new("mine", Level::Hard, "alie", 1);
+        let mut p = Play::new("vr-mine", Level::Hard, "alie", 1);
         p.update(p.song.length_ms + 500);
         assert!(p.down && p.ended);
         assert_eq!(p.hp, 0);
@@ -113,7 +113,7 @@ mod tests {
     fn bots_play_like_their_difficulty() {
         let mut scores = Vec::new();
         for d in [Difficulty::Easy, Difficulty::Normal, Difficulty::Hard] {
-            let mut p = Play::new("ice", Level::Normal, "aming", d.level());
+            let mut p = Play::new("vr-ice", Level::Normal, "aming", d.level());
             let mut bot = Bot::new(&p, d, 7);
             let mut t = -3000;
             while !p.ended {
@@ -172,8 +172,8 @@ mod tests {
         assert_eq!(r[0]["type"], "error");
         handle(&mut room, "key", &mut host, &json!({"type": "host", "cmd": "add_bot", "seat": 11}));
         assert!(room.seats[11].is_some());
-        handle(&mut room, "key", &mut host, &json!({"type": "host", "cmd": "settings", "settings": {"song": "sea", "level": "hard"}}));
-        assert_eq!(room.settings.song, "sea");
+        handle(&mut room, "key", &mut host, &json!({"type": "host", "cmd": "settings", "settings": {"song": "vr-sea", "level": "hard"}}));
+        assert_eq!(room.settings.song, "vr-sea");
         handle(&mut room, "key", &mut host, &json!({"type": "host", "cmd": "start"}));
         assert!(room.playing());
         handle(&mut room, "key", &mut guest, &json!({"type": "progress", "score": 123456, "combo": 41, "dmg": 999}));

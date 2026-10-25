@@ -83,7 +83,7 @@ export function saveCharacter(id) {
 
 /** 選曲畫面上次停在哪：{ song, level } */
 export function savedPick() {
-  return read(PICK_KEY, { song: 'city', level: 'normal' });
+  return read(PICK_KEY, { song: 'vr-city', level: 'normal' });
 }
 export function savePick(pick) {
   write(PICK_KEY, pick);

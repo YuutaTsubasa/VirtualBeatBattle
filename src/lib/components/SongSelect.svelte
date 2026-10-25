@@ -1,12 +1,12 @@
 <script>
-  // 選擇曲目（art-work/rhythm-ui-concept-v1 的右上）：左邊編號的曲目列表（選到的那一列變藍），
-  // 右邊大圖、曲名、魔王、BPM／長度／6 KEY、難度、最佳成績；底部一條：角色（等級）、魔王（戰力推估）、電腦示範、開始演奏。
+  // 選擇曲目（art-work/rhythm-ui-concept-v1 的右上）：左邊編號的曲目列表（選到的那一列變藍；上面可以依來源遊戲篩選），
+  // 右邊大圖、收錄自哪一款遊戲（那款遊戲的 Logo）、曲名、魔王、BPM／長度／6 KEY、難度、最佳成績；
+  // 底部一條：角色（等級）、魔王（戰力推估）、電腦示範、開始演奏。
   // 每一首都是一隻魔王；魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），
   // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
-  import { TRACKS, LEVELS } from '../game/tracks.js';
+  import { TRACKS, LEVELS, GAMES, gameOf, songOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
-  import { SONGS } from '../audio/songs.js';
   import { getCharacter } from '../game/characters.js';
   import { levelOf, bestOf } from '../game/progress.js';
   import { atkOfLevel, xpToNext, MAX_LEVEL } from '../game/constants.js';
@@ -16,18 +16,22 @@
   import { t } from '../i18n.svelte.js';
   import ScreenFrame from './ScreenFrame.svelte';
   import BackButton from './BackButton.svelte';
-  import CHARTS from '../../../crates/beat-core/charts.json' with { type: 'json' };
+  import META from '../game/charts-meta.json' with { type: 'json' };
 
   // onstart({ song, level, demo })、onback()
   let { character, pick, onstart, onback } = $props();
 
-  let songId = $state(untrack(() => pick?.song) ?? 'city');
+  let songId = $state(untrack(() => pick?.song) ?? 'vr-city');
   let level = $state(untrack(() => pick?.level) ?? 'normal');
   const c = $derived(getCharacter(character));
   const lv = $derived(levelOf(character));
   const track = $derived(TRACKS.find((tr) => tr.id === songId) ?? TRACKS[0]);
   const world = $derived(WORLDS[track.world]);
-  const chartInfo = $derived(CHARTS.songs.find((s) => s.id === songId));
+  const chartInfo = $derived(META[track.id]);
+  const game = $derived(gameOf(track.game));
+  // 依來源遊戲篩選（all = 全部）
+  let filter = $state('all');
+  const shown = $derived(filter === 'all' ? TRACKS : TRACKS.filter((tr) => tr.game === filter));
   const best = $derived(bestOf(songId, level));
   // 現在的等級全 Perfect 大約打得掉魔王幾成（不算角色能力）
   const estimate = $derived(Math.round(75 * (atkOfLevel(lv.lv) / 100)));
@@ -44,6 +48,14 @@
   let list;
   onMount(() => list.querySelector('.song.sel')?.focus({ preventScroll: true }));
 
+  function setFilter(id) {
+    play('move');
+    filter = id;
+    // 選到的曲子不在篩選結果裡：改選這款遊戲的第一首
+    if (id !== 'all' && track.game !== id) songId = TRACKS.find((tr) => tr.game === id).id;
+    requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
+  }
+
   function choose(id) {
     if (id !== songId) play('move');
     songId = id;
@@ -57,24 +69,31 @@
 
 <ScreenFrame title={t('選擇曲目')} en="SONG SELECT">
   <div class="pick">
-    <div class="songs" bind:this={list}>
-      {#each TRACKS as tr, i (tr.id)}
-        {@const w = WORLDS[tr.world]}
-        {@const b = bestOf(tr.id, level)}
-        <button type="button" class="song" class:sel={tr.id === songId} onclick={() => choose(tr.id)} onfocus={() => choose(tr.id)} ondblclick={() => start()}>
-          <span class="no">{String(i + 1).padStart(2, '0')}</span>
-          <img class="thumb" src={art(tr)} alt="" />
-          <span class="names">
-            <b>{t(tr.title)}</b>
-            <small>BOSS {t(w.boss.name)}</small>
-          </span>
-          <span class="mark">
-            {#if b?.killed}<i class="down">{t('擊破')}</i>{/if}
-            {#if b}<i class="rank">{b.rank}</i>{/if}
-          </span>
-          <span class="bpm"><i class="eq"></i>{SONGS[tr.song].bpm}</span>
-        </button>
-      {/each}
+    <div class="list-col">
+      <div class="filters" role="tablist">
+        <button type="button" role="tab" aria-selected={filter === 'all'} class:on={filter === 'all'} onclick={() => setFilter('all')}>{t('全部')} <i>{TRACKS.length}</i></button>
+        {#each GAMES as g (g.id)}
+          <button type="button" role="tab" aria-selected={filter === g.id} class:on={filter === g.id} onclick={() => setFilter(g.id)}>{t(g.short)}</button>
+        {/each}
+      </div>
+      <div class="songs" bind:this={list}>
+        {#each shown as tr (tr.id)}
+          {@const b = bestOf(tr.id, level)}
+          <button type="button" class="song" class:sel={tr.id === songId} onclick={() => choose(tr.id)} onfocus={() => choose(tr.id)} ondblclick={() => start()}>
+            <span class="no">{String(TRACKS.indexOf(tr) + 1).padStart(2, '0')}</span>
+            <img class="thumb" src={art(tr)} alt="" />
+            <span class="names">
+              <b>{t(tr.title)}</b>
+              <small>{t('來自 {game}', { game: t(gameOf(tr.game).name) })}</small>
+            </span>
+            <span class="mark">
+              {#if b?.killed}<i class="down">{t('擊破')}</i>{/if}
+              {#if b}<i class="rank">{b.rank}</i>{/if}
+            </span>
+            <span class="bpm"><i class="eq"></i>{songOf(tr).bpm}</span>
+          </button>
+        {/each}
+      </div>
     </div>
 
     <div class="detail">
@@ -83,13 +102,17 @@
         <span class="boss-art" style={bossStyle(world.id)}></span>
       </div>
       <div class="info">
+        <div class="from">
+          <span>{t('收錄自')}</span>
+          {#key game.id}<img src={asset(game.logo)} alt={t(game.name)} />{/key}
+        </div>
         <h3 class="pop-text">{t(track.title)}</h3>
         <p class="boss">BOSS {t(world.boss.name)}</p>
-        <p class="meta">BPM <b>{SONGS[track.song].bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
+        <p class="meta">BPM <b>{songOf(track).bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
         <div class="levels" role="radiogroup">
           {#each LEVELS as l (l.id)}
             <button type="button" role="radio" aria-checked={level === l.id} class="lv" class:on={level === l.id} onclick={() => { play('move'); level = l.id; }}>
-              {l.name}<b>{chartInfo?.charts[l.id].rating}</b>
+              {l.name}<b>{chartInfo?.levels[l.id].rating}</b>
             </button>
           {/each}
         </div>
@@ -99,7 +122,7 @@
           {#if best}<i class="rank">{best.rank}</i>{/if}
           {#if best?.fc}<i class="fc">FULL COMBO</i>{/if}
         </p>
-        <span class="notes">{t('音符數')} {chartInfo?.charts[level].notes.filter((n) => n[3] === 0).length}</span>
+        <span class="notes">{t('音符數')} {chartInfo?.levels[level].notes}</span>
       </div>
     </div>
   </div>
@@ -132,7 +155,37 @@
     gap: 2.4cqw;
     min-height: 0;
   }
+  .list-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8cqh;
+    min-height: 0;
+  }
+  .filters {
+    display: flex;
+    gap: 0.3cqw;
+  }
+  .filters button {
+    flex: 1;
+    padding: 0.6cqh 0;
+    border: none;
+    background: #e6ebf5;
+    color: var(--navy-soft);
+    font-weight: 900;
+    font-size: 1.9cqh;
+    white-space: nowrap;
+    clip-path: polygon(0.8cqh 0, 100% 0, calc(100% - 0.8cqh) 100%, 0 100%);
+  }
+  .filters button i {
+    font-style: normal;
+    opacity: 0.7;
+  }
+  .filters button.on {
+    background: var(--accent);
+    color: #fff;
+  }
   .songs {
+    flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -151,7 +204,7 @@
     background: transparent;
     text-align: left;
     color: var(--navy);
-    flex: 1;
+    flex: none;
     min-height: 8.6cqh;
   }
   .song:hover {
@@ -252,7 +305,33 @@
     display: flex;
     flex-direction: column;
     gap: 0.6cqh;
-    padding-top: 6cqh;
+  }
+  /* 收錄自哪一款遊戲：那款遊戲的 Logo */
+  .from {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2cqh;
+    margin-bottom: 0.6cqh;
+  }
+  .from span {
+    font-weight: 900;
+    font-size: 1.6cqh;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .from img {
+    height: 11cqh;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0.4cqh 0.6cqh rgba(16, 40, 110, 0.2));
+    animation: logo-in 0.25s ease-out;
+  }
+  @keyframes logo-in {
+    from {
+      opacity: 0;
+      translate: 2cqw 0;
+    }
   }
   h3 {
     margin: 0;

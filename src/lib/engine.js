@@ -13,11 +13,11 @@ import * as input from './game/input.js';
 import * as render from './game/render.js';
 import { play } from './game/audio.js';
 import { COUNTDOWN } from './game/constants.js';
-import { trackOf } from './game/tracks.js';
+import { trackOf, songOf, repeatOf } from './game/tracks.js';
 import { options, fallMs } from './game/options.svelte.js';
 import { onFrame, sendProgress } from './net.svelte.js';
 import { audioContext } from './audio/synth.js';
-import { Player, SONGS } from './audio/music.js';
+import { Player } from './audio/music.js';
 import { ui } from './ui.svelte.js';
 
 // 打完後先停一下才跳結果（毫秒）
@@ -140,7 +140,7 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
     player = new Player();
     const ctx = audioContext();
     // 時鐘是 AudioContext 才排程音樂（不出聲的環境照樣可以玩）
-    if (useAudioClock && ctx) player.play(SONGS[tr.song], { at: Math.max(start, ctx.currentTime + 0.02), repeat: tr.repeat });
+    if (useAudioClock && ctx) player.play(songOf(tr), { at: Math.max(start, ctx.currentTime + 0.02), repeat: repeatOf(tr) });
     musicOn = true;
   }
 
