@@ -41,6 +41,22 @@ test('every chord name in the progressions is understood', () => {
   }
 });
 
+// 原創曲：跟本作的曲子一樣，每小節剛好 4 拍、旋律與伴奏一樣長
+test('every bar of the original songs is exactly 4 beats', async () => {
+  const { SONGS: ORIGINAL } = await import('../src/lib/audio/library/original.js');
+  for (const [name, song] of Object.entries(ORIGINAL)) {
+    const lengths = new Set();
+    for (const tr of song.tracks) {
+      if (tr.mml) {
+        bars(tr.mml).forEach((bar, i) => assert.equal(parseMML(bar).length, 4, `${name} ${tr.kind} 第 ${i + 1} 小節`));
+        lengths.add(parseMML(tr.mml).length);
+      }
+      if (tr.prog) lengths.add(beatsOfProg(tr.prog));
+    }
+    assert.equal(lengths.size, 1, `${name}: ${[...lengths].join(' / ')}`);
+  }
+});
+
 // 收錄的曲子（其他遊戲照搬來的，寫法跟各自的遊戲一樣，所以只檢查能不能用）
 test('every playable track points at a looping song with a melody and known chords', async () => {
   const { TRACKS, songOf, repeatOf } = await import('../src/lib/game/tracks.js');

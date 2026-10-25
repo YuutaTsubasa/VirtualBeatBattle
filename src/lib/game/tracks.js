@@ -1,4 +1,5 @@
-// 可以玩的曲子：收錄系列四款遊戲的曲子（虛擬台麻館＋每個角色的主題曲、虛擬排球王、虛擬闖天下、虛擬跑跑樂），每一首都是一隻魔王。
+// 可以玩的曲子：本作的原創曲（EDM、Hardcore、Speedcore，譜面比較難），加上收錄系列四款遊戲的曲子
+// （虛擬台麻館＋每個角色的主題曲、虛擬排球王、虛擬闖天下、虛擬跑跑樂），每一首都是一隻魔王。
 // 曲子本身在 src/lib/audio/library/（照搬各遊戲的 songs.js）與 src/lib/audio/songs.js（跑跑樂，也是本作選單的曲子），
 // 譜面由 chartgen.js 從曲子的旋律與鼓點自動產生，存在 crates/beat-core/charts.json（npm run charts）。
 // 魔王的圖與名字沿用虛擬闖天下的六大關（stages.js 的 WORLDS），world 決定這首是哪一隻魔王、用哪一張背景。
@@ -6,13 +7,15 @@
 
 import { SONGS as RUNNERS } from '../audio/songs.js';
 import { compile } from '../audio/music.js';
+import { SONGS as ORIGINAL } from '../audio/library/original.js';
 import { SONGS as MAHJONG } from '../audio/library/mahjong.js';
 import { CHARACTER_THEMES } from '../audio/library/mahjong-themes.js';
 import { SONGS as VOLLEYBALL } from '../audio/library/volleyball.js';
 import { SONGS as QUEST } from '../audio/library/quest.js';
 
-/** 來源的遊戲：名稱、Logo（public/games/）、曲庫 */
+/** 來源的遊戲：名稱、Logo（public/games/；本作沒有圖，用字排的 Logo）、曲庫 */
 export const GAMES = [
+  { id: 'original', name: '虛擬音鬥樂', short: '原創', logo: null, songs: ORIGINAL },
   // 台麻館的角色主題曲用 char-<角色 id> 當 key
   { id: 'mahjong', name: '虛擬台麻館', short: '台麻館', logo: 'games/mahjong.webp', songs: { ...MAHJONG, ...Object.fromEntries(Object.entries(CHARACTER_THEMES).map(([id, song]) => [`char-${id}`, song])) } },
   { id: 'volleyball', name: '虛擬排球王', short: '排球王', logo: 'games/volleyball.webp', songs: VOLLEYBALL },
@@ -23,6 +26,10 @@ export const gameOf = (id) => GAMES.find((g) => g.id === id) ?? GAMES[0];
 
 // id、來源遊戲、那款遊戲裡的曲子 key、曲名、魔王（WORLDS 的編號 0 都市 1 森林 2 海 3 冰 4 礦坑 5 城堡）
 const LIST = [
+  // 原創曲
+  { id: 'og-edm', game: 'original', song: 'edm', title: '霓虹頻率', world: 0 },
+  { id: 'og-hardcore', game: 'original', song: 'hardcore', title: '超速心跳', world: 4 },
+  { id: 'og-speedcore', game: 'original', song: 'speedcore', title: '終焉頻率', world: 5 },
   { id: 'mj-title', game: 'mahjong', song: 'title', title: '夜晚的雀館', world: 0 },
   { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1 },
   { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2 },

@@ -162,4 +162,10 @@ export default {
   '雷歐的主題曲': 'Leo’s Theme',
   '阿烈的主題曲': 'Alie’s Theme',
   '隱藏來客的主題曲': 'Theme of the Hidden Guest',
+  // 原創曲
+  '原創': 'Original',
+  '霓虹頻率': 'Neon Frequency',
+  '超速心跳': 'Overdrive Heartbeat',
+  '終焉頻率': 'Final Frequency',
+  '虛擬音鬥樂': 'Virtual Beat Battle',
 };

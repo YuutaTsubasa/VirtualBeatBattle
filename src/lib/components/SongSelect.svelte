@@ -16,6 +16,7 @@
   import { t } from '../i18n.svelte.js';
   import ScreenFrame from './ScreenFrame.svelte';
   import BackButton from './BackButton.svelte';
+  import Logo from './Logo.svelte';
   import META from '../game/charts-meta.json' with { type: 'json' };
 
   // onstart({ song, level, demo })、onback()
@@ -105,7 +106,9 @@
       <div class="info">
         <div class="from">
           <span>{t('收錄自')}</span>
-          {#key game.id}<img src={asset(game.logo)} alt={t(game.name)} />{/key}
+          {#key game.id}
+            {#if game.logo}<img src={asset(game.logo)} alt={t(game.name)} />{:else}<span class="own-logo"><Logo /></span>{/if}
+          {/key}
         </div>
         <h3 class="pop-text">{t(track.title)}</h3>
         <p class="boss">BOSS {t(world.boss.name)}</p>
@@ -335,6 +338,12 @@
     max-width: 100%;
     object-fit: contain;
     filter: drop-shadow(0 0.4cqh 0.6cqh rgba(16, 40, 110, 0.2));
+    animation: logo-in 0.25s ease-out;
+  }
+  /* 本作的原創曲：用字排的 Logo */
+  .own-logo {
+    display: block;
+    width: 30cqh;
     animation: logo-in 0.25s ease-out;
   }
   @keyframes logo-in {

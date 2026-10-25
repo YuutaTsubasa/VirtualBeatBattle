@@ -203,7 +203,7 @@ function quad(g, f, u0, u1, r0, r1) {
   g.closePath();
 }
 
-const SOLO = { mode: 'solo', main: field(480, 66, { top: 64, judge: 440, Z: 2.7 }), rival: null, boss: { x: 480, y: 236, h: 250 } };
+const SOLO = { mode: 'solo', main: field(480, 70, { top: 60, judge: 440, Z: 3.6 }), rival: null, boss: { x: 480, y: 236, h: 250 } };
 let layout = SOLO;
 
 // 版面（art-work/rhythm-ui-concept-v1）：
@@ -216,9 +216,9 @@ function computeLayout(race, you, spectate) {
   if (!race || n <= 1) return SOLO;
   if (n === 2) {
     const rival = race.players.find((p) => p.seat !== you);
-    return { mode: 'duo', main: field(310, 50, { top: 112, judge: 446, Z: 2.2 }), rival: { f: field(790, 44, { top: 112, judge: 446 }), seat: rival?.seat }, boss: { x: 480, y: 260, h: 230 } };
+    return { mode: 'duo', main: field(310, 52, { top: 104, judge: 446, Z: 3 }), rival: { f: field(790, 44, { top: 112, judge: 446 }), seat: rival?.seat }, boss: { x: 480, y: 260, h: 230 } };
   }
-  return { mode: 'multi', main: field(250, 56, { top: 112, judge: 446, Z: 2.2 }), rival: null, boss: { x: 250, y: 250, h: 190 } };
+  return { mode: 'multi', main: field(250, 58, { top: 104, judge: 446, Z: 3 }), rival: null, boss: { x: 250, y: 250, h: 190 } };
 }
 
 /** 觸控：畫面座標 (x, y) 落在自己的哪一條軌道（判定線上方一點到畫面底部都算） */

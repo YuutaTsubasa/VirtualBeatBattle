@@ -158,10 +158,10 @@ export function generateChart(song, level, repeat = 1) {
   return { notes, lengthMs: Math.round(length * repeat * spb * 1000) };
 }
 
-/** 譜面等級（給玩家看的 1～15）：用每秒音符數與同時押、長押的比例粗估 */
+/** 譜面等級（給玩家看的數字，大約 1～22）：用每秒音符數與同時押的比例粗估（原創曲的十六分音符譜面會到 17～22） */
 export function ratingOf(notes, lengthMs) {
   const real = notes.filter((n) => n[3] === 0);
   const nps = real.length / (lengthMs / 1000);
   const chords = real.filter((n, i) => i > 0 && real[i - 1][0] === n[0]).length / Math.max(1, real.length);
-  return Math.max(1, Math.min(15, Math.round(nps * 2.2 + chords * 6)));
+  return Math.max(1, Math.min(25, Math.round(nps * 1.3 + chords * 5 + 0.5)));
 }
