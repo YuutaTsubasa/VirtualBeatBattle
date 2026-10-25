@@ -1,0 +1,20 @@
+{
+  "title": "全力扣殺",
+  "game": "volleyball",
+  "bpm": 156,
+  "tempoMap": true,
+  "offsetMs": 0,
+  "audio": "song.wav",
+  "parts": {
+    "melody": ["midi/Serrated Drop (Synth).mid"],
+    "bass": "midi/Serrated Drop (Bass).mid",
+    "drums": "midi/Serrated Drop (Drums).mid"
+  },
+  "keysound": {
+    "stems": "stems",
+    "keys": ["Serrated Drop (Synth).wav"]
+  },
+  "world": 0,
+  "boss": { "key": "blocker", "name": "鐵壁攔網王" },
+  "credit": "Suno（Serrated Drop）"
+}
