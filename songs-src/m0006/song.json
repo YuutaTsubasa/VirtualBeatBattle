@@ -1,0 +1,23 @@
+{
+  "title": "海底撈月",
+  "game": "mahjong",
+  "original": "mj-tension",
+  "bpm": 145,
+  "tempoMap": true,
+  "offsetBeats": -0.025,
+  "midiShiftMs": -45,
+  "offsetMs": 0,
+  "audio": "song.wav",
+  "parts": {
+    "melody": ["midi/Driving Groove (Guitar).mid"],
+    "bass": "midi/Driving Groove (Bass).mid",
+    "drums": "midi/Driving Groove (Drums).mid"
+  },
+  "keysound": {
+    "stems": "stems",
+    "keys": ["Driving Groove (Guitar).wav"]
+  },
+  "world": 4,
+  "boss": { "key": "jankui", "name": "雀鬼" },
+  "credit": "Suno（Driving Groove）"
+}

@@ -43,7 +43,7 @@ mod tests {
     /// 每份譜面都讀得到、長押裡面不會再疊音符、照時間按就是全 Perfect
     #[test]
     fn every_chart_loads_and_is_playable() {
-        assert_eq!(songs().len(), 46);
+        assert_eq!(songs().len(), 47);
         for s in songs() {
             for level in [Level::Easy, Level::Normal, Level::Hard, Level::Expert] {
                 let notes = &s.chart(level).notes;
