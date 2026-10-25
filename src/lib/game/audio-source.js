@@ -3,6 +3,8 @@
 //
 // 對齊：拍 = (秒 × 1000 − offsetMs) ÷ 一拍的毫秒，再四捨五入到 1/4 拍。offsetMs 是音檔裡「第 1 拍」的時間。
 // Suno 的 MIDI 速度會飄：給 beatToSec 的話改用 MIDI 裡的拍位置對齊，並把每一拍的毫秒記在 beatMs，譜面照它換算時間。
+//   offsetBeats：MIDI 的音整體偏離它自己的拍子格多少拍（例如 -0.035 = 音都早了一點，對齊前先往後挪）
+//   shiftMs：MIDI 跟音檔差多少毫秒（例如 -33 = 音檔裡的聲音比 MIDI 早 33ms），只影響換算成時間，不影響對齊格子
 // 旋律：同一格有好幾個音（和弦、轉錄出來的雜音）只留最高的那個；太短、太小聲的雜音丟掉。
 // 鼓：照 GM 鼓組的音高分大鼓（35、36）、小鼓（37～40）、Hi-hat（42、44、46，還有 Ride 51）；沒有鼓的 MIDI 就用最基本的四拍。
 
@@ -14,7 +16,7 @@ const HAT = new Set([42, 44, 46, 51, 59]);
  * parts：{ melody, bass, drums, backing }，每個都是 parseMidi 的 notes（秒）或 undefined。
  * 回傳 chartFrom 用的來源：{ bpm, length, melody, backing, kicks, snares, hats }
  */
-export function sourceFromMidi({ bpm, offsetMs = 0, lengthMs, parts, minVel = 20, beatToSec, offsetBeats = 0 }) {
+export function sourceFromMidi({ bpm, offsetMs = 0, lengthMs, parts, minVel = 20, beatToSec, offsetBeats = 0, shiftMs = 0 }) {
   const msPerBeat = 60000 / bpm;
   // 有 beatToSec（MIDI 的速度表）就用音符的 tick 位置算拍、再照速度表換回毫秒；沒有就當速度固定
   const tempoMap = typeof beatToSec === 'function';
@@ -25,7 +27,7 @@ export function sourceFromMidi({ bpm, offsetMs = 0, lengthMs, parts, minVel = 20
   if (tempoMap) {
     beatMs = [];
     for (let b = 0; ; b++) {
-      const ms = Math.round((beatToSec(b + offsetBeats) * 1000 - offsetMs) * 10) / 10;
+      const ms = Math.round((beatToSec(b + offsetBeats) * 1000 + shiftMs - offsetMs) * 10) / 10;
       beatMs.push(ms);
       if (ms > lengthMs) break;
     }

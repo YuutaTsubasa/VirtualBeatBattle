@@ -69,7 +69,7 @@ const read = (f) =>
       })
     : undefined;
 const parts = { melody: read(conf.parts.melody), bass: read(conf.parts.bass), drums: read(conf.parts.drums), backing: read(conf.parts.backing) };
-const source = sourceFromMidi({ bpm: conf.bpm, offsetMs, lengthMs, parts, ...(conf.tempoMap ? { beatToSec, offsetBeats: conf.offsetBeats ?? 0 } : {}) });
+const source = sourceFromMidi({ bpm: conf.bpm, offsetMs, lengthMs, parts, ...(conf.tempoMap ? { beatToSec, offsetBeats: conf.offsetBeats ?? 0, shiftMs: conf.midiShiftMs ?? 0 } : {}) });
 mkdirSync('src/lib/game/audio-songs', { recursive: true });
 const data = {
   id,

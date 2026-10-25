@@ -48,4 +48,8 @@ npm run import-song <曲子 id>
 
 ## 對齊不準的時候
 
+Suno 的分軌 MIDI 加 `"tempoMap": true`（照 MIDI 的速度表對齊，速度會飄也沒關係）。MIDI 跟音檔差一點點的話（Claude 會先用鼓的分軌量）：
+- `offsetBeats`：MIDI 的音整體偏離它自己的拍子格（例如 `-0.035`）
+- `midiShiftMs`：音檔的聲音比 MIDI 早（負）或晚（正）幾毫秒（例如 `-33`）
+
 玩的時候如果覺得音符整體太早或太晚，調 `offsetMs`（太早就加大、太晚就減小），再跑一次 `npm run import-song`。

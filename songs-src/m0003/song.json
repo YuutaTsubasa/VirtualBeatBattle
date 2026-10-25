@@ -1,0 +1,27 @@
+{
+  "title": "魔王戰",
+  "game": "quest",
+  "bpm": 173,
+  "tempoMap": true,
+  "offsetBeats": -0.035,
+  "midiShiftMs": -33,
+  "offsetMs": 0,
+  "audio": "song.wav",
+  "parts": {
+    "melody": [
+      "midi/Guitar Chiptune (Synth).mid",
+      "midi/Guitar Chiptune (Keyboard).mid"
+    ],
+    "bass": "midi/Guitar Chiptune (Bass).mid",
+    "drums": "midi/Guitar Chiptune (Drums).mid"
+  },
+  "keysound": {
+    "stems": "stems",
+    "keys": [
+      "Guitar Chiptune (Synth).wav",
+      "Guitar Chiptune (Keyboard).wav"
+    ]
+  },
+  "world": 4,
+  "credit": "Suno（Guitar Chiptune）"
+}
