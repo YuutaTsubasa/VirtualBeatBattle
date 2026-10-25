@@ -52,8 +52,7 @@ function adsr(param, t, peak, { a = 0.005, d = 0.2, s = 0.6, r = 0.1 }, dur) {
   param.cancelScheduledValues(t);
   param.setValueAtTime(0, t);
   param.linearRampToValueAtTime(peak, t + a);
-  // 持續音量最多 99.9%：剛好 100%（風琴）的時候，離線算音檔的 node-web-audio-api 會爆音（npm run render-song），聽起來一樣
-  param.setTargetAtTime(peak * Math.min(s, 0.999), t + a, Math.max(d, 0.001) / 3);
+  param.setTargetAtTime(peak * s, t + a, Math.max(d, 0.001) / 3);
   param.setTargetAtTime(0, t + Math.max(dur, a), Math.max(r, 0.001) / 3);
 }
 

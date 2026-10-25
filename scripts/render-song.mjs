@@ -2,7 +2,7 @@
 //   node scripts/render-song.mjs <曲目 id，例如 mj-title> [輪數，預設 2] [輸出檔，預設 songs-src/exports/<id>.mp3]
 // 用 node-web-audio-api 的 OfflineAudioContext 跑跟遊戲一模一樣的合成器（src/lib/audio/synth.js），
 // 把整首的音符一次排好（遊戲裡是邊播邊排），算完存成 WAV 再交給 ffmpeg 轉 MP3。
-import { OfflineAudioContext } from 'node-web-audio-api';
+import { OfflineAudioContext, AudioParam } from 'node-web-audio-api';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { dirname } from 'node:path';
@@ -24,6 +24,33 @@ const spb = 60 / song.bpm;
 const seconds = LEAD + length * spb * loops + TAIL;
 
 // synth.js 用 window.AudioContext 建立音源：換成固定長度的離線版本
+// node-web-audio-api 的 setTargetAtTime 有 bug：後面再排別的變化（或逼近到跟目標一樣）時會爆音（風琴、長的方波音）。
+// 這裡把它換成「從上一個值直線走到目標（3 個時間常數，走完 95%）」，聽起來差不多，遊戲裡（瀏覽器）照原本的
+{
+  const last = new WeakMap(); // AudioParam → 最後排的值
+  const wrap = (name, fn) => {
+    const orig = AudioParam.prototype[name];
+    AudioParam.prototype[name] = function (...args) {
+      fn?.call(this, ...args);
+      return orig.apply(this, args);
+    };
+  };
+  wrap('setValueAtTime', function (v) {
+    last.set(this, v);
+  });
+  wrap('linearRampToValueAtTime', function (v) {
+    last.set(this, v);
+  });
+  wrap('exponentialRampToValueAtTime', function (v) {
+    last.set(this, v);
+  });
+  AudioParam.prototype.setTargetAtTime = function (target, start, tau) {
+    this.setValueAtTime(last.get(this) ?? this.value, start);
+    this.linearRampToValueAtTime(target, start + tau * 3);
+    return this;
+  };
+}
+
 globalThis.window = {
   AudioContext: class extends OfflineAudioContext {
     constructor() {
