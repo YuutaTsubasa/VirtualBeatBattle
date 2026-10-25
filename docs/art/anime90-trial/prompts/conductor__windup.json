@@ -1,0 +1,16 @@
+{
+  "name": "conductor__windup",
+  "asset": "bosses/conductor/windup.png",
+  "size": [
+    768,
+    768
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/conductor__idle.png"
+  ],
+  "prompt": "Use case: stylized-concept. ONE game-ready boss animation cel for Virtual Beat Battle, original villain \"Final Frequency Conductor\", windup. Reference1 is definitive boss identity, costume, colors and proportions. Preserve exactly across animation. Tall imposing adult male conductor, elegant stylized4.5-head-tall arcade boss proportions, opaque ivory half-mask covers eyes and upper face with sharp angular eye slits, mouth and chin visible underneath. Slick swept-back silver hair, high collar. Long INK NAVY #101A33 cloak with DARK CRIMSON lining, silver clasp, dark red waistcoat and pale cravat, charcoal slim trousers, dark leather gloves and distinct black ankle boots. One slender straight cobalt/cyan LIGHT BATON held in RIGHT hand. A few broken musical staff ribbons and note symbols float near shoulders, always detached from body and above waist, no text or readable words. Classic1990s anime hand-inked outline, clean sculpted cel shadows, rich controlled navy/crimson/cobalt palette, notpixelart, not3D. Attack anticipation: strong wide grounded stance, torso leans slightly backward, RIGHT baton arm raised high above head aiming upward-right, left hand draws inward at chest. Cloak expands behind to LEFT. Full baton and hands within frame. Full body sole-to-hair, full baton, cloak and floating pieces inside central84% square frame with ample transparent margins. Exactly two arms and two legs. True transparent background and gaps, no backdrop, ground, drop shadow, circle under feet, labels, panels or extra characters. Standing poses feet are lowest solid element, cloak never below soles. Target768x768 transparentPNG with ground anchor384744. Preserve readable silhouette at small game scale.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-67133209-6cb8-4dd8-83c5-13ff2c5a8889.png",
+  "localSource": "sources/conductor__windup.png"
+}

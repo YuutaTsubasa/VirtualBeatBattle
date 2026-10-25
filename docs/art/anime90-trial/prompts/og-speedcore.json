@@ -1,0 +1,14 @@
+{
+  "name": "og-speedcore",
+  "asset": "environment/og-speedcore.png",
+  "size": [
+    1920,
+    1080
+  ],
+  "transparent": false,
+  "refs": [],
+  "prompt": "Use case: stylized-concept. FINAL1920x1080 widescreen game background, 1990s hand-painted anime arcade rhythm boss arena. Empty arena on TOP of a massive black musical transmission tower high ABOVE a luminous sea of clouds. Threatening cracked sky with RED and COBALT soundwave rings and fractured light, readable clear contrast, enough luminosity to withstand in-game darkening. Camera looks along a broad near-black stage toward a small far-end raised platform centered EXACTLY at x960 y400 in1920x1080; that point is the unobstructed surface where a boss will later stand, not sky or a void. Establish the stage far-edge horizontal surface around y400, leading geometric floor lines spreading downward toward camera. Center bottom55% will be covered by an expanding rhythm highway: leave that area simple dark blue plane with subtle broad perspective construction, DO NOT paint actual lanes or notes. Leftmost25% and rightmost25% are quiet low-detail dark-cloud silhouettes for HUD readability. High dramatic focal architecture and red/cobalt sonic rings in upper center behind the boss standing point. Ink navy, charcoal, dark crimson, cobalt-blue with restrained ice-white clouds. NO characters, NO boss, no humans, no text, no logos, no UI, no buttons, no musical-note sprites. Strong coherent perspective, clear playable stage contact surface at50%width37%height. Full-bleed opaque background.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-b143fe5d-133d-4be7-b6ce-d27744f484c9.png",
+  "localSource": "sources/og-speedcore.png"
+}

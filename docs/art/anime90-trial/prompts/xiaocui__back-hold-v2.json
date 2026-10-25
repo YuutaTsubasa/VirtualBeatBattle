@@ -1,0 +1,16 @@
+{
+  "name": "xiaocui__back-hold-v2",
+  "asset": "characters/xiaocui/sprites/back-hold.png",
+  "size": [
+    512,
+    512
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/xiaocui__back-hold.png"
+  ],
+  "prompt": "Use case: precise-object-edit. Edit ONLY the energy glow in this transparent rear-view Xiaocui sprite. Current large blue shield around hands is too big. REMOVE the entire large luminous shield/petal disc and outer haze. Replace with a TINY soft cyan-white sphere held BETWEEN her palms, diameter about the width of one palm, with a very tight faint halo only. All space formerly occupied by large shield outside hands becomes fully transparent. Keep exact two green ponytails and bows, back sailor blouse, skirt, both hand anatomy, body pose, feet, full canvas and classic cel shading unchanged. Do not add any other effect or change costume. Genuine transparent background including cleared glow region. No text or ground.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-89673af7-979c-4862-b284-7acb68b190a3.png",
+  "localSource": "sources/xiaocui__back-hold-v2.png"
+}

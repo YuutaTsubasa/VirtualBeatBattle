@@ -169,4 +169,10 @@ export default {
   '終焉頻率': 'Final Frequency',
   '虛擬音鬥樂': 'Virtual Beat Battle',
   '（對手）': ' (Rival)',
+  '排序': 'Sort',
+  '等級 ↑': 'Level ↑',
+  '等級 ↓': 'Level ↓',
+  '預設': 'Default',
+  '終焉指揮者': 'The Final Conductor',
+  '之後的傷害是 OVERKILL': 'Further damage is OVERKILL',
 };

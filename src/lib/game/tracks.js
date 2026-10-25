@@ -29,7 +29,7 @@ const LIST = [
   // 原創曲
   { id: 'og-edm', game: 'original', song: 'edm', title: '霓虹頻率', world: 0 },
   { id: 'og-hardcore', game: 'original', song: 'hardcore', title: '超速心跳', world: 4 },
-  { id: 'og-speedcore', game: 'original', song: 'speedcore', title: '終焉頻率', world: 5 },
+  { id: 'og-speedcore', game: 'original', song: 'speedcore', title: '終焉頻率', world: 5, bg: 'games/og-speedcore.webp', boss: { key: 'conductor', name: '終焉指揮者' } },
   { id: 'mj-title', game: 'mahjong', song: 'title', title: '夜晚的雀館', world: 0 },
   { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1 },
   { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2 },
@@ -73,7 +73,7 @@ const LIST = [
 
 // 背景：台麻館的曲子用麻將館、排球王的曲子用排球王的海灘（各畫風都有，src/lib/style-assets.json），其他用魔王那一大關的遠景
 const GAME_BG = { mahjong: 'games/mahjong-parlor.webp', volleyball: 'games/volleyball-court.webp' };
-export const TRACKS = LIST.map((tr) => ({ ...tr, bg: GAME_BG[tr.game] ?? null }));
+export const TRACKS = LIST.map((tr) => ({ ...tr, bg: tr.bg ?? GAME_BG[tr.game] ?? null }));
 
 /** 這一首的背景圖（畫面與選曲的封面共用） */
 export const backgroundOf = (track) => track.bg ?? `stages/${['city', 'forest', 'sea', 'ice', 'mine', 'castle'][track.world]}-3/far.webp`;
@@ -107,9 +107,11 @@ const WORLD_IDS = ['city', 'forest', 'sea', 'ice', 'mine', 'castle'];
 
 /**
  * 這一首的魔王：{ kind: 'bosses' | 'characters', key（圖集的 key）, name（翻譯前的名字）, rival（是不是對手角色） }
- * 角色主題曲的魔王是那位角色本人（用角色的動作圖），其他是闖天下六大關的魔王。
+ * 角色主題曲的魔王是那位角色本人（用角色的動作圖），原創曲有自己的魔王，其他是闖天下六大關的魔王。
  */
 export function bossOf(track, worlds) {
   if (track.rival) return { kind: 'characters', key: track.rival.id, name: track.rival.name, rival: true };
+  // 原創曲自己的魔王（bosses/<key>.webp）
+  if (track.boss) return { kind: 'bosses', key: track.boss.key, name: track.boss.name, rival: false };
   return { kind: 'bosses', key: WORLD_IDS[track.world], name: worlds[track.world].boss.name, rival: false };
 }

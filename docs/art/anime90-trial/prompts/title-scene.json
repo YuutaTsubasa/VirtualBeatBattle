@@ -1,0 +1,17 @@
+{
+  "name": "title-scene",
+  "asset": "ui/title-scene.png",
+  "size": [
+    1920,
+    1080
+  ],
+  "transparent": false,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/rhythm-ui-concept-v1/01-solo-ui-concept.png",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/public/characters/xiaocui/normal.webp"
+  ],
+  "prompt": "Use case: stylized-concept. FINAL1920x1080 widescreen title illustration for Virtual Beat Battle, classic1990s cel anime crisp ink outlines, clean cel shadows and beautifully painted sky background. Reference1 is mood/layout ONLY, particularly top-left panel sky city; NOT its outfit or UI. Reference2 is absolute character identity and clothing. Xiaocui: dark emerald GREEN twin ponytails BOTH visible separately roots to tips, large pink bow at EACH base, turquoise eyes, white sailor blouse with dark teal sailor collar and white stripes, pink neck bow, teal pleated skirt. No headphones, futuristic clothing, armor, gloves, additional hairpins. Warm smile, reaching an open hand toward viewer in welcoming foreshortening, anatomically clear five fingers. ONE character on RIGHT60% of image, face centered approximately x1250 y420 in1920x1080 (65%width39%height). Both green ponytails clearly spread to either side of her head within right60%, full hair tips within image. Elegant white futuristic city floating above clouds, airy spires and floating circular halo bridges, delicate soundwave ribbons in sky. Palette ice-white #F5F6FC cobalt #1450F5 ink-navy #101A33 with restrained cyan #2FC6FF; character keeps canonical clothing colors. The LEFT38% will be covered by menu so contains quiet sky/clouds ONLY, nothing important. No text, logo, panels, interface or watermark anywhere. Full-bleed opaque scenic illustration. Keep smiling face, both ponytails and reaching hand unobstructed in right60%.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-9866dc2d-2192-4523-ba59-3962bb800d34.png",
+  "localSource": "sources/title-scene.png"
+}

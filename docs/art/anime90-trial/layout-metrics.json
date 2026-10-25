@@ -1,0 +1,1006 @@
+{
+  "assets": {
+    "ui/logo.png": {
+      "size": [
+        1400,
+        560
+      ],
+      "visibleBoundsAlphaAbove4": {
+        "x": 104,
+        "y": 144,
+        "right": 1291,
+        "bottom": 404
+      },
+      "colors": 7211,
+      "transparentPixels": 652760,
+      "partialAlphaPixels": 124413,
+      "source": "sources/logo.png",
+      "sourceSha256": "0b5ede1ddd3dee241394569e4818a0aaa8e1d483911621176830434b14b7410c",
+      "sha256": "30b08457ce95a1d795bda2fa3fb3fb83d5b0c4efa2c54cb709993cd87f6ba27c",
+      "letteringBounds": {
+        "x": 211,
+        "y": 146,
+        "right": 1158,
+        "bottom": 397,
+        "method": "Opaque dark navy pixel threshold RGB<50,70,120; includes Chinese and English lettering, excludes cobalt waveform."
+      }
+    },
+    "ui/title-scene.png": {
+      "size": [
+        1920,
+        1080
+      ],
+      "visibleBoundsAlphaAbove4": {
+        "x": 0,
+        "y": 0,
+        "right": 1919,
+        "bottom": 1079
+      },
+      "colors": 354038,
+      "transparentPixels": 0,
+      "partialAlphaPixels": 0,
+      "source": "sources/title-scene-v2.png",
+      "sourceSha256": "fcae57e5a9dbf7b6ab7d121b959bb8371acf864c4ba5b2ca004255afb2e8cb75",
+      "sha256": "d40ab7d7f068b846abef6ba65d6dcbaea0d703457b9160fa8613cda98d9a6c66",
+      "composition": {
+        "faceCenterApprox": [
+          1280,
+          430
+        ],
+        "characterLeftmostApproxX": 815,
+        "menuCoverX": [
+          0,
+          730
+        ],
+        "method": "Visual estimate from final illustration; both ponytails and hand right of38%menu area."
+      }
+    },
+    "environment/og-speedcore.png": {
+      "size": [
+        1920,
+        1080
+      ],
+      "visibleBoundsAlphaAbove4": {
+        "x": 0,
+        "y": 0,
+        "right": 1919,
+        "bottom": 1079
+      },
+      "colors": 338391,
+      "transparentPixels": 0,
+      "partialAlphaPixels": 0,
+      "source": "sources/og-speedcore.png",
+      "sourceSha256": "c48797b6d6813032a0c05c2271dbd87018d4fb11152d491396c8fcfd1fdabe21",
+      "sha256": "3b2a805e2aba7a86eb4e2821992230025ebf588524adaacefb6d52d5cd70ba42",
+      "composition": {
+        "bossContactTarget": [
+          960,
+          400
+        ],
+        "surfaceAtTarget": "far end stage/steps",
+        "trackOverlay": "center lower55%",
+        "hud": "outer25%both sides",
+        "method": "Visual check; no in-game validation."
+      }
+    },
+    "characters/xiaocui/sprites/back-idle.png": {
+      "size": [
+        512,
+        512
+      ],
+      "visibleBounds": {
+        "x": 105,
+        "y": 93,
+        "right": 393,
+        "bottom": 496,
+        "width": 289,
+        "height": 404,
+        "hairTopY": 97,
+        "lowerBandCenterX": 256,
+        "lowerBandX": [
+          132,
+          380
+        ]
+      },
+      "groundAnchor": [
+        256,
+        496
+      ],
+      "headTopY": 97,
+      "measurement": "Alpha>16visiblebounds; hair top by green opaque pixel mask; ground x is center of opaque lower18% stance band, not each shoe individually.",
+      "source": "sources/xiaocui__back-idle.png",
+      "sourceSha256": "03ff7b43fb38c2fa3cc8b66ff31906c2e0ded8777a70b2e20bd2e8d63acbe31b",
+      "sha256": "5b49c04faf1f10915d1c7e4ed988e8a159d884829abe775bfe6cd6a842bc4ea3",
+      "transparentPixels": 201912,
+      "partialAlphaPixels": 57941,
+      "opaquePixels": 55550,
+      "transform": {
+        "crop": {
+          "x": 267,
+          "y": 123,
+          "right": 1023,
+          "bottom": 1180,
+          "width": 757,
+          "height": 1058,
+          "hairTopY": 135,
+          "lowerBandCenterX": 664,
+          "lowerBandX": [
+            339,
+            989
+          ]
+        },
+        "scale": 0.38181818181818183,
+        "resize": [
+          289,
+          404
+        ],
+        "placement": [
+          105,
+          93
+        ]
+      },
+      "view": "three-quarter-rear"
+    },
+    "characters/xiaocui/sprites/back-strike1.png": {
+      "size": [
+        512,
+        512
+      ],
+      "visibleBounds": {
+        "x": 60,
+        "y": 97,
+        "right": 420,
+        "bottom": 496,
+        "width": 361,
+        "height": 400,
+        "hairTopY": 98,
+        "lowerBandCenterX": 256.5,
+        "lowerBandX": [
+          123,
+          390
+        ]
+      },
+      "groundAnchor": [
+        256.5,
+        496
+      ],
+      "headTopY": 98,
+      "measurement": "Alpha>16visiblebounds; hair top by green opaque pixel mask; ground x is center of opaque lower18% stance band, not each shoe individually.",
+      "source": "sources/xiaocui__back-strike1.png",
+      "sourceSha256": "586d24a3234b1ddca7388b5db767114c10a5df98840652861e7dfd73c928fa48",
+      "sha256": "debd853c85df980882351a6cea32780a07e840ed5854a2831e9b906a87da0ed9",
+      "transparentPixels": 195057,
+      "partialAlphaPixels": 64405,
+      "opaquePixels": 61316,
+      "transform": {
+        "crop": {
+          "x": 128,
+          "y": 102,
+          "right": 1123,
+          "bottom": 1206,
+          "width": 996,
+          "height": 1105,
+          "hairTopY": 105,
+          "lowerBandCenterX": 672,
+          "lowerBandX": [
+            303,
+            1041
+          ]
+        },
+        "scale": 0.36239782016348776,
+        "resize": [
+          361,
+          400
+        ],
+        "placement": [
+          60,
+          97
+        ]
+      },
+      "view": "three-quarter-rear"
+    },
+    "characters/xiaocui/sprites/back-strike2.png": {
+      "size": [
+        512,
+        512
+      ],
+      "visibleBounds": {
+        "x": 36,
+        "y": 96,
+        "right": 378,
+        "bottom": 496,
+        "width": 343,
+        "height": 401,
+        "hairTopY": 97,
+        "lowerBandCenterX": 256.5,
+        "lowerBandX": [
+          231,
+          282
+        ]
+      },
+      "groundAnchor": [
+        256.5,
+        496
+      ],
+      "headTopY": 97,
+      "measurement": "Alpha>16visiblebounds; hair top by green opaque pixel mask; ground x is center of opaque lower18% stance band, not each shoe individually.",
+      "source": "sources/xiaocui__back-strike2-v2.png",
+      "sourceSha256": "481836484ef9c8a0ee1e14edcec5dbb31bea50c41cf42a7ba695d645821b4477",
+      "sha256": "1c5922f0bc1c2ed5ebdcb59ba952c848d69f28c917cadaf5454e809cdf9f2f73",
+      "transparentPixels": 201338,
+      "partialAlphaPixels": 58587,
+      "opaquePixels": 56219,
+      "transform": {
+        "crop": {
+          "x": 175,
+          "y": 74,
+          "right": 1152,
+          "bottom": 1217,
+          "width": 978,
+          "height": 1144,
+          "hairTopY": 79,
+          "lowerBandCenterX": 804.5,
+          "lowerBandX": [
+            731,
+            878
+          ]
+        },
+        "scale": 0.3506151142355009,
+        "resize": [
+          343,
+          401
+        ],
+        "placement": [
+          36,
+          96
+        ]
+      },
+      "view": "three-quarter-rear"
+    },
+    "characters/xiaocui/sprites/back-sweep.png": {
+      "size": [
+        512,
+        512
+      ],
+      "visibleBounds": {
+        "x": 21,
+        "y": 90,
+        "right": 443,
+        "bottom": 496,
+        "width": 423,
+        "height": 407,
+        "hairTopY": 98,
+        "lowerBandCenterX": 256,
+        "lowerBandX": [
+          97,
+          415
+        ]
+      },
+      "groundAnchor": [
+        256,
+        496
+      ],
+      "headTopY": 98,
+      "measurement": "Alpha>16visiblebounds; hair top by green opaque pixel mask; ground x is center of opaque lower18% stance band, not each shoe individually.",
+      "source": "sources/xiaocui__back-sweep.png",
+      "sourceSha256": "3af152ae718e53cf807d88ec37aba058deeabf6b434ac54fce8bfad6e779b4ae",
+      "sha256": "64a00a521e1ec1cf73d70d90cc7883b0df5a0737498cac0a8c77d407e04044f1",
+      "transparentPixels": 189098,
+      "partialAlphaPixels": 69881,
+      "opaquePixels": 66213,
+      "transform": {
+        "crop": {
+          "x": 40,
+          "y": 88,
+          "right": 1217,
+          "bottom": 1220,
+          "width": 1178,
+          "height": 1133,
+          "hairTopY": 110,
+          "lowerBandCenterX": 695.5,
+          "lowerBandX": [
+            251,
+            1140
+          ]
+        },
+        "scale": 0.35945945945945945,
+        "resize": [
+          423,
+          407
+        ],
+        "placement": [
+          21,
+          90
+        ]
+      },
+      "view": "three-quarter-rear"
+    },
+    "characters/xiaocui/sprites/back-hold.png": {
+      "size": [
+        512,
+        512
+      ],
+      "visibleBounds": {
+        "x": 78,
+        "y": 93,
+        "right": 401,
+        "bottom": 496,
+        "width": 324,
+        "height": 404,
+        "hairTopY": 97,
+        "lowerBandCenterX": 256,
+        "lowerBandX": [
+          127,
+          385
+        ]
+      },
+      "groundAnchor": [
+        256,
+        496
+      ],
+      "headTopY": 97,
+      "measurement": "Alpha>16visiblebounds; hair top by green opaque pixel mask; ground x is center of opaque lower18% stance band, not each shoe individually.",
+      "source": "sources/xiaocui__back-hold-v2.png",
+      "sourceSha256": "3d404404fe11e035ef53257d9e2dc995921005504d52c31b5e687d415ca7e5bd",
+      "sha256": "f8e322709f21f534c51806607303a864a2c0f15ac515e8dcf34916d6ceea309b",
+      "transparentPixels": 196935,
+      "partialAlphaPixels": 62941,
+      "opaquePixels": 58525,
+      "transform": {
+        "crop": {
+          "x": 192,
+          "y": 144,
+          "right": 1051,
+          "bottom": 1213,
+          "width": 860,
+          "height": 1070,
+          "hairTopY": 155,
+          "lowerBandCenterX": 665,
+          "lowerBandX": [
+            321,
+            1009
+          ]
+        },
+        "scale": 0.3771266540642722,
+        "resize": [
+          324,
+          404
+        ],
+        "placement": [
+          78,
+          93
+        ]
+      },
+      "view": "three-quarter-rear"
+    },
+    "characters/xiaocui/sprites/back-release.png": {
+      "size": [
+        512,
+        512
+      ],
+      "visibleBounds": {
+        "x": 73,
+        "y": 63,
+        "right": 397,
+        "bottom": 496,
+        "width": 325,
+        "height": 434,
+        "hairTopY": 98,
+        "lowerBandCenterX": 256,
+        "lowerBandX": [
+          132,
+          380
+        ]
+      },
+      "groundAnchor": [
+        256,
+        496
+      ],
+      "headTopY": 98,
+      "measurement": "Alpha>16visiblebounds; hair top by green opaque pixel mask; ground x is center of opaque lower18% stance band, not each shoe individually.",
+      "source": "sources/xiaocui__back-release.png",
+      "sourceSha256": "2e9d8b5323f655306c8df579296d5b62200f0e3727c5137d67e848d09d28c742",
+      "sha256": "0476dec3855ebfbebbdc042a5816dc41572737c441eca1eee8eb4daef28cb21f",
+      "transparentPixels": 201648,
+      "partialAlphaPixels": 58084,
+      "opaquePixels": 54812,
+      "transform": {
+        "crop": {
+          "x": 180,
+          "y": 35,
+          "right": 1073,
+          "bottom": 1226,
+          "width": 894,
+          "height": 1192,
+          "hairTopY": 130,
+          "lowerBandCenterX": 684.5,
+          "lowerBandX": [
+            342,
+            1027
+          ]
+        },
+        "scale": 0.36405109489051096,
+        "resize": [
+          325,
+          434
+        ],
+        "placement": [
+          73,
+          63
+        ]
+      },
+      "view": "three-quarter-rear"
+    },
+    "characters/xiaocui/sprites/back-hurt.png": {
+      "size": [
+        512,
+        512
+      ],
+      "visibleBounds": {
+        "x": 17,
+        "y": 122,
+        "right": 389,
+        "bottom": 496,
+        "width": 373,
+        "height": 375,
+        "hairTopY": 123,
+        "lowerBandCenterX": 256,
+        "lowerBandX": [
+          149,
+          363
+        ]
+      },
+      "groundAnchor": [
+        256,
+        496
+      ],
+      "headTopY": 123,
+      "measurement": "Alpha>16visiblebounds; hair top by green opaque pixel mask; ground x is center of opaque lower18% stance band, not each shoe individually.",
+      "source": "sources/xiaocui__back-hurt.png",
+      "sourceSha256": "9ec356b311852f731f60da17f9f5c7771986172e89a1dab4672c7839ca313313",
+      "sha256": "15e9a151c86fc4d2b7d8605f67ee9537a2325fb633677978fb71bb0beaf3be67",
+      "transparentPixels": 200678,
+      "partialAlphaPixels": 58791,
+      "opaquePixels": 54213,
+      "transform": {
+        "crop": {
+          "x": 95,
+          "y": 119,
+          "right": 1177,
+          "bottom": 1206,
+          "width": 1083,
+          "height": 1088,
+          "hairTopY": 122,
+          "lowerBandCenterX": 791,
+          "lowerBandX": [
+            480,
+            1102
+          ]
+        },
+        "scale": 0.3448275862068966,
+        "resize": [
+          373,
+          375
+        ],
+        "placement": [
+          17,
+          122
+        ]
+      },
+      "view": "three-quarter-rear"
+    },
+    "bosses/conductor/idle.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 66,
+        "y": 114,
+        "right": 616,
+        "bottom": 744,
+        "width": 551,
+        "height": 631,
+        "lowerBandCenterX": 384.5,
+        "lowerBandX": [
+          217,
+          552
+        ],
+        "pixels": 148320
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 114,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Center of lower15% opaque stance band with lowest extent744; not each shoe individually.",
+      "source": "sources/conductor__idle.png",
+      "sourceSha256": "bd71f625e0fa208681c5c448e534a68c7990b281f16794fab297fe2b436031c1",
+      "sha256": "efc6ba1003c4adbbd495c3a012685f6a370292709706bccba5cba91d65faf229",
+      "opaquePixels": 143795,
+      "transparentPixels": 430176,
+      "transform": {
+        "crop": {
+          "x": 116,
+          "y": 10,
+          "right": 1191,
+          "bottom": 1240,
+          "width": 1076,
+          "height": 1231,
+          "lowerBandCenterX": 738,
+          "lowerBandX": [
+            411,
+            1065
+          ],
+          "pixels": 561481
+        },
+        "scale": 0.5121951219512195,
+        "resize": [
+          551,
+          631
+        ],
+        "placement": [
+          66,
+          114
+        ]
+      }
+    },
+    "bosses/conductor/walk1.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 32,
+        "y": 139,
+        "right": 619,
+        "bottom": 744,
+        "width": 588,
+        "height": 606,
+        "lowerBandCenterX": 384,
+        "lowerBandX": [
+          179,
+          589
+        ],
+        "pixels": 156370
+      },
+      "groundAnchor": [
+        384,
+        744
+      ],
+      "headTopYApprox": 148,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Center of lower15% opaque stance band with lowest extent744; not each shoe individually.",
+      "source": "sources/conductor__walk1.png",
+      "sourceSha256": "a8be2b5382f327b32042b5b37f78490ee2b816542b0854c179ca64629c93f788",
+      "sha256": "6a0cbff349479dca7a13df78ed8ca649e3b37190a1662400b56f105008e15d8b",
+      "opaquePixels": 152309,
+      "transparentPixels": 423309,
+      "transform": {
+        "crop": {
+          "x": 72,
+          "y": 12,
+          "right": 1231,
+          "bottom": 1207,
+          "width": 1160,
+          "height": 1196,
+          "lowerBandCenterX": 767,
+          "lowerBandX": [
+            362,
+            1172
+          ],
+          "pixels": 605063
+        },
+        "scale": 0.5064748201438849,
+        "resize": [
+          588,
+          606
+        ],
+        "placement": [
+          32,
+          139
+        ]
+      }
+    },
+    "bosses/conductor/walk2.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 45,
+        "y": 126,
+        "right": 660,
+        "bottom": 744,
+        "width": 616,
+        "height": 619,
+        "lowerBandCenterX": 384.5,
+        "lowerBandX": [
+          157,
+          612
+        ],
+        "pixels": 171251
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 115,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Center of lower15% opaque stance band with lowest extent744; not each shoe individually.",
+      "source": "sources/conductor__walk2.png",
+      "sourceSha256": "bc50b1a88503a0dad27a8d6e769ba3af3df0728e408555e68eccb046b28bd4f0",
+      "sha256": "bfce66567355cd79d82c8f4024a682bdfc0920fec4c105275100f4761bb19f05",
+      "opaquePixels": 166779,
+      "transparentPixels": 406871,
+      "transform": {
+        "crop": {
+          "x": 46,
+          "y": 26,
+          "right": 1224,
+          "bottom": 1210,
+          "width": 1179,
+          "height": 1185,
+          "lowerBandCenterX": 696.5,
+          "lowerBandX": [
+            260,
+            1133
+          ],
+          "pixels": 623840
+        },
+        "scale": 0.5223880597014925,
+        "resize": [
+          616,
+          619
+        ],
+        "placement": [
+          45,
+          126
+        ]
+      }
+    },
+    "bosses/conductor/windup.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 33,
+        "y": 127,
+        "right": 629,
+        "bottom": 744,
+        "width": 597,
+        "height": 618,
+        "lowerBandCenterX": 384.5,
+        "lowerBandX": [
+          158,
+          611
+        ],
+        "pixels": 142047
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 231,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Center of lower15% opaque stance band with lowest extent744; not each shoe individually.",
+      "source": "sources/conductor__windup.png",
+      "sourceSha256": "e5d0ba766e0a713bcecfd606033a6eea08c8300e2a61fdf97584f3461ba082fb",
+      "sha256": "2128da988696d8c81af74502b80b95234618d3c81b8f70dd20b5ed31841ec407",
+      "opaquePixels": 137925,
+      "transparentPixels": 438424,
+      "transform": {
+        "crop": {
+          "x": 46,
+          "y": 12,
+          "right": 1231,
+          "bottom": 1239,
+          "width": 1186,
+          "height": 1228,
+          "lowerBandCenterX": 745.5,
+          "lowerBandX": [
+            295,
+            1196
+          ],
+          "pixels": 556999
+        },
+        "scale": 0.503216583273767,
+        "resize": [
+          597,
+          618
+        ],
+        "placement": [
+          33,
+          127
+        ]
+      }
+    },
+    "bosses/conductor/slam.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 33,
+        "y": 172,
+        "right": 665,
+        "bottom": 744,
+        "width": 633,
+        "height": 573,
+        "lowerBandCenterX": 384.5,
+        "lowerBandX": [
+          121,
+          648
+        ],
+        "pixels": 163548
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 217,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Center of lower15% opaque stance band with lowest extent744; not each shoe individually.",
+      "source": "sources/conductor__slam-v2.png",
+      "sourceSha256": "aa3760863eda3f32ec82a7d27b7feccc93a769bf569022f32fb7085dbe4fb60a",
+      "sha256": "db643951d569a0623b92cf8c929a45af2033215cea23fea04bc3fb2325a40ef4",
+      "opaquePixels": 158729,
+      "transparentPixels": 413227,
+      "transform": {
+        "crop": {
+          "x": 41,
+          "y": 106,
+          "right": 1233,
+          "bottom": 1185,
+          "width": 1193,
+          "height": 1080,
+          "lowerBandCenterX": 704,
+          "lowerBandX": [
+            208,
+            1200
+          ],
+          "pixels": 577581
+        },
+        "scale": 0.530920060331825,
+        "resize": [
+          633,
+          573
+        ],
+        "placement": [
+          33,
+          172
+        ]
+      }
+    },
+    "bosses/conductor/hurt.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 100,
+        "y": 85,
+        "right": 698,
+        "bottom": 744,
+        "width": 599,
+        "height": 660,
+        "lowerBandCenterX": 384.5,
+        "lowerBandX": [
+          101,
+          668
+        ],
+        "pixels": 171787
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 114,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Center of lower15% opaque stance band with lowest extent744; not each shoe individually.",
+      "source": "sources/conductor__hurt.png",
+      "sourceSha256": "868586e4d34c1b65c8ff26cff962490f735fed0d092fc7b6c7950fb3b6e56d55",
+      "sha256": "a7c9ff0fd431b51d16673ccf5c2562046efe9fad23c43d1134afbd818429842a",
+      "opaquePixels": 166522,
+      "transparentPixels": 403252,
+      "transform": {
+        "crop": {
+          "x": 123,
+          "y": 44,
+          "right": 1174,
+          "bottom": 1201,
+          "width": 1052,
+          "height": 1158,
+          "lowerBandCenterX": 623,
+          "lowerBandX": [
+            124,
+            1122
+          ],
+          "pixels": 527192
+        },
+        "scale": 0.569620253164557,
+        "resize": [
+          599,
+          660
+        ],
+        "placement": [
+          100,
+          85
+        ]
+      }
+    },
+    "bosses/conductor/fall.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 33,
+        "y": 136,
+        "right": 736,
+        "bottom": 744,
+        "width": 704,
+        "height": 609,
+        "lowerBandCenterX": 559,
+        "lowerBandX": [
+          383,
+          735
+        ],
+        "pixels": 164634
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 300,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Horizontal fall/down: full silhouette center on x384 with lowest extent at744; feet remain to right of pivot.",
+      "source": "sources/conductor__fall-v2.png",
+      "sourceSha256": "3c2dc41be5bc1029c9e64f409ef5fea1e00dcf955f9239f3423800ba8c7bfe76",
+      "sha256": "72b1437b55739fa03234c868dfc6c9bb4d872434ddcf592436517e72d82e94d4",
+      "opaquePixels": 158776,
+      "transparentPixels": 406811,
+      "transform": {
+        "crop": {
+          "x": 32,
+          "y": 94,
+          "right": 1234,
+          "bottom": 1134,
+          "width": 1203,
+          "height": 1041,
+          "lowerBandCenterX": 931.5,
+          "lowerBandX": [
+            630,
+            1233
+          ],
+          "pixels": 478550
+        },
+        "scale": 0.5852036575228595,
+        "resize": [
+          704,
+          609
+        ],
+        "placement": [
+          33,
+          136
+        ]
+      }
+    },
+    "bosses/conductor/down.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 33,
+        "y": 469,
+        "right": 736,
+        "bottom": 744,
+        "width": 704,
+        "height": 276,
+        "lowerBandCenterX": 385,
+        "lowerBandX": [
+          34,
+          736
+        ],
+        "pixels": 101572
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 640,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Horizontal fall/down: full silhouette center on x384 with lowest extent at744; feet remain to right of pivot.",
+      "source": "sources/conductor__down-v3.png",
+      "sourceSha256": "1b5fb1330475bb5c7b1f15236cbed95f13cc170535b7cdb2e126072a4c41563e",
+      "sha256": "9d722b8c5160492ac9c6c89e2192a5637a25915895019b1874b0c1c79d6fd863",
+      "opaquePixels": 95604,
+      "transparentPixels": 477977,
+      "transform": {
+        "crop": {
+          "x": 22,
+          "y": 427,
+          "right": 1229,
+          "bottom": 900,
+          "width": 1208,
+          "height": 474,
+          "lowerBandCenterX": 626,
+          "lowerBandX": [
+            24,
+            1228
+          ],
+          "pixels": 298490
+        },
+        "scale": 0.5827814569536424,
+        "resize": [
+          704,
+          276
+        ],
+        "placement": [
+          33,
+          469
+        ]
+      }
+    },
+    "bosses/conductor/charge.png": {
+      "size": [
+        768,
+        768
+      ],
+      "visibleBounds": {
+        "x": 33,
+        "y": 113,
+        "right": 609,
+        "bottom": 744,
+        "width": 577,
+        "height": 632,
+        "lowerBandCenterX": 384.5,
+        "lowerBandX": [
+          187,
+          582
+        ],
+        "pixels": 195344
+      },
+      "groundAnchor": [
+        384.5,
+        744
+      ],
+      "headTopYApprox": 136,
+      "headMeasurement": "Manually inspected source hair top mapped through export transform; approximate. Floating notes and baton excluded.",
+      "anchorMethod": "Center of lower15% opaque stance band with lowest extent744; not each shoe individually.",
+      "source": "sources/conductor__charge-v2.png",
+      "sourceSha256": "31bebe2718032c4144d4c3cf3961543ad1aa3da61c4c5aa8a2ee712792ce357e",
+      "sha256": "79e9432880ee7590e4bc2409528b2a11cd3bf040ed5551eca28b3d5fe8317248",
+      "opaquePixels": 179601,
+      "transparentPixels": 369447,
+      "transform": {
+        "crop": {
+          "x": 163,
+          "y": 122,
+          "right": 1110,
+          "bottom": 1159,
+          "width": 948,
+          "height": 1038,
+          "lowerBandCenterX": 741,
+          "lowerBandX": [
+            416,
+            1066
+          ],
+          "pixels": 527059
+        },
+        "scale": 0.6089965397923875,
+        "resize": [
+          577,
+          632
+        ],
+        "placement": [
+          33,
+          113
+        ]
+      }
+    }
+  }
+}

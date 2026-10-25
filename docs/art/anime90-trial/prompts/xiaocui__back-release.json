@@ -1,0 +1,18 @@
+{
+  "name": "xiaocui__back-release",
+  "asset": "characters/xiaocui/sprites/back-release.png",
+  "size": [
+    512,
+    512
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/references/xiaocui-existing-idle.png",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/references/xiaocui-portrait.webp",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/xiaocui__back-idle.png"
+  ],
+  "prompt": "Use case: identity-preserve. Draw ONE full-body game animation cel, Xiaocui release for a six-key rhythm battle. Reference1 is ONLY canonical compact chibi body proportions, outfit and1990s cel anime linework; change view to REAR. Reference2 canonical portrait hair and clothing identity. Reference3 established rear idle design: match exactly in all frames. Camera is BEHIND her and slightly ABOVE, three-quarter REAR view; she faces distant boss at TOP of screen, AWAY from player. Viewer must see the BACK of her head, BACK sailor collar, shoulder blades and back of teal skirt. Do not look over shoulder, no face or frontal eyes. Dark emerald green TWO twin ponytails, each with its own pink bow, both visible separately continuously from root to tip. White short sleeve sailor blouse, DARK TEAL back sailor collar with two white stripe lines, teal pleated skirt covering hips, white ankle socks and teal-white high-top trainers. No headphones, armor, gloves, props or changed costume. Same compact three-head-tall proportions as reference1, clean hand-inked classic90s anime outlines and simple cel shading, notpixelart. Powerful upward release strike: both hands sweep upward and forward AWAY from camera, one arm raised higher above head and other forward near shoulder. Grounded stance, dramatic back/shoulder twist, two ponytails trail behind separately. Keep entire hands, hair and shoes inside frame. No beam, no large VFX. ONE character only, genuine transparent background including gaps. Full body including both ponytail tips and hands/shoes within central80% square with clear margins. Shoes are lowest opaque part; no ground, drop shadow, text, frame or UI. Final export512x512 with support foot contact(256,496). Show a clear readable rear-facing action.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-d3fbc05c-81af-4cfe-8b4e-5224f231bf91.png",
+  "localSource": "sources/xiaocui__back-release.png"
+}

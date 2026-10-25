@@ -77,9 +77,10 @@ function floater(text, x, y, color = pal.flash, size = 18) {
   floaters.push({ text, x, y, life: 44, color, size });
 }
 
-function banner(text, sub = '', life = 120, color = '#ffd84a') {
+/** 大字提示。small：曲子進行中用的小提示（放在上方魔王血條底下，不擋音符）；不是 small 的只在倒數時用 */
+function banner(text, sub = '', life = 120, color = '#ffd84a', small = false) {
   banners.length = 0;
-  banners.push({ text, sub, life, max: life, color });
+  banners.push({ text, sub, life, max: life, color, small });
 }
 
 function outlinedText(g, text, x, y, size, fill = pal.text, align = 'center', stroke = pal.ink) {
@@ -145,8 +146,27 @@ function drawFallbackPerson(g, character, x, y, h, alpha = 1) {
   g.restore();
 }
 
+// 音鬥樂的背面動作圖（站在判定線上背對玩家、面向魔王）：有的角色就把一般的動作換成背面的
+const BACK_POSE = {
+  idle: 'back-idle',
+  dash: 'back-idle',
+  punch1: 'back-strike1',
+  punch2: 'back-strike2',
+  kick: 'back-strike2',
+  sweep: 'back-sweep',
+  special: 'back-hold',
+  release: 'back-release',
+  win: 'back-release',
+  hurt: 'back-hurt',
+  down: 'back-hurt',
+};
+// 沒有背面圖的角色：同時押、長押放開用相近的側面動作
+const SIDE_POSE = { sweep: 'kick', release: 'kick' };
+
 function drawPerson(g, character, pose, x, y, h, opts = {}) {
   const sheet = sheetOf('characters', character);
+  if (sheet?.frames.includes('back-idle')) pose = BACK_POSE[pose] ?? pose;
+  else pose = SIDE_POSE[pose] ?? pose;
   if (!(sheet && drawFrame(g, sheet, pose, x, y, h, opts.facing ?? 1, opts))) drawFallbackPerson(g, character, x, y, h, opts.alpha ?? 1);
 }
 
@@ -301,6 +321,8 @@ export function handleEvents(events, v) {
     me.attack = 12;
     me.pose = ATTACKS[attackN++ % ATTACKS.length];
     const other = sorted.find((e) => side(e.lane) !== side(mine.lane));
+    // 左右同時押：本體兩手往外揮（分身在另一邊一起打）
+    if (other || mine.chord) me.pose = 'sweep';
     if (other || (hits.length === 1 && mine.chord && side(mine.lane) !== bodySide)) {
       const e = other ?? mine;
       me.clone.lane = e.lane;
@@ -309,6 +331,13 @@ export function handleEvents(events, v) {
       me.clone.attack = 14;
       me.clone.pose = ATTACKS[attackN % ATTACKS.length];
     }
+  }
+  // 長押放開的那一下：大動作往上揮
+  const release = events.find((e) => e.type === 'judge' && e.tail && e.j !== 'M');
+  if (release) {
+    me.x = laneX(f, release.lane);
+    me.attack = 14;
+    me.pose = 'release';
   }
   for (const e of events) {
     if (e.type === 'judge') {
@@ -339,11 +368,11 @@ export function handleEvents(events, v) {
       comboPop = 20;
       floater(`${e.n} COMBO!`, f.cx, f.top + 120, '#ffd84a', 22);
     } else if (e.type === 'bossdown') {
-      banner(t('擊破！'), t('魔王倒下了！之後的傷害是 OVERKILL'), 150, '#ffd84a');
+      banner(t('擊破！'), t('之後的傷害是 OVERKILL'), 100, '#ffd84a', true);
       shake = 14;
       burst(b.x, b.y - b.h * 0.4, '#ffd84a', 40, 7, 50, 0.12);
     } else if (e.type === 'down') {
-      if (!downShown) banner(t('體力歸零……'), t('戰鬥輸了，曲子打完還是有技術分！'), 140, '#ff6b7a');
+      if (!downShown) banner(t('體力歸零……'), t('戰鬥輸了，曲子打完還是有技術分！'), 100, '#ff6b7a', true);
       downShown = true;
     } else if (e.type === 'hold') {
       effect('spark', laneX(f, e.lane), f.judge, 48, 10);
@@ -1024,6 +1053,21 @@ function drawEffects(g) {
     const inK = Math.min(1, (b.max - b.life) / 12);
     g.save();
     g.globalAlpha = Math.min(1, b.life / 20);
+    if (b.small) {
+      // 小提示：魔王血條底下一條窄窄的帶子，左右兩邊淡掉
+      const y = 74;
+      const sb = g.createLinearGradient(W / 2 - 220, 0, W / 2 + 220, 0);
+      sb.addColorStop(0, 'rgba(10,40,140,0)');
+      sb.addColorStop(0.5, 'rgba(10,40,140,0.7)');
+      sb.addColorStop(1, 'rgba(10,40,140,0)');
+      g.fillStyle = sb;
+      g.fillRect(W / 2 - 220, y - 18, 440, b.sub ? 50 : 36);
+      outlinedText(g, b.text, W / 2 + (1 - inK) * 80, y, 26, b.color);
+      if (b.sub) outlinedText(g, b.sub, W / 2, y + 22, 11, pal.cream);
+      g.restore();
+      b.life--;
+      continue;
+    }
     const bg = g.createLinearGradient(0, 0, W, 0);
     bg.addColorStop(0, 'rgba(20,80,245,0)');
     bg.addColorStop(0.5, 'rgba(10,40,140,0.75)');

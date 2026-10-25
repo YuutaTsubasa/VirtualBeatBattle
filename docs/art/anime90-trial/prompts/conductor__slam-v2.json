@@ -1,0 +1,16 @@
+{
+  "name": "conductor__slam-v2",
+  "asset": "bosses/conductor/slam.png",
+  "size": [
+    768,
+    768
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/conductor__slam.png"
+  ],
+  "prompt": "Use case: precise-object-edit. Preserve this exact conductor downward-attack pose, costume, face, anatomy, cloak, music fragments, baton and90s anime cel finish. Correct CANVAS FIT only: full leftmost cloak fold and rightmost baton tip are too close to border. Pull camera back about12%, center entire existing full-body action inside a square transparent canvas with at least7% clear transparent margin on every side. Reconstruct any clipped leftmost cloak edge as a clean continuous fold. Do not change pose or lighting, do not crop or stretch, no new objects. True transparent background and gaps, no ground or shadow. Entire hair,cloak,boots,baton,notes visible.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-7eb30de9-233a-4f05-a995-f2647316ff85.png",
+  "localSource": "sources/conductor__slam-v2.png"
+}

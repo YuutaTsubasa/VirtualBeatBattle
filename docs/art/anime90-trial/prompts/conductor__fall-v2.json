@@ -1,0 +1,16 @@
+{
+  "name": "conductor__fall-v2",
+  "asset": "bosses/conductor/fall.png",
+  "size": [
+    768,
+    768
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/conductor__fall.png"
+  ],
+  "prompt": "Use case: precise-object-edit. Keep exact falling-backward conductor pose, silver hair/half-mask, torso, hands and baton, both bent legs, headLEFT bootsRIGHT. Change ONLY billowing cloak placement: current cloth hangs BELOW boots and breaks ground alignment. Redraw entire cloak billowing UP and LEFT behind torso, with ALL cloak tips and music-note fragments ABOVE the lowest boot sole. Lowest boot at lowerRIGHT must be the single lowest opaque component. Keep cloak dramatic and full, same navy/crimson lining/silver trim, do not remove cloak. Preserve transparent gaps. Pull back to leave at least8%clear margin around full silhouette. Whole character and baton inside square, no clipping, background, floor, shadow or text. A clear mid-fall not a standing pose.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-f6c2a246-118c-4d7b-a557-882cf5b7cc47.png",
+  "localSource": "sources/conductor__fall-v2.png"
+}

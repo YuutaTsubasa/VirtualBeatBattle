@@ -1,0 +1,16 @@
+{
+  "name": "title-scene-v2",
+  "asset": "ui/title-scene.png",
+  "size": [
+    1920,
+    1080
+  ],
+  "transparent": false,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/title-scene.png"
+  ],
+  "prompt": "Use case: precise-object-edit. Edit this title illustration composition ONLY. Preserve Xiaocui exact face, emerald twin ponytails with two pink bows, sailor outfit, reaching hand with five fingers, classic1990s anime style, white floating sky city and halos. Critical requirement: the ENTIRE character including BOTH ponytails, every hair tip, both pink bows and all fingers must fit in RIGHT60% of wide image. Current left ponytail and hand extend too far left. Scale character down about22%, arrange both ponytails as separate downward arcs closer to shoulders, move character right so face remains near65%width39%height. Place leftmost hair and fingers at43%width or farther right. Keep a CLEAR vertical boundary at40%width: to left of it ONLY sky and city, ZERO character pixels. Do not crop either ponytail at right edge: keep rightmost hair at97%width. Both roots and tips visible. It is fine for lower skirt to meet bottom edge. Do not duplicate character. No text, logo, menu, UI or added accessories. Full widescreen16:9 opaque illustration. Preserve friendly welcoming expression and open palm, no costume changes.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-dcaa871d-7596-4383-8ddd-9adbc825ffb9.png",
+  "localSource": "sources/title-scene-v2.png"
+}

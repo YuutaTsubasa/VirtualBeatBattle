@@ -1,0 +1,16 @@
+{
+  "name": "conductor__down-v3",
+  "asset": "bosses/conductor/down.png",
+  "size": [
+    768,
+    768
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/conductor__down-v2.png"
+  ],
+  "prompt": "Use case: precise-object-edit. Preserve this exact defeated conductor lying horizontally on side, headLEFT bootsRIGHT, mask, silver hair, navy/crimson cloak and gloves,90s anime shading. For game ground alignment adjust baton and cloth: move the glowing baton UP into his hands across torso, so baton is above boot soles; fold the low cloak hem upward under body, so no cloth or luminous effects hang BELOW the bottom of the lowest rightmost boot. Keep that boot sole as lowest opaque point. All components fully inside square transparent canvas with ample margins. Do NOT stand him up, change costume, add ground or shadow. Maintain low horizontal resting pose and clear face. Genuine transparency.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-4849c0df-f30a-4bff-9325-aba7b9b8f053.png",
+  "localSource": "sources/conductor__down-v3.png"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "logo",
+  "asset": "ui/logo.png",
+  "size": [
+    1400,
+    560
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/rhythm-ui-concept-v1/01-solo-ui-concept.png"
+  ],
+  "prompt": "Use case: logo-brand. Create the FINAL standalone game logo for 虛擬音鬥樂. Exact Traditional Chinese main title: 「虛擬音鬥樂」 exactly FIVE characters in that order. Fourth character is 鬥 U+9B25, the traditional fight character, NOT 斗 or 門. Second line exact English: \"VIRTUAL BEAT BATTLE\". NO other words. Reference image is layout/style mood only: use its top-left logo angular weight, do NOT copy its mistaken Chinese glyph. Wide horizontal composition, heavy italic geometric black sans lettering in solid ink navy #101A33, elegant sharp slashes, clean legible full glyph interiors. One thin cobalt-blue #1450F5 lightning/audio-wave motif on EACH side. All five Chinese glyphs equally large and dominant. English small well-spaced single baseline underneath, dark navy. Ice-white #F5F6FC and a little cyan #2FC6FF only as subtle edge accents. Flat crisp premium arcade music game mark, no bevel, no sports balls, no extra icons, no background plate, no shadows. Generous transparent padding around complete logo. True transparent background. Wide 2.5:1 aspect ratio asset suitable for1400x560 final. Ensure legibility on white.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-7328a31f-2102-42dc-84c6-691d30636930.png",
+  "localSource": "sources/logo.png"
+}

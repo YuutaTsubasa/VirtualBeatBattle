@@ -1,0 +1,17 @@
+{
+  "name": "xiaocui__back-idle",
+  "asset": "characters/xiaocui/sprites/back-idle.png",
+  "size": [
+    512,
+    512
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/references/xiaocui-existing-idle.png",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/references/xiaocui-portrait.webp"
+  ],
+  "prompt": "Use case: identity-preserve. Draw ONE full-body game animation cel, Xiaocui idle for a six-key rhythm battle. Reference1 is ONLY canonical compact chibi body proportions, outfit and1990s cel anime linework; change view to REAR. Reference2 canonical portrait hair and clothing identity. Camera is BEHIND her and slightly ABOVE, three-quarter REAR view; she faces distant boss at TOP of screen, AWAY from player. Viewer must see the BACK of her head, BACK sailor collar, shoulder blades and back of teal skirt. Do not look over shoulder, no face or frontal eyes. Dark emerald green TWO twin ponytails, each with its own pink bow, both visible separately continuously from root to tip. White short sleeve sailor blouse, DARK TEAL back sailor collar with two white stripe lines, teal pleated skirt covering hips, white ankle socks and teal-white high-top trainers. No headphones, armor, gloves, props or changed costume. Same compact three-head-tall proportions as reference1, clean hand-inked classic90s anime outlines and simple cel shading, notpixelart. Grounded ready stance, knees slightly bent, feet planted apart, both hands closed in fists held forward in front of chest pointing away into depth, shoulders relaxed ready. ONE character only, genuine transparent background including gaps. Full body including both ponytail tips and hands/shoes within central80% square with clear margins. Shoes are lowest opaque part; no ground, drop shadow, text, frame or UI. Final export512x512 with support foot contact(256,496). Show a clear readable rear-facing action.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-6c7d7bd3-1675-44d6-a65a-89d6e816fbcf.png",
+  "localSource": "sources/xiaocui__back-idle.png"
+}

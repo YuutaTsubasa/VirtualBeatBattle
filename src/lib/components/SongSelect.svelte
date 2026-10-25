@@ -31,7 +31,36 @@
   const game = $derived(gameOf(track.game));
   // 依來源遊戲篩選（all = 全部）
   let filter = $state('all');
-  const shown = $derived(filter === 'all' ? TRACKS : TRACKS.filter((tr) => tr.game === filter));
+  // 排序：default（收錄順序）、asc（選到的難度的等級，低→高）、desc（高→低）；記在這台電腦
+  const SORTS = ['default', 'asc', 'desc'];
+  let sort = $state(loadSort());
+  function loadSort() {
+    try {
+      const v = localStorage.getItem('vbb_song_sort');
+      return SORTS.includes(v) ? v : 'default';
+    } catch {
+      return 'default';
+    }
+  }
+  const ratingOf = (tr) => META[tr.id]?.levels[level]?.rating ?? 0;
+  const shown = $derived.by(() => {
+    const list = filter === 'all' ? TRACKS : TRACKS.filter((tr) => tr.game === filter);
+    if (sort === 'default') return list;
+    const k = sort === 'asc' ? 1 : -1;
+    // 等級一樣的話照 BPM，再一樣就照收錄順序
+    return [...list].sort((a, b) => k * (ratingOf(a) - ratingOf(b)) || k * (songOf(a).bpm - songOf(b).bpm) || TRACKS.indexOf(a) - TRACKS.indexOf(b));
+  });
+
+  function cycleSort() {
+    play('move');
+    sort = SORTS[(SORTS.indexOf(sort) + 1) % SORTS.length];
+    try {
+      localStorage.setItem('vbb_song_sort', sort);
+    } catch {
+      // 存不了就算了
+    }
+    requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
+  }
   const best = $derived(bestOf(songId, level));
   // 現在的等級全 Perfect 大約打得掉魔王幾成（不算角色能力）
   const estimate = $derived(Math.round(75 * (atkOfLevel(lv.lv) / 100)));
@@ -75,6 +104,9 @@
   <div class="pick">
     <div class="list-col">
       <div class="filters" role="tablist">
+        <button type="button" class="sort" class:on={sort !== 'default'} onclick={cycleSort} title={t('排序')}>
+          {sort === 'asc' ? t('等級 ↑') : sort === 'desc' ? t('等級 ↓') : t('預設')}
+        </button>
         <button type="button" role="tab" aria-selected={filter === 'all'} class:on={filter === 'all'} onclick={() => setFilter('all')}>{t('全部')} <i>{TRACKS.length}</i></button>
         {#each GAMES as g (g.id)}
           <button type="button" role="tab" aria-selected={filter === g.id} class:on={filter === g.id} onclick={() => setFilter(g.id)}>{t(g.short)}</button>
@@ -95,6 +127,7 @@
               {#if b?.killed}<i class="down">{t('擊破')}</i>{/if}
               {#if b}<i class="rank">{b.rank}</i>{/if}
             </span>
+            <span class="lvl">{ratingOf(tr)}</span>
             <span class="bpm"><i class="eq"></i>{songOf(tr).bpm}</span>
           </button>
         {/each}
@@ -187,6 +220,29 @@
     font-style: normal;
     opacity: 0.7;
   }
+  .filters .sort {
+    flex: 1.3;
+    background: var(--navy);
+    color: #fff;
+  }
+  .filters .sort.on {
+    background: #c81e4a;
+  }
+  /* 這一首在選到的難度的等級 */
+  .lvl {
+    min-width: 4.4cqh;
+    padding: 0.1cqh 0.6cqh;
+    text-align: center;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 2.2cqh;
+    background: #e6ebf5;
+    color: var(--navy);
+  }
+  .song.sel .lvl {
+    background: #fff;
+    color: var(--accent);
+  }
   .filters button.on {
     background: var(--accent);
     color: #fff;
@@ -202,7 +258,7 @@
   }
   .song {
     display: grid;
-    grid-template-columns: 4cqw 11cqh 1fr auto auto;
+    grid-template-columns: 4cqw 11cqh 1fr auto auto auto;
     align-items: center;
     gap: 1cqw;
     padding: 0.8cqh 1.2cqw;

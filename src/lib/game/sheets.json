@@ -68,7 +68,14 @@
         "run5",
         "run6",
         "run7",
-        "run8"
+        "run8",
+        "back-idle",
+        "back-strike1",
+        "back-strike2",
+        "back-sweep",
+        "back-hold",
+        "back-release",
+        "back-hurt"
       ],
       "cols": 8,
       "cell": 400,
@@ -964,6 +971,22 @@
       "fix": {
         "walk1": 1.101
       }
+    },
+    "conductor": {
+      "src": "bosses/conductor.webp",
+      "frames": [
+        "idle",
+        "walk1",
+        "walk2",
+        "windup",
+        "slam",
+        "hurt",
+        "fall",
+        "down",
+        "charge"
+      ],
+      "cols": 6,
+      "cell": 600
     }
   },
   "stages": [

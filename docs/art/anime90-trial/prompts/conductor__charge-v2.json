@@ -1,0 +1,16 @@
+{
+  "name": "conductor__charge-v2",
+  "asset": "bosses/conductor/charge.png",
+  "size": [
+    768,
+    768
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/conductor__charge.png"
+  ],
+  "prompt": "Use case: precise-object-edit. Preserve this exact conductor pose, anatomy, costume, mask, hair, boots, cloak, notes and effects. Correct FRAMING: some hair or aura reaches the image border. Pull camera back substantially: ENTIRE artwork must occupy only central70% of square image width AND central70% height, with15% totally empty TRANSPARENT margin on all four sides. Reconstruct any clipped hair/outer aura to a complete smooth edge. Do not merely add border around clipped content: redraw complete silhouette. Keep exact pose standing facing RIGHT with compact luminous aura. All glow edges must fade to fully transparent well BEFORE border. No glow below boots soles. True transparent backdrop, no scene or ground, no shadow, text or additional elements.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-c7a6e209-e776-4e1f-b4d4-8ec3f6be72d8.png",
+  "localSource": "sources/conductor__charge-v2.png"
+}

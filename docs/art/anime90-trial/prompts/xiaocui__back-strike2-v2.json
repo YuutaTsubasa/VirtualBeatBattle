@@ -1,0 +1,17 @@
+{
+  "name": "xiaocui__back-strike2-v2",
+  "asset": "characters/xiaocui/sprites/back-strike2.png",
+  "size": [
+    512,
+    512
+  ],
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/xiaocui__back-strike2.png",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/sources/xiaocui__back-idle.png"
+  ],
+  "prompt": "Use case: precise-object-edit. Correct this rear-view Xiaocui kick cel. Current image is WRONG leg: raised shoe is at screen RIGHT and her right thigh is lifted. Need LEFT LEG KICK. In rear view anatomical left is SCREEN LEFT. Redraw legs and hip twist: LEFT thigh exits LEFT side of skirt, left knee lifts toward upper LEFT into depth, lifted LEFT shoe visible near screen LEFT at waist/shoulder height. RIGHT leg exits RIGHT side of skirt and extends DOWN to the ONLY planted foot near lower center-right. Do not cross legs. Keep back to viewer, torso aimed TOP of screen, both fists guarding forward, two green ponytails with two pink bows, back sailor collar, white blouse, teal skirt, white socks and teal high-top trainers. Preserve exact character identity, chibi size and cel shading. Reference2 is idle costume model. Both ponytails independently visible, full body margins, true transparent background. No text, ground or shadow. Make a clear left leg forward kick, NOT a right kick and NOT a side profile.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-555d085b-efe6-431e-ad6f-5fbf8606bcc2.png",
+  "localSource": "sources/xiaocui__back-strike2-v2.png"
+}
