@@ -1,0 +1,13 @@
+{
+  "name": "blocker__walk2",
+  "asset": "bosses/blocker/walk2.png",
+  "pose": "walk2",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-originals-and-bosses/sources/blocker__idle.png"
+  ],
+  "prompt": "Use case: stylized-concept. Single FINAL transparent square 2D boss sprite for Virtual Beat Battle anime90. Input is exact BLOCKER identity, preserve facial structure, hair, tan skin, massive muscles, uniform colors and bare feet. Change pose only. BLOCKER the giant beach volleyball defender: very tall massively muscular adult male, broad thick shoulders and powerful arms/legs, human anatomy about7heads tall; sun-tanned skin, square jaw, short spiky dark brown hair, dark eyebrows, confident competitive expression. White sports headband with two short tails; sleeveless cobalt-blue sports vest with white side stripe and narrow bright-orange trim; matching navy/cobalt mid-thigh shorts with white side panel and orange hem; thick white wrist sweatbands. BARE FEET for beach volleyball, all five toes on each visible foot. No jersey numbers, no letters, no logos. No armor, no horns, no cape, no weapon. 3/4 side view facing RIGHT, expressive90s sports-anime drawing with crisp dark outlines and flat cel-shaded skin/muscles, sunny highlights. Pose walk2: Walking passing phase toward RIGHT, one foot planted below hips, other knee bent with bare heel lifted behind LEFT; clear gap below lifted foot, arms counter-swing. Entire figure including raised fingers, headband tails and all toes fully within canvas with generous12–15% transparent margins. Exactly2arms2hands2legs, five fingers per hand. No environment, ground shadow, ball, net, sand, text, labels, UI, watermark. Genuine transparent alpha.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-b8e9a7d4-d45d-4fae-b845-5e59523bd2ac.png",
+  "localSource": "sources/blocker__walk2.png"
+}

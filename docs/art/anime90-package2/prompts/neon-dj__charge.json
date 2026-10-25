@@ -1,0 +1,13 @@
+{
+  "name": "neon-dj__charge",
+  "asset": "bosses/neon-dj/charge.png",
+  "pose": "charge",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-originals-and-bosses/sources/neon-dj__idle.png"
+  ],
+  "prompt": "Use case: stylized-concept. Single final 2D game boss sprite for Virtual Beat Battle, one frame only, transparent square canvas. Input image is the exact NEON-DJ identity reference: preserve helmet, armor pieces, color placement, shield geometry, body proportions and material, change only pose. Keep same 3/4 side-view camera facing RIGHT. Subject: Neon DJ, a sleek athletic humanoid DJ robot about 5.5 heads tall, cobalt and ivory angular armor over dark navy articulated joints. Black wraparound LED visor displaying simple magenta equalizer bars, no text. Circular headphone ear pods each with one short thin antenna. Compact cyan speaker in chest. Exactly two arms, two legs, two hands. Each forearm carries a clearly recognizable circular vinyl turntable shield with black record concentric grooves, cyan rim, magenta center and a small tonearm; shields stay attached. Mechanical boots, no clothing, no cape, no hair. Strong clean navy outlines, precise flat cel-shaded planes and restrained highlights, matching anime90 style not 3D render, not pixel art. POSE charge: Power-up: stable wide grounded stance, knees bent, two turntable shields raised at chest height angled outward, chest speaker bright cyan, visor intense magenta, small restrained cyan/magenta electrical arcs closely hugging shoulder/forearm silhouette. No giant aura, no ground disc, full body unobstructed. Composition: complete uncut figure and equipment centered, 12–15% transparent padding on all sides, no crop even antennas/shields. Face and torso oriented RIGHT except natural recoil. Keep all effects tight. No words, labels, numbers, UI, scenery, floor, ground shadow, floating detached objects, watermark. Genuine transparent background.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-bff9610e-b461-4b19-b313-ee88ab40eeea.png",
+  "localSource": "sources/neon-dj__charge.png"
+}

@@ -5,7 +5,7 @@
   // 每一首都是一隻魔王；魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），
   // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
-  import { SHOWN_TRACKS as TRACKS, LEVELS, SHOWN_GAMES as GAMES, gameOf, songOf, backgroundOf, bossOf } from '../game/tracks.js';
+  import { SHOWN_TRACKS as TRACKS, LEVELS, SHOWN_GAMES as GAMES, gameOf, songOf, coverOf, bossOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { getCharacter } from '../game/characters.js';
   import { levelOf, bestOf } from '../game/progress.js';
@@ -74,7 +74,7 @@
   // 現在的等級全 Perfect 大約打得掉魔王幾成（不算角色能力）
   const estimate = $derived(Math.round(75 * (atkOfLevel(lv.lv) / 100)));
   const minutes = (ms) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
-  const art = (tr) => asset(backgroundOf(tr));
+  const art = (tr) => asset(coverOf(tr));
 
   // 魔王：闖天下的魔王，或角色主題曲的對手角色
   const boss = $derived(bossOf(track, WORLDS));
@@ -149,7 +149,8 @@
     <div class="detail">
       <div class="cover">
         <img src={art(track)} alt="" />
-        <span class="boss-art" class:rival={boss.rival} style={bossStyle(boss)}></span>
+        <!-- 封面已經畫了魔王：有封面就不再疊魔王的動作圖 -->
+        {#if !track.cover}<span class="boss-art" class:rival={boss.rival} style={bossStyle(boss)}></span>{/if}
       </div>
       <div class="info">
         <div class="from">

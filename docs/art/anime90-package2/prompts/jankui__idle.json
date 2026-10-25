@@ -1,0 +1,14 @@
+{
+  "name": "jankui__idle",
+  "asset": "bosses/jankui/idle.png",
+  "pose": "idle",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/delivery/bosses/conductor/idle.png",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/public/games/mahjong-parlor.webp"
+  ],
+  "prompt": "Use case: stylized-concept. One FINAL transparent square full-body game boss sprite for Virtual Beat Battle anime90. Input1 establishes ONLY clean 1990s anime ink and flat layered cel shading; do not copy its conductor identity/cloak/mask. Input2 establishes warm mahjong-parlor palette ONLY; do not draw scenery. Design a new character below. JANKUI the mahjong gambling demon: lean mature handsome sinister male, about7heads tall, sleek swept-back black hair with small gray streak at temples, TWO thin short ivory oni horns emerge above forehead, amber eyes, pointed ears, subtle fang in confident smirk. Pale warm skin. Elegant fitted dark emerald three-piece suit, charcoal deep green trousers, cream dress shirt, burgundy tie, small brass tie clip and gold watch chain, polished dark brown dress shoes. Warm golden highlights match antique wooden mahjong parlor. Not a robot, not conductor, no cape, no mask, no instrument. Mahjong tiles ivory rectangular beveled blocks with green backs; simple circle-suit red/green/blue pips ONLY, no Chinese lettering. 3/4 sideview facing RIGHT, clean strong outlines, precise cel shadows, restrained painted highlights, not pixel art or3D. Pose idle: Confident upright idle, weight slightly on back leg, one hand holds an ivory mahjong tile between index/middle fingers at waist, other hand relaxed; three tiles floating close around upper shoulders. Complete figure and all tiles inside canvas with generous12–15% transparent margins; exactly2arms2hands2legs. Five fingers per visible hand. Transparent alpha, no environment, floor, ground shadow, text, logo, UI, labels, watermark. Tiles stay at torso/head height, never below knees except no tiles in fall/down.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-ec945cbd-3202-452d-b893-643f9a36111d.png",
+  "localSource": "sources/jankui__idle.png"
+}

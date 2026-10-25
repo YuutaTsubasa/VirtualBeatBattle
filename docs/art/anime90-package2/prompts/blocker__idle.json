@@ -1,0 +1,14 @@
+{
+  "name": "blocker__idle",
+  "asset": "bosses/blocker/idle.png",
+  "pose": "idle",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/delivery/bosses/conductor/idle.png",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/public/games/volleyball-court.webp"
+  ],
+  "prompt": "Use case: stylized-concept. Single FINAL transparent square 2D boss sprite for Virtual Beat Battle anime90. Input1 is ONLY clean1990s anime ink/cel-shading style, not character identity. Input2 is sunny beach palette reference ONLY, do not draw scene. Design new human athlete below. BLOCKER the giant beach volleyball defender: very tall massively muscular adult male, broad thick shoulders and powerful arms/legs, human anatomy about7heads tall; sun-tanned skin, square jaw, short spiky dark brown hair, dark eyebrows, confident competitive expression. White sports headband with two short tails; sleeveless cobalt-blue sports vest with white side stripe and narrow bright-orange trim; matching navy/cobalt mid-thigh shorts with white side panel and orange hem; thick white wrist sweatbands. BARE FEET for beach volleyball, all five toes on each visible foot. No jersey numbers, no letters, no logos. No armor, no horns, no cape, no weapon. 3/4 side view facing RIGHT, expressive90s sports-anime drawing with crisp dark outlines and flat cel-shaded skin/muscles, sunny highlights. Pose idle: Ready volleyball stance, knees gently bent, both bare feet planted, open hands at waist ready to receive, focused confident expression. Entire figure including raised fingers, headband tails and all toes fully within canvas with generous12–15% transparent margins. Exactly2arms2hands2legs, five fingers per hand. No environment, ground shadow, ball, net, sand, text, labels, UI, watermark. Genuine transparent alpha.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-cb1eb4a6-4322-4235-bf52-e87ce3a36e34.png",
+  "localSource": "sources/blocker__idle.png"
+}

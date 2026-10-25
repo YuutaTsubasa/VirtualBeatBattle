@@ -180,4 +180,8 @@ export default {
   '琴鍵音': 'Keysounds',
   '開啟': 'On',
   '打中音符才播旋律（有分軌的曲子）': 'Melody plays only when you hit notes (songs with stems)',
+  '霓虹 DJ': 'Neon DJ',
+  '超載機兵': 'Overdrive Mech',
+  '雀鬼': 'Mahjong Demon',
+  '鐵壁攔網王': 'Iron Wall Blocker',
 };

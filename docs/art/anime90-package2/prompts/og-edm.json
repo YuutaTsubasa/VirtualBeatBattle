@@ -1,0 +1,16 @@
+{
+  "name": "og-edm",
+  "asset": "environment/og-edm.png",
+  "size": [
+    1920,
+    1080
+  ],
+  "transparent": false,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/delivery/environment/og-speedcore.png"
+  ],
+  "prompt": "Use case: stylized-concept. FINAL 1920x1080 widescreen opaque game environment for Virtual Beat Battle, polished 1990s hand-painted anime arcade background. Reference image ONLY establishes camera perspective, stage layout and ink/paint finish; create the completely NEW location described here, do not copy its tower/clouds. A broad empty floor spreads toward camera from the far-end boss platform whose contact surface is EXACTLY x960 y400 (50%width,37%height). That location must be an unobstructed solid horizontal stage surface, never a void. Floor simple and low detail across center lower55%, because a rhythm highway will be overlaid there. Outer25% on both sides reserved for HUD: keep lower contrast and low detail. Strong focal backdrop in upper center behind boss platform, enough luminosity to withstand in-game darkening. No characters, boss, people, text, signs with letters, logos, UI, gameplay lanes or note sprites. Full-bleed 16:9, coherent perspective. Song Neon Frequency, EDM150BPM. A rooftop stage high in a night neon metropolis, distant elegant skyscrapers, holographic equalizer-bar billboards without text, narrow laser beams in upper sky. Cobalt and magenta with restrained cyan edge light. Broad cool charcoal rooftop floor extending downward, a small far-end raised performance platform at specified contact point. Rooftop rails and speaker architecture remain peripheral, visually quiet. Crisp silhouettes, painterly night atmosphere, futuristic but distinctly hand-painted anime.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-474a06f3-c5be-4793-8983-51adb0b9bf11.png",
+  "localSource": "sources/og-edm.png"
+}

@@ -149,7 +149,12 @@
         "games/volleyball-court.webp",
         "ui/logo.webp",
         "ui/title-scene.webp",
-        "games/og-speedcore.webp"
+        "games/og-speedcore.webp",
+        "games/og-edm.webp",
+        "games/og-hardcore.webp",
+        "covers/og-edm.webp",
+        "covers/og-hardcore.webp",
+        "covers/og-speedcore.webp"
       ],
       "config": {}
     },

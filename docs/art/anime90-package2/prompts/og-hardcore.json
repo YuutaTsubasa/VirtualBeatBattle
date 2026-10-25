@@ -1,0 +1,16 @@
+{
+  "name": "og-hardcore",
+  "asset": "environment/og-hardcore.png",
+  "size": [
+    1920,
+    1080
+  ],
+  "transparent": false,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/delivery/environment/og-speedcore.png"
+  ],
+  "prompt": "Use case: stylized-concept. FINAL 1920x1080 widescreen opaque game environment for Virtual Beat Battle, polished 1990s hand-painted anime arcade background. Reference image ONLY establishes camera perspective, stage layout and ink/paint finish; create the completely NEW location described here, do not copy its tower/clouds. A broad empty floor spreads toward camera from the far-end boss platform whose contact surface is EXACTLY x960 y400 (50%width,37%height). That location must be an unobstructed solid horizontal stage surface, never a void. Floor simple and low detail across center lower55%, because a rhythm highway will be overlaid there. Outer25% on both sides reserved for HUD: keep lower contrast and low detail. Strong focal backdrop in upper center behind boss platform, enough luminosity to withstand in-game darkening. No characters, boss, people, text, signs with letters, logos, UI, gameplay lanes or note sprites. Full-bleed 16:9, coherent perspective. Song Overdrive Heartbeat, Hardcore180BPM. Underground racing/RAVE tunnel arena, receding ribbed concrete and metal arches, huge speaker stacks embedded in upper side walls, fast orange and red light streaks integrated into tunnel architecture, warm warning lamps with NO lettering. Dark navy charcoal floor, restrained cobalt reflections, hot red-orange warning light in upper center. At specified boss contactpoint an empty small raised platform at far end of broad floor, NOT a vanishing point tunnel opening. Strong intense high-speed lighting while center foreground remains clear quiet floor; side HUD areas subdued.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-78315b2c-1e08-40b6-bd99-3b4c3f2cc75a.png",
+  "localSource": "sources/og-hardcore.png"
+}

@@ -987,6 +987,70 @@
       ],
       "cols": 6,
       "cell": 600
+    },
+    "neon-dj": {
+      "src": "bosses/neon-dj.webp",
+      "frames": [
+        "idle",
+        "walk1",
+        "walk2",
+        "windup",
+        "slam",
+        "hurt",
+        "fall",
+        "down",
+        "charge"
+      ],
+      "cols": 6,
+      "cell": 600
+    },
+    "overdrive": {
+      "src": "bosses/overdrive.webp",
+      "frames": [
+        "idle",
+        "walk1",
+        "walk2",
+        "windup",
+        "slam",
+        "hurt",
+        "fall",
+        "down",
+        "charge"
+      ],
+      "cols": 6,
+      "cell": 600
+    },
+    "jankui": {
+      "src": "bosses/jankui.webp",
+      "frames": [
+        "idle",
+        "walk1",
+        "walk2",
+        "windup",
+        "slam",
+        "hurt",
+        "fall",
+        "down",
+        "charge"
+      ],
+      "cols": 6,
+      "cell": 600
+    },
+    "blocker": {
+      "src": "bosses/blocker.webp",
+      "frames": [
+        "idle",
+        "walk1",
+        "walk2",
+        "windup",
+        "slam",
+        "hurt",
+        "fall",
+        "down",
+        "charge"
+      ],
+      "cols": 6,
+      "cell": 600
     }
   },
   "stages": [

@@ -1,0 +1,13 @@
+{
+  "name": "jankui__windup",
+  "asset": "bosses/jankui/windup.png",
+  "pose": "windup",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-originals-and-bosses/sources/jankui__idle.png"
+  ],
+  "prompt": "Use case: stylized-concept. One FINAL transparent square full-body game boss sprite for Virtual Beat Battle anime90. Input is exact JANKUI identity reference, preserve face, thin horns, hairstyle, suit and body proportions; change pose only. JANKUI the mahjong gambling demon: lean mature handsome sinister male, about7heads tall, sleek swept-back black hair with small gray streak at temples, TWO thin short ivory oni horns emerge above forehead, amber eyes, pointed ears, subtle fang in confident smirk. Pale warm skin. Elegant fitted dark emerald three-piece suit, charcoal deep green trousers, cream dress shirt, burgundy tie, small brass tie clip and gold watch chain, polished dark brown dress shoes. Warm golden highlights match antique wooden mahjong parlor. Not a robot, not conductor, no cape, no mask, no instrument. Mahjong tiles ivory rectangular beveled blocks with green backs; simple circle-suit red/green/blue pips ONLY, no Chinese lettering. 3/4 sideview facing RIGHT, clean strong outlines, precise cel shadows, restrained painted highlights, not pixel art or3D. Pose windup: Preparing a tile-throw attack, grounded bent-knee stance, torso twists back LEFT; CAMERA-NEAR hand raised behind left shoulder holding three fanned mahjong tiles, other hand forward near waist; eyes target RIGHT. No other floating tiles. Complete figure and all tiles inside canvas with generous12–15% transparent margins; exactly2arms2hands2legs. Five fingers per visible hand. Transparent alpha, no environment, floor, ground shadow, text, logo, UI, labels, watermark. Tiles stay at torso/head height, never below knees except no tiles in fall/down.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-73465247-5128-4bac-8e4a-befd10178145.png",
+  "localSource": "sources/jankui__windup.png"
+}

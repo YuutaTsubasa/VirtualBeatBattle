@@ -1,0 +1,14 @@
+{
+  "name": "overdrive__down-v2",
+  "asset": "bosses/overdrive/down.png",
+  "pose": "down",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-originals-and-bosses/sources/overdrive__idle.png",
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-originals-and-bosses/sources/overdrive__down.png"
+  ],
+  "prompt": "Use case: stylized-concept. Correct defeated DOWN sprite of the exact orange/navy speaker mech in image1. Image2 is a rejected pose: it is TOO UPRIGHT/SITTING. Draw the entire mech LYING COMPLETELY FLAT on its back in side elevation, head at FAR LEFT, feet at FAR RIGHT. The long axis head-chest-waist-knees-ankles is HORIZONTAL, within10 degrees. Camera at ground level looking slightly down, not looking up at its chest. Back of helmet, back of torso and hips all rest on the SAME horizontal invisible floor. Helmet center at the same vertical level as hips. Legs extend fully straight to right, no bent raised knees. Broad shoulder housings and arms rest low alongside torso. Chest speaker points UPWARD rather than toward viewer; visible foreshortened elliptical orange speaker. Both boots at right, toes point upward. Exhaust pipes project left from upper back because robot is lying down, NO flames. Low flat unambiguous incapacitated silhouette, occupy central horizontal strip of square canvas, abundant empty transparency above. Preserve all armor colors, exact limb count, industrial speaker design, clean anime90 cel shaded art. No floor, shadow, scenery, text, labels or FX. Full uncut figure, extra transparent margin left and right.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-dde3bd60-1681-4f8c-97cd-210c3eaf85d5.png",
+  "localSource": "sources/overdrive__down-v2.png"
+}

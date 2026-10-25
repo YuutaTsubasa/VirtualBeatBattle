@@ -84,6 +84,23 @@ function floater(text, x, y, color = pal.flash, size = 18) {
   floaters.push({ text, x, y, life: 44, color, size });
 }
 
+// 傷害數字：音符很密的時候，0.35 秒內的傷害加成同一個數字（不然一排數字疊在一起看不清楚）
+let lastDmg = null;
+function damage(n, x, y, color, size) {
+  const now = performance.now();
+  if (lastDmg && floaters.includes(lastDmg) && now - lastDmg.t0 < 350) {
+    lastDmg.n += n;
+    lastDmg.text = String(lastDmg.n);
+    lastDmg.size = Math.min(30, Math.max(lastDmg.size, size) + 1);
+    lastDmg.life = 44;
+    return;
+  }
+  floater(String(n), x, y, color, size);
+  lastDmg = floaters.at(-1);
+  lastDmg.n = n;
+  lastDmg.t0 = now;
+}
+
 /** 大字提示。small：曲子進行中用的小提示（放在上方魔王血條底下，不擋音符）；不是 small 的只在倒數時用 */
 function banner(text, sub = '', life = 120, color = '#ffd84a', small = false) {
   banners.length = 0;
@@ -381,7 +398,7 @@ export function handleEvents(events, v) {
       burst(x, f.judge, color, e.j === 'P' ? 8 : 4, 3.2, 20);
       streaks.push({ x0: x, y0: f.judge - 30, x1: b.x + (Math.random() - 0.5) * 60, y1: b.y - b.h * 0.35, life: 10, max: 10, color, w: e.chord ? 7 : 4 });
       bossHurt = 6;
-      if (e.dmg > 0 && (e.j === 'P' || e.chord || e.tail)) floater(String(e.dmg), b.x + (Math.random() - 0.5) * 120, b.y - b.h * 0.55, color, e.chord ? 22 : 16);
+      if (e.dmg > 0 && (e.j === 'P' || e.chord || e.tail)) damage(e.dmg, b.x + (Math.random() - 0.5) * 120, b.y - b.h * 0.55, color, e.chord ? 22 : 16);
     } else if (e.type === 'hurt' || e.type === 'mine') {
       me.hurt = 16;
       bossSlam = 18;

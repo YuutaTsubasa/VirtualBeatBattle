@@ -1,0 +1,13 @@
+{
+  "name": "neon-dj__walk2-v3",
+  "asset": "bosses/neon-dj/walk2.png",
+  "pose": "walk2",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-originals-and-bosses/sources/neon-dj__idle.png"
+  ],
+  "prompt": "Use case: stylized-concept. Draw one transparent full-body anime90 sprite of exactly the cobalt/ivory NEON-DJ robot in reference, same armor, equalizer visor facing RIGHT, two headphone antennas, two vinyl turntable forearm shields. Change pose to WALK PASSING PHASE: weight supported on FAR LEG which is nearly VERTICAL under torso, its foot flat pointing RIGHT. CAMERA-NEAR LEG is BENT BACK behind the body toward LEFT: near thigh slopes downward LEFT, knee at LEFT of hips, lower leg folds diagonally back up RIGHT so the raised heel is near the back of the knee, toe points DOWN. Near foot is lifted completely off ground. Clear space between the raised foot and straight supporting shin. This is a relaxed walking follow-through, not a wide-stride contact pose or running. Near arm with turntable shield swings forward toward RIGHT across waist, far arm swings backward LEFT. Entire robot remains facing RIGHT, upright torso and level helmet. 1990s anime clean dark ink, layered flat cel shading, correct mechanical joints, both turntables readable. Full figure including both feet and antennas fits within square with generous transparent margins. Genuine alpha background; no floor, shadow, effects, text, labels, UI, or extra limbs.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-47f81b6b-82c6-47f7-98e7-4f5144749205.png",
+  "localSource": "sources/neon-dj__walk2-v3.png"
+}

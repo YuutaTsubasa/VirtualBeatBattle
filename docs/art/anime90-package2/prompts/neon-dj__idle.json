@@ -1,0 +1,13 @@
+{
+  "name": "neon-dj__idle",
+  "asset": "bosses/neon-dj/idle.png",
+  "pose": "idle",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-trial/delivery/bosses/conductor/idle.png"
+  ],
+  "prompt": "Use case: stylized-concept. Single final 2D game boss sprite for Virtual Beat Battle, one frame only, transparent square canvas. Input image is STYLE REFERENCE ONLY: match polished 1990s anime clean ink and layered cel shading, do not copy human character, hair, cloak, mask or baton. Establish entirely new robot below. Subject: Neon DJ, a sleek athletic humanoid DJ robot about 5.5 heads tall, cobalt and ivory angular armor over dark navy articulated joints. Black wraparound LED visor displaying simple magenta equalizer bars, no text. Circular headphone ear pods each with one short thin antenna. Compact cyan speaker in chest. Exactly two arms, two legs, two hands. Each forearm carries a clearly recognizable circular vinyl turntable shield with black record concentric grooves, cyan rim, magenta center and a small tonearm; shields stay attached. Mechanical boots, no clothing, no cape, no hair. Strong clean navy outlines, precise flat cel-shaded planes and restrained highlights, matching anime90 style not 3D render, not pixel art. POSE idle: Relaxed alert idle, stable slightly wide planted stance; both turntable forearms lowered beside hips, slight bent elbows, LED eyes looking right. Composition: complete uncut figure and equipment centered, 12–15% transparent padding on all sides, no crop even antennas/shields. Face and torso oriented RIGHT except natural recoil. Keep all effects tight. No words, labels, numbers, UI, scenery, floor, ground shadow, floating detached objects, watermark. Genuine transparent background.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-2c0e849b-6658-4c9c-929c-9014355c3d93.png",
+  "localSource": "sources/neon-dj__idle.png"
+}

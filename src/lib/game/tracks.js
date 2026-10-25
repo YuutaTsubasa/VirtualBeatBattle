@@ -28,13 +28,13 @@ export const gameOf = (id) => GAMES.find((g) => g.id === id) ?? GAMES[0];
 // id、來源遊戲、那款遊戲裡的曲子 key、曲名、魔王（WORLDS 的編號 0 都市 1 森林 2 海 3 冰 4 礦坑 5 城堡）
 const LIST = [
   // 原創曲
-  { id: 'og-edm', game: 'original', song: 'edm', title: '霓虹頻率', world: 0 },
-  { id: 'og-hardcore', game: 'original', song: 'hardcore', title: '超速心跳', world: 4 },
-  { id: 'og-speedcore', game: 'original', song: 'speedcore', title: '終焉頻率', world: 5, bg: 'games/og-speedcore.webp', boss: { key: 'conductor', name: '終焉指揮者' } },
-  { id: 'mj-title', game: 'mahjong', song: 'title', title: '夜晚的雀館', world: 0 },
-  { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1 },
-  { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2 },
-  { id: 'mj-tension', game: 'mahjong', song: 'tension', title: '海底撈月', world: 4 },
+  { id: 'og-edm', game: 'original', song: 'edm', title: '霓虹頻率', world: 0, bg: 'games/og-edm.webp', cover: 'covers/og-edm.webp', boss: { key: 'neon-dj', name: '霓虹 DJ' } },
+  { id: 'og-hardcore', game: 'original', song: 'hardcore', title: '超速心跳', world: 4, bg: 'games/og-hardcore.webp', cover: 'covers/og-hardcore.webp', boss: { key: 'overdrive', name: '超載機兵' } },
+  { id: 'og-speedcore', game: 'original', song: 'speedcore', title: '終焉頻率', world: 5, bg: 'games/og-speedcore.webp', cover: 'covers/og-speedcore.webp', boss: { key: 'conductor', name: '終焉指揮者' } },
+  { id: 'mj-title', game: 'mahjong', song: 'title', title: '夜晚的雀館', world: 0, boss: { key: 'jankui', name: '雀鬼' } },
+  { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1, boss: { key: 'jankui', name: '雀鬼' } },
+  { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2, boss: { key: 'jankui', name: '雀鬼' } },
+  { id: 'mj-tension', game: 'mahjong', song: 'tension', title: '海底撈月', world: 4, boss: { key: 'jankui', name: '雀鬼' } },
   // 台麻館的角色主題曲：魔王就是那位角色本人（對手，用角色的動作圖）。阿翼是隱藏角色，曲名不寫名字、魔王也不用他
   { id: 'mj-xiaocui', game: 'mahjong', song: 'char-xiaocui', title: '小翠的主題曲', world: 0, rival: { id: 'xiaocui', name: '小翠' } },
   { id: 'mj-yuehua', game: 'mahjong', song: 'char-yuehua', title: '月華的主題曲', world: 3, rival: { id: 'yuehua', name: '月華' } },
@@ -47,10 +47,10 @@ const LIST = [
   { id: 'mj-leo', game: 'mahjong', song: 'char-leo', title: '雷歐的主題曲', world: 5, rival: { id: 'leo', name: '雷歐' } },
   { id: 'mj-alie', game: 'mahjong', song: 'char-alie', title: '阿烈的主題曲', world: 3, rival: { id: 'alie', name: '阿烈' } },
   { id: 'mj-ayi', game: 'mahjong', song: 'char-ayi', title: '隱藏來客的主題曲', world: 5 },
-  { id: 'vb-title', game: 'volleyball', song: 'title', title: '晴天的海灘', world: 2 },
-  { id: 'vb-menu', game: 'volleyball', song: 'menu', title: '海邊的午後', world: 1 },
-  { id: 'vb-match', game: 'volleyball', song: 'match', title: '全力扣殺', world: 0 },
-  { id: 'vb-tension', game: 'volleyball', song: 'tension', title: '賽末點', world: 3 },
+  { id: 'vb-title', game: 'volleyball', song: 'title', title: '晴天的海灘', world: 2, boss: { key: 'blocker', name: '鐵壁攔網王' } },
+  { id: 'vb-menu', game: 'volleyball', song: 'menu', title: '海邊的午後', world: 1, boss: { key: 'blocker', name: '鐵壁攔網王' } },
+  { id: 'vb-match', game: 'volleyball', song: 'match', title: '全力扣殺', world: 0, boss: { key: 'blocker', name: '鐵壁攔網王' } },
+  { id: 'vb-tension', game: 'volleyball', song: 'tension', title: '賽末點', world: 3, boss: { key: 'blocker', name: '鐵壁攔網王' } },
   { id: 'vq-title', game: 'quest', song: 'title', title: '踏上旅程', world: 0 },
   { id: 'vq-menu', game: 'quest', song: 'menu', title: '集合時間', world: 1 },
   { id: 'vq-city', game: 'quest', song: 'stage-city', title: '白色都市', world: 0 },
@@ -85,7 +85,10 @@ const HIDE_PC98 = true;
 export const SHOWN_TRACKS = HIDE_PC98 && AUDIO_TRACKS.length ? TRACKS.filter((tr) => tr.audioSong) : TRACKS;
 export const SHOWN_GAMES = GAMES.filter((g) => SHOWN_TRACKS.some((tr) => tr.game === g.id));
 
-/** 這一首的背景圖（畫面與選曲的封面共用） */
+/** 這一首的背景圖（遊戲畫面；選曲畫面沒有封面時也用它） */
+/** 選曲畫面的封面：有畫好的封面用封面，沒有就用背景 */
+export const coverOf = (track) => track.cover ?? backgroundOf(track);
+
 export const backgroundOf = (track) => track.bg ?? `stages/${['city', 'forest', 'sea', 'ice', 'mine', 'castle'][track.world]}-3/far.webp`;
 
 /** 難度：id、名稱 */

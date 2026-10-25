@@ -1,0 +1,420 @@
+{
+  "request": "2026-10-25-1900-anime90-first-batch.md",
+  "requestSha256": "18b1fc6e57f5eaf64b464c0dce3ebc8e2e196a514d925c29c8a87f216d103420",
+  "generatedWith": "built-in image_gen",
+  "createdAt": "2026-10-25T14:40:40.094Z",
+  "count": 41,
+  "promptFiles": 45,
+  "assets": [
+    {
+      "asset": "environment/og-edm.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "874c38c5eac58ff96af91a51ccb4139a2423a41af3421e2f9c9b5c8dc96cd3fc",
+      "source": "sources/og-edm.png",
+      "sourceSha256": "fc5cddf290ef39790049d7c992b5c51894bde2d7d6cf584380b3df268744d433"
+    },
+    {
+      "asset": "environment/og-hardcore.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "a6215cd56a1ba2aac65f2a6a338c0941cc8cdd92c44b6692a0d326aa2b8e8780",
+      "source": "sources/og-hardcore.png",
+      "sourceSha256": "63bd82ca326b524a32685c2c179f8432c6cadee45a1d06446c197201eaffbd06"
+    },
+    {
+      "asset": "bosses/neon-dj/idle.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "4be2f90901cb609b1e7fd24d53efa7761237d6e0315f4fce82da111290699359",
+      "source": "sources/neon-dj__idle.png",
+      "sourceSha256": "97000c1c5a2900f6b1268016cfbf927ab9f7aca6c57810d94ef62a02fb61ab20"
+    },
+    {
+      "asset": "bosses/neon-dj/walk1.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "48a82e7d17bb022166e2d60e20bd1a79b8bce01e502243af10faca969791adb5",
+      "source": "sources/neon-dj__walk1.png",
+      "sourceSha256": "eac6a17c597805e8b4b879e31bb807b881d8712ae392872ecccad293eae80f4f"
+    },
+    {
+      "asset": "bosses/neon-dj/walk2.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "27167c2e6166e3b5aad097ea37b82f5fd43d225a9f91a719000a461da689978c",
+      "source": "sources/neon-dj__walk2-v3.png",
+      "sourceSha256": "bbafd9aabb17faf3227e1295f9c41966a2f60acb1d752226691ddc8c4e37bfb7"
+    },
+    {
+      "asset": "bosses/neon-dj/windup.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "fd46a823cbcdec4f305190f7fddc91f89cb2195c296e40c1de0685df8d8cf512",
+      "source": "sources/neon-dj__windup.png",
+      "sourceSha256": "770e988ec0913ae32accb2bc6b4ad9c9d3ca6a44f67e87a2937847ca92492536"
+    },
+    {
+      "asset": "bosses/neon-dj/slam.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "1a77f0ce3a23be6ebe0435708cb768d908483517901cb50770e36e7bfd5b9e1e",
+      "source": "sources/neon-dj__slam.png",
+      "sourceSha256": "af6afb15475becc4490c53b703351e1903f6d3c2ffd8b9258e16b888a642e059"
+    },
+    {
+      "asset": "bosses/neon-dj/hurt.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "f29bee126f60e622a57b6ed286e2a9f47ad5ade4fac790c442fc4a7204cddf14",
+      "source": "sources/neon-dj__hurt.png",
+      "sourceSha256": "09626b3e6e18da4c7e10446879ebc2f2856a9a9b054407879d6245dc546a2917"
+    },
+    {
+      "asset": "bosses/neon-dj/fall.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "ada7d4fd1276c545fdf086211ed890d910a166c8af0302299045dcff8a1e4cd8",
+      "source": "sources/neon-dj__fall.png",
+      "sourceSha256": "cc671cdabca1a4010f60a9daa1cb729d3f12b77cd60863ffb15734da0110a764"
+    },
+    {
+      "asset": "bosses/neon-dj/down.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "cb54546dfd9ed8e34eea51f5bbed2e9c2976ffc4c772f6be1e8572e6895c9439",
+      "source": "sources/neon-dj__down.png",
+      "sourceSha256": "8cccd943102abffbf095ae65a2ef934a22213636b591e933813685a056804272"
+    },
+    {
+      "asset": "bosses/neon-dj/charge.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "4debba743cc0c68931a2ae31e093cc22812e0e1b4200cc56f030aec38d5ab518",
+      "source": "sources/neon-dj__charge.png",
+      "sourceSha256": "85c8bb328fccb669893be5ac2424f3fb9525c80f7789b3fb5043b525946ff31b"
+    },
+    {
+      "asset": "bosses/overdrive/idle.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "f304ce40778b43e5d8467d103a72d17a850b88d621d47ba1d3b15ecf8140e32e",
+      "source": "sources/overdrive__idle.png",
+      "sourceSha256": "43bd251bc60b666460d60a89f7b7f52b34e57d39147c4f9e366fe901e279b67f"
+    },
+    {
+      "asset": "bosses/overdrive/walk1.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "253c4617c1f38b1ccc9acc345ad74a7c61bb3b10a44cff253b0e47106953a2ff",
+      "source": "sources/overdrive__walk1.png",
+      "sourceSha256": "e0cf71e584cb75bb949d230bd3a63199cdb8c4cca48b7a60afdddcd9c7ef81e4"
+    },
+    {
+      "asset": "bosses/overdrive/walk2.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "a01323acf204ef9b0acbf40bc1359378a1784b6f7edcb07c5298b3a1aafb8cb4",
+      "source": "sources/overdrive__walk2.png",
+      "sourceSha256": "0bf5272212c67a5a3d04c7be31b3df86a79605048c7e501372534dd233bc411b"
+    },
+    {
+      "asset": "bosses/overdrive/windup.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "c822a79e6bda627b297d0dcea31a0b43872e6c10e5007fe48aa2bfa7ac866ba9",
+      "source": "sources/overdrive__windup.png",
+      "sourceSha256": "026480209eb059f276923b912ebe41fe7514a8e529182418b3446e1f05059f1a"
+    },
+    {
+      "asset": "bosses/overdrive/slam.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "d06e1d8256005ae933ebb8425a7a16f1fc7bbbebb246f4106afff3889313994d",
+      "source": "sources/overdrive__slam.png",
+      "sourceSha256": "a09356f82f25667584b49f6897537f37ec415dd81a810dc14223708411887a75"
+    },
+    {
+      "asset": "bosses/overdrive/hurt.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "d65d291a83992f3aaa6c47596199a11e7a0e3af36425de591f701932df0507c2",
+      "source": "sources/overdrive__hurt.png",
+      "sourceSha256": "681a8aa2366d325322d804697029920cb59ddf24189b3dfcad7485c10ffba14b"
+    },
+    {
+      "asset": "bosses/overdrive/fall.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "44f7fd7f7d2bb9349ead62ded450480936640a6258a05de117d8fee5a39417c4",
+      "source": "sources/overdrive__fall.png",
+      "sourceSha256": "f007afaab99deae999d3c61c5779a7051f7ea09e8e7b1193b43cd14feb320986"
+    },
+    {
+      "asset": "bosses/overdrive/down.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "1946ebe50afe36742d56be596e12a5982c6bb47610676a5bbbe801e3ab256b2b",
+      "source": "sources/overdrive__down-v2.png",
+      "sourceSha256": "3acddfcfd25a114b44f2b7bc33cf8c9d1242f337bd52913d43c07023b71a37d9"
+    },
+    {
+      "asset": "bosses/overdrive/charge.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "8ee72d324a1e7a2b9396fc557307bfa83ec9c7e525a4478c7ec665b76273c593",
+      "source": "sources/overdrive__charge.png",
+      "sourceSha256": "cf7f31f130b833d9a61eb48b399dad8adff19dee807f945c490b2f4cbcd10e0a"
+    },
+    {
+      "asset": "bosses/jankui/idle.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "e47face22975514046e1dd4ac029e9f46d9ce72f44eec14abb5266fea02353c1",
+      "source": "sources/jankui__idle.png",
+      "sourceSha256": "d27b15aa206d760d23f0d681d686d84793f9d0c426803186926696c1e689b707"
+    },
+    {
+      "asset": "bosses/jankui/walk1.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "669d17ff9463ff195497b44892fe82246d92d91bb0257c9e506f0f2efe7a5333",
+      "source": "sources/jankui__walk1.png",
+      "sourceSha256": "cdaaa4bf65cfddbb5acf01d137c64cd948326f41cfc876c8fef2fc88cf221ac3"
+    },
+    {
+      "asset": "bosses/jankui/walk2.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "83ea64ead69a7431fa3988c80fc24e76754e77f5286152e780a0c5b36ca29741",
+      "source": "sources/jankui__walk2.png",
+      "sourceSha256": "213b785ffbde03c05781759a01bab0a7708d4951fb320558c2a4c0068417dde0"
+    },
+    {
+      "asset": "bosses/jankui/windup.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "d1f481968e597c1bf22419b7b11a5590bd070002cc7eb3885a62fdc076d9d410",
+      "source": "sources/jankui__windup.png",
+      "sourceSha256": "1827c9432ea5f404737b9234c32f10453d6326b4f0b601a6fdc5b8a5d5c09d6e"
+    },
+    {
+      "asset": "bosses/jankui/slam.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "d54b5a1b42d707538ddc9ab41b41329532308b333dcb9424a16bafe5736e6006",
+      "source": "sources/jankui__slam.png",
+      "sourceSha256": "b25047afef247b6746ed009f573bf99426b1e173fc129f29ea9b94a2bbc9abad"
+    },
+    {
+      "asset": "bosses/jankui/hurt.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "41a293891deae4573237b3c4a4e74b9f6f2bff66c034be9044f9c6a712382331",
+      "source": "sources/jankui__hurt.png",
+      "sourceSha256": "fbd99fe85f7be4f9fd99872b1986f6ba5b6fcc3e0c8378419ff16701c8e56f6d"
+    },
+    {
+      "asset": "bosses/jankui/fall.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "fae7ecea0b0bb3b7a0a3246cf4db1e8e23de2ba8ac78c98313e6da531efef2d9",
+      "source": "sources/jankui__fall.png",
+      "sourceSha256": "723cd3a21a4afee92be0513c55cd6452214d8ba837cd93337c5780fa5619dc64"
+    },
+    {
+      "asset": "bosses/jankui/down.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "b08ac0dab40877546ff2e0cf16759e854f0e3670ea489fdec2400c9d26643b5d",
+      "source": "sources/jankui__down.png",
+      "sourceSha256": "886d1ec87d1436b2a002d1ae91f56834dc707ee6394affca6852cf1350062d4a"
+    },
+    {
+      "asset": "bosses/jankui/charge.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "cc629ff7f872072a7699d908d485a21da2573bbd63eee5912c179f7249e08801",
+      "source": "sources/jankui__charge.png",
+      "sourceSha256": "2e4c4c3f79861797383d34651a20fd41b0d5996ddc2a7ffe41e1cba8a4ba6976"
+    },
+    {
+      "asset": "bosses/blocker/idle.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "5f8e56ef5bda18f2f11b61ec4562cb433eaadbf88de2c92bdc0952cad2407c4b",
+      "source": "sources/blocker__idle.png",
+      "sourceSha256": "3e8fa7c7421dfeccdebbf3359dd726ce2fa3a49c0859b82d1aaedd98ced8f30d"
+    },
+    {
+      "asset": "bosses/blocker/walk1.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "3e5b74142e8105538c20fe29956d3b5fda7c4f8e10a25cd8fd278b37c8bc908c",
+      "source": "sources/blocker__walk1.png",
+      "sourceSha256": "9c9a190a5f1320aab177b5382a39f65e6159edfc466b471dabfd65012d7f7641"
+    },
+    {
+      "asset": "bosses/blocker/walk2.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "5a6ee1c2bbd7e527f8b5cfac9514d11659d8f6d3a9fc2929482a72bbb8ceaaab",
+      "source": "sources/blocker__walk2.png",
+      "sourceSha256": "99cf2bc8f7cb697c58ed1847295eeb9c13447a050530da0b0b0f4432a2a223e3"
+    },
+    {
+      "asset": "bosses/blocker/windup.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "0105ec396303e37b9367403b0f8f247443c56b419c1a1d98a66e9e6476510dbf",
+      "source": "sources/blocker__windup.png",
+      "sourceSha256": "16de7761cc7bd84ba8ffba9dd4151e1921804c851e256baeb91409a7218e1489"
+    },
+    {
+      "asset": "bosses/blocker/slam.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "7674d5ef0be9b7bd50f7bdac744c6a745d0aabfa07202652bd72b58840ce1e17",
+      "source": "sources/blocker__slam.png",
+      "sourceSha256": "afa2991fc9ad625c220a8020368a8e1e6c04423835c2e26ed9356bed4dae76a9"
+    },
+    {
+      "asset": "bosses/blocker/hurt.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "ee84c274bed196d8f8c9ef74c1cf5f20e9c69c46f4ea6981620ad31d738eddb2",
+      "source": "sources/blocker__hurt.png",
+      "sourceSha256": "2704abf611befb3ad974c68dc4d402c6bdc2a976c8fa9de25064ea9ab9a38fe2"
+    },
+    {
+      "asset": "bosses/blocker/fall.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "6fbc5f90b74b92ea5b595c3eeaca3d2ea47f1a1a4742295c97dbf334e0ba4fad",
+      "source": "sources/blocker__fall.png",
+      "sourceSha256": "33cb1b7c1e46ea6abdb87f3d4ecac6afd2ab320f43805f63270e2691486683cf"
+    },
+    {
+      "asset": "bosses/blocker/down.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "b28872bc5c34ca008bc63ee9f25e6d8c99367667950132d8877840d473d29bb9",
+      "source": "sources/blocker__down.png",
+      "sourceSha256": "c16f25a7c538c21b3a85b36dec9d2436037191384eb19377a933957dae78dddf"
+    },
+    {
+      "asset": "bosses/blocker/charge.png",
+      "size": [
+        768,
+        768
+      ],
+      "sha256": "5ef763b83a5f28218b88117b9f1c9def1bbfd1d1ce348d8eb2b66e182c177f2e",
+      "source": "sources/blocker__charge.png",
+      "sourceSha256": "391a6a52ed8072c191ddf89ba1f742b64f47866e4e2ebf293b419cc5c926d18a"
+    },
+    {
+      "asset": "covers/og-edm.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "sha256": "9f2d6e4fa87c5b556e7b333cdbcf5be33c1ac263d6602f28a9267253f6b02e21",
+      "source": "sources/cover-og-edm-v1.png",
+      "sourceSha256": "fe85a4bd39d35df9ba21e998123193edb84a0f11704c72e1cdaf5b1afc0c98c4"
+    },
+    {
+      "asset": "covers/og-hardcore.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "sha256": "b3d0d8d893c6adab3ad0307237c47e439ebf623d5e7e65d17e1d1dcfa26c4e3e",
+      "source": "sources/cover-og-hardcore-v1.png",
+      "sourceSha256": "53a94aa701c925e5fe85638b54ecf67d96e5c533d3e38199b39d1836cfc03baf"
+    },
+    {
+      "asset": "covers/og-speedcore.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "sha256": "95929b0aa68c2400eef2ed138006ec5e6feb22af881c508260eac2d497c02627",
+      "source": "sources/cover-og-speedcore-v1.png",
+      "sourceSha256": "901a01262126085c4de73e41c424ee8146027335cec3da29d5c1f6fe41e8475c"
+    }
+  ]
+}

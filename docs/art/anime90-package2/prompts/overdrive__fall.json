@@ -1,0 +1,13 @@
+{
+  "name": "overdrive__fall",
+  "asset": "bosses/overdrive/fall.png",
+  "pose": "fall",
+  "transparent": true,
+  "refs": [
+    "C:/Users/User/Repo/OtherRetroGames/Rhythm/art-work/anime90-originals-and-bosses/sources/overdrive__idle.png"
+  ],
+  "prompt": "Use case: stylized-concept. FINAL single 2D boss sprite for Virtual Beat Battle anime90, square genuinely transparent background. Reference is OVERDRIVE identity: preserve exactly helmet, armor plating, colors, proportions, chest speaker, exhaust pipes, hands and boots; change pose only. Subject: OVERDRIVE, huge stocky speaker-powered industrial brawler mech, about 4.5 heads tall, extremely broad square shoulders, barrel chest, heavy forearms with large five-finger mechanical fists, short powerful legs and broad flat mechanical boots. Dark gunmetal navy armor with hot vermilion/orange plates and ivory warning insets. A single large round hot orange loudspeaker core at center chest with dark concentric rings. Small angular helmet sunk between shoulders, narrow amber eye slit, solid jaw plate. TWO short heavy exhaust pipes rise from upper back behind shoulders with small orange exhaust flames normally, except defeated pose. No DJ records, no turntable shields, no antenna headphones, no human hair, no cape. Distinct hulking silhouette, hard clean outlines and crisp cel-shaded planes, anime painted highlights, not photoreal, not 3D, not pixel art. 3/4 side view facing RIGHT. Pose fall: Knocked backward LEFT with torso strongly diagonal near-horizontal; helmet far LEFT, two boots in air to RIGHT; both arms bent helplessly, body intact, no floor or impact. Clear falling defeat transition. Full character and exhaust inside canvas with at least12% transparent padding on all edges. Exactly two arms/two hands/two legs. No scenery, text, UI, labels, logos, floor, shadow, loose particles. Flames stay short and close to exhaust, never obscure silhouette.",
+  "tool": "built-in image_gen",
+  "source": "C:\\Users\\User\\.codex\\generated_images\\01a16d2c-7d71-7783-90fb-426a26f466ae\\exec-c476b0ac-d874-4d0d-aa8b-5dbf0b4fadf4.png",
+  "localSource": "sources/overdrive__fall.png"
+}
