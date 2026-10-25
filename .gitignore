@@ -41,4 +41,5 @@ songs-src/**/*.wav
 songs-src/**/*.mp3
 songs-src/**/*.flac
 songs-src/**/*.m4a
+songs-src/**/*.mid
 songs-src/exports/

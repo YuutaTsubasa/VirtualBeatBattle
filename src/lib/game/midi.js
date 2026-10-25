@@ -2,7 +2,10 @@
 // 給 scripts/import-audio-song.mjs 用（Suno 分軌轉出來的 MIDI、或 Basic Pitch 之類的工具轉的 MIDI）。
 // 處理：速度變化（tempo map）、running status、velocity 0 的 note-on 當成 note-off。SMPTE 的時間格式不處理。
 
-/** 解析 MIDI：回傳 { notes: [{ time, dur, midi, vel, channel, track }]（秒）, tempos: [{ tick, mpq }], ppq } */
+/**
+ * 解析 MIDI：回傳 { notes: [{ time, dur, midi, vel, channel, track, beat, beats }], tempos: [{ tick, mpq }], ppq, beatToSec }
+ * time／dur 是秒；beat／beats 是拍（tick ÷ ppq）。Suno 的 MIDI 速度會跟著演奏飄，所以「第幾拍」要用 tick 算、再用 beatToSec 換回秒。
+ */
 export function parseMidi(bytes) {
   const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   let p = 0;
@@ -94,10 +97,10 @@ export function parseMidi(bytes) {
   const notes = raw
     .map((n) => {
       const time = toSec(n.tick);
-      return { time, dur: Math.max(0, toSec(n.endTick) - time), midi: n.midi, vel: n.vel, channel: n.channel, track: n.track };
+      return { time, dur: Math.max(0, toSec(n.endTick) - time), midi: n.midi, vel: n.vel, channel: n.channel, track: n.track, beat: n.tick / ppq, beats: (n.endTick - n.tick) / ppq };
     })
     .sort((a, c) => a.time - c.time || c.midi - a.midi);
-  return { notes, tempos, ppq };
+  return { notes, tempos, ppq, beatToSec: (beat) => toSec(beat * ppq) };
 }
 
 /** 寫一個最簡單的 MIDI 檔（格式 0、一個速度）：notes = [{ time, dur, midi, vel?, channel? }]（秒）。測試用。 */

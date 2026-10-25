@@ -5,7 +5,7 @@
   // 每一首都是一隻魔王；魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），
   // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
-  import { TRACKS, LEVELS, GAMES, gameOf, songOf, backgroundOf, bossOf } from '../game/tracks.js';
+  import { SHOWN_TRACKS as TRACKS, LEVELS, SHOWN_GAMES as GAMES, gameOf, songOf, backgroundOf, bossOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { getCharacter } from '../game/characters.js';
   import { levelOf, bestOf } from '../game/progress.js';
@@ -22,7 +22,9 @@
   // onstart({ song, level, demo })、onback()
   let { character, pick, onstart, onback } = $props();
 
-  let songId = $state(untrack(() => pick?.song) ?? 'vr-city');
+  // 上次選的曲子現在不在清單裡（例如 PC-98 的曲子先藏起來了）就選第一首
+  const firstPick = untrack(() => pick?.song);
+  let songId = $state(TRACKS.some((tr) => tr.id === firstPick) ? firstPick : TRACKS[0].id);
   let level = $state(untrack(() => pick?.level) ?? 'normal');
   const c = $derived(getCharacter(character));
   const lv = $derived(levelOf(character));

@@ -34,9 +34,18 @@ execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', audioIn, '-af', 'loudn
 // 2. MIDI → 譜面來源
 const offsetMs = conf.offsetMs ?? 0;
 const lengthMs = Math.round(duration * 1000 - offsetMs);
-const read = (f) => (f ? (Array.isArray(f) ? f : [f]).flatMap((x) => parseMidi(readFileSync(join(dir, x))).notes) : undefined);
+// Suno 的分軌 MIDI 共用同一份速度表（會跟著演奏飄）：tempoMap: true 的話照 MIDI 的拍對齊，不用固定 BPM
+let beatToSec;
+const read = (f) =>
+  f
+    ? (Array.isArray(f) ? f : [f]).flatMap((x) => {
+        const m = parseMidi(readFileSync(join(dir, x)));
+        beatToSec ??= m.beatToSec;
+        return m.notes;
+      })
+    : undefined;
 const parts = { melody: read(conf.parts.melody), bass: read(conf.parts.bass), drums: read(conf.parts.drums), backing: read(conf.parts.backing) };
-const source = sourceFromMidi({ bpm: conf.bpm, offsetMs, lengthMs, parts });
+const source = sourceFromMidi({ bpm: conf.bpm, offsetMs, lengthMs, parts, ...(conf.tempoMap ? { beatToSec, offsetBeats: conf.offsetBeats ?? 0 } : {}) });
 mkdirSync('src/lib/game/audio-songs', { recursive: true });
 const data = {
   id,

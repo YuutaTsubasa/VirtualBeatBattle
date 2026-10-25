@@ -43,7 +43,7 @@ const mirror = (lane) => LANES - 1 - lane;
 const sideOf = (lane) => (lane < 3 ? 0 : 1);
 
 /**
- * 譜面的來源（以拍為單位）：{ bpm, length（拍）, melody: [{ beat, dur, midi }], backing: [{ beat, midi }], kicks, snares, hats: [beat] }。
+ * 譜面的來源（以拍為單位）：{ bpm, length（拍）, beatMs?（每一拍在第幾毫秒，速度會飄的音檔曲子才有）, melody: [{ beat, dur, midi }], backing: [{ beat, midi }], kicks, snares, hats: [beat] }。
  * PC-98 的曲子從音軌展開（旋律＝第一條有 MML 的 FM／方波音軌；伴奏＝琶音、貝斯、第二旋律）；
  * 音檔的曲子（Suno）從 MIDI 轉出來（scripts/import-audio-song.mjs 寫成 src/lib/game/audio-songs/<id>.json）。
  */
@@ -162,16 +162,24 @@ export function chartFrom(src, level, repeat = 1) {
   round.sort((a, b) => a.beat - b.beat || a.lane - b.lane);
 
   // 展開成 repeat 輪：第二、四輪左右鏡像（簡單不鏡像，讓新手熟悉）
+  // 拍 → 毫秒：音檔曲子的速度會飄，有 beatMs（每一拍在第幾毫秒）就照它內插；PC-98 曲子速度固定
+  const msOf = (beat) => {
+    const map = src.beatMs;
+    if (!map) return beat * spb * 1000;
+    const i = Math.max(0, Math.min(map.length - 2, Math.floor(beat)));
+    return map[i] + (beat - i) * (map[i + 1] - map[i]);
+  };
   const notes = [];
   for (let k = 0; k < repeat; k++) {
     const flipped = level !== 'easy' && k % 2 === 1;
     for (const n of round) {
-      const ms = Math.round((n.beat + k * length) * spb * 1000);
+      const beat = n.beat + k * length;
+      const ms = Math.round(msOf(beat));
       const lane = flipped ? mirror(n.lane) : n.lane;
-      notes.push([ms, lane, Math.round(n.len * spb * 1000), n.kind]);
+      notes.push([ms, lane, Math.round(msOf(beat + n.len)) - ms, n.kind]);
     }
   }
-  return { notes, lengthMs: Math.round(length * repeat * spb * 1000) };
+  return { notes, lengthMs: Math.round(msOf(length * repeat)) };
 }
 
 /** 譜面等級（給玩家看的數字，大約 1～22）：用每秒音符數與同時押的比例粗估（原創曲的十六分音符譜面會到 17～22） */

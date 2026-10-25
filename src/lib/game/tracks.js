@@ -80,6 +80,11 @@ const firstOther = LIST.findIndex((tr) => tr.game !== 'original');
 export const TRACKS = [...LIST.slice(0, firstOther), ...AUDIO_TRACKS, ...LIST.slice(firstOther)].map((tr) => ({ ...tr, bg: tr.bg ?? GAME_BG[tr.game] ?? null }));
 
 /** 這一首的背景圖（畫面與選曲的封面共用） */
+// 有音檔曲子（Suno）之後，選曲畫面與大廳先只放音檔曲子、PC-98 的收錄曲藏起來（資料與譜面都留著；要放回來把 HIDE_PC98 改成 false）
+const HIDE_PC98 = true;
+export const SHOWN_TRACKS = HIDE_PC98 && AUDIO_TRACKS.length ? TRACKS.filter((tr) => tr.audioSong) : TRACKS;
+export const SHOWN_GAMES = GAMES.filter((g) => SHOWN_TRACKS.some((tr) => tr.game === g.id));
+
 export const backgroundOf = (track) => track.bg ?? `stages/${['city', 'forest', 'sea', 'ice', 'mine', 'castle'][track.world]}-3/far.webp`;
 
 /** 難度：id、名稱 */

@@ -6,7 +6,7 @@
   import { WEB_URL, shareLink } from '../site.js';
   import { CHARACTERS, getCharacter } from '../game/characters.js';
   import { DIFFICULTIES, SLOT_COLORS } from '../game/constants.js';
-  import { TRACKS, LEVELS, gameOf, backgroundOf, bossOf } from '../game/tracks.js';
+  import { SHOWN_TRACKS as TRACKS, LEVELS, gameOf, backgroundOf, bossOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { asset } from '../art-style.svelte.js';
   import { play } from '../game/audio.js';
@@ -36,6 +36,11 @@
   let chatBox = $state();
 
   const myCharacter = $derived(net.seat != null ? room?.seats[net.seat]?.character : null);
+
+  // 房間預設的曲子（Rust 那邊是收錄的第一首）不在清單裡：房主換成清單的第一首
+  $effect(() => {
+    if (isHost && room && !TRACKS.some((tr) => tr.id === room.settings.song)) updateSettings({ song: TRACKS[0].id });
+  });
 
   $effect(() => {
     room?.chat.length;
