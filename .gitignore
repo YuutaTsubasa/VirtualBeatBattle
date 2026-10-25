@@ -35,3 +35,10 @@ art-work/art-inbox-progress.json
 
 # 介面概念稿（ChatGPT 畫的）：只留提示詞，大張的 PNG 留在本機
 art-work/rhythm-ui-concept-v1/*.png
+
+# 音樂的原始檔（Suno 的音檔、分軌、MIDI）與匯出的參考音檔：太大，只留 song.json
+songs-src/**/*.wav
+songs-src/**/*.mp3
+songs-src/**/*.flac
+songs-src/**/*.m4a
+songs-src/exports/
