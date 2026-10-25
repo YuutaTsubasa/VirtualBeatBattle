@@ -24,19 +24,22 @@
   // onstart({ song, level, demo })、onback()
   let { character, pick, onstart, onback } = $props();
 
-  // 上次選的曲子現在不在清單裡（例如 PC-98 的曲子先藏起來了）就選第一首；上次玩的是某一首的原曲就選那一首、切到原曲
+  // songId 一律是新版那一首的 id。上次玩的是某一首的原曲，就選那一首（回到選曲畫面一律是新版）；
+  // 上次選的曲子現在不在清單裡（例如 PC-98 的曲子先藏起來了）就選第一首
   const firstPick = untrack(() => pick?.song);
   const pickedAsOriginal = TRACKS.find((tr) => tr.original && tr.original === firstPick);
   let songId = $state(pickedAsOriginal?.id ?? (TRACKS.some((tr) => tr.id === firstPick) ? firstPick : TRACKS[0].id));
-  // 「切換原曲」按鈕：Suno 的新版選到時，可以切到 PC-98 的原曲（看、聽、玩）；選別首或換篩選就切回來
-  let showOriginal = $state(!!pickedAsOriginal);
+  // 「切換原曲」：整個列表換成原曲（PC-98）版本，等級、排序、成績、試聽、開始演奏都照原曲；再按「切換新版」才換回來
+  let originalMode = $state(false);
+  /** 這一首現在顯示的版本（原曲模式而且有原曲的話是原曲） */
+  const shownOf = (tr) => (originalMode && tr.original ? trackOf(tr.original) : tr);
+  const hasOriginals = TRACKS.some((tr) => tr.original);
   let level = $state(untrack(() => pick?.level) ?? 'normal');
   const c = $derived(getCharacter(character));
   const lv = $derived(levelOf(character));
   const picked = $derived(TRACKS.find((tr) => tr.id === songId) ?? TRACKS[0]);
-  const original = $derived(picked.original ? trackOf(picked.original) : null);
   // 右邊顯示、試聽、開始演奏的是這一首（原曲或新版）
-  const track = $derived(showOriginal && original ? original : picked);
+  const track = $derived(shownOf(picked));
   const chartInfo = $derived(META[track.id]);
   const game = $derived(gameOf(track.game));
   // 依來源遊戲篩選（all = 全部）
@@ -56,15 +59,17 @@
     }
   }
   const ratingOf = (tr, lv = level) => META[tr.id]?.levels[lv]?.rating ?? 0;
-  // 列表的每一列：{ key, tr, lv }（lv 是全難度排序時那一列的難度，其他時候是 null＝跟著上面選的難度）
+  // 列表的每一列：{ key, base, tr, lv }（base 是新版那一首、tr 是現在顯示的版本；lv 是全難度排序時那一列的難度，其他時候是 null＝跟著上面選的難度）
   const shown = $derived.by(() => {
     const songs = filter === 'all' ? TRACKS : TRACKS.filter((tr) => tr.game === filter);
-    let rows = allLevels ? songs.flatMap((tr) => LEVELS.map((l) => ({ key: `${tr.id}:${l.id}`, tr, lv: l.id }))) : songs.map((tr) => ({ key: tr.id, tr, lv: null }));
+    let rows = allLevels
+      ? songs.flatMap((base) => LEVELS.map((l) => ({ key: `${base.id}:${l.id}`, base, tr: shownOf(base), lv: l.id })))
+      : songs.map((base) => ({ key: base.id, base, tr: shownOf(base), lv: null }));
     if (sort === 'default') return rows;
     const k = sort.endsWith('asc') ? 1 : -1;
     const r = (row) => ratingOf(row.tr, row.lv ?? level);
     // 等級一樣的話照 BPM，再一樣就照收錄順序、難度順序
-    const order = (row) => TRACKS.indexOf(row.tr) * 10 + (row.lv ? LEVELS.findIndex((l) => l.id === row.lv) : 0);
+    const order = (row) => TRACKS.indexOf(row.base) * 10 + (row.lv ? LEVELS.findIndex((l) => l.id === row.lv) : 0);
     return [...rows].sort((a, b) => k * (r(a) - r(b)) || k * (songOf(a.tr).bpm - songOf(b.tr).bpm) || order(a) - order(b));
   });
 
@@ -108,13 +113,13 @@
 
   function toggleOriginal() {
     play('move');
-    showOriginal = !showOriginal;
+    originalMode = !originalMode;
+    requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
   }
 
   function setFilter(id) {
     play('move');
     filter = id;
-    showOriginal = false;
     // 選到的曲子不在篩選結果裡：改選這款遊戲的第一首
     if (id !== 'all' && track.game !== id) songId = TRACKS.find((tr) => tr.game === id).id;
     requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
@@ -122,7 +127,6 @@
 
   function choose(id, lv = null) {
     if (id !== songId || (lv && lv !== level)) play('move');
-    if (id !== songId) showOriginal = false;
     songId = id;
     if (lv) level = lv;
   }
@@ -144,17 +148,22 @@
         {#each GAMES as g (g.id)}
           <button type="button" role="tab" aria-selected={filter === g.id} class:on={filter === g.id} onclick={() => setFilter(g.id)}>{t(g.short)}</button>
         {/each}
+        {#if hasOriginals}
+          <button type="button" class="orig" class:on={originalMode} aria-pressed={originalMode} onclick={toggleOriginal} title={t('整個列表切換成原曲／新版')}>
+            {originalMode ? t('切換新版') : t('切換原曲')}
+          </button>
+        {/if}
       </div>
       <div class="songs" bind:this={list}>
         {#each shown as row (row.key)}
           {@const tr = row.tr}
           {@const lv = row.lv ?? level}
           {@const b = bestOf(tr.id, lv)}
-          <button type="button" class="song" class:sel={tr.id === songId && lv === level} onclick={() => choose(tr.id, row.lv)} onfocus={() => choose(tr.id, row.lv)} ondblclick={() => start()}>
-            <span class="no">{String(TRACKS.indexOf(tr) + 1).padStart(2, '0')}</span>
+          <button type="button" class="song" class:sel={row.base.id === songId && lv === level} onclick={() => choose(row.base.id, row.lv)} onfocus={() => choose(row.base.id, row.lv)} ondblclick={() => start()}>
+            <span class="no">{String(TRACKS.indexOf(row.base) + 1).padStart(2, '0')}</span>
             <img class="thumb" src={art(tr)} alt="" />
             <span class="names">
-              <b>{t(tr.title)}</b>
+              <b>{t(tr.title)}{#if tr !== row.base}<em class="orig-tag">{t('原曲')}</em>{/if}</b>
               <small>{t('來自 {game}', { game: t(gameOf(tr.game).name) })}</small>
             </span>
             <span class="mark">
@@ -184,13 +193,8 @@
         </div>
         <div class="title-row">
           <h3 class="pop-text">{t(track.title)}</h3>
-          {#if original}
-            <button type="button" class="orig" class:on={showOriginal} aria-pressed={showOriginal} onclick={toggleOriginal} title={t('切換新版／原曲')}>
-              {showOriginal ? t('切換新版') : t('切換原曲')}
-            </button>
-          {/if}
+          {#if track !== picked}<em class="orig-tag big">{t('原曲')}</em>{/if}
         </div>
-        {#if showOriginal}<p class="orig-tag">{t('原曲')}</p>{/if}
         <p class="boss">BOSS {bossName}</p>
         <p class="meta">BPM <b>{songOf(track).bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
         <div class="levels" role="radiogroup">
@@ -596,26 +600,36 @@
     align-items: center;
     gap: 1.4cqh;
   }
-  .orig {
-    flex: none;
-    padding: 0.5cqh 1.4cqh;
-    border: var(--line) solid var(--accent);
-    background: #fff;
+  /* 切換原曲／新版：比篩選寬一點、淡藍底，切到原曲時變實心 */
+  .filters .orig {
+    flex: 1.8;
+    background: #d8e5ff;
     color: var(--accent);
-    font-weight: 900;
-    font-size: 1.8cqh;
-    letter-spacing: 0.1em;
   }
-  .orig.on {
+  .filters .orig.on {
     background: var(--accent);
     color: #fff;
   }
+  /* 原曲版本的標示：列表曲名後面、右邊大曲名旁 */
   .orig-tag {
-    margin: 0;
+    display: inline-block;
+    margin-left: 0.8cqh;
+    padding: 0 0.6cqh;
+    border: var(--line) solid currentColor;
+    font-style: normal;
     font-weight: 900;
-    font-size: 1.7cqh;
-    letter-spacing: 0.12em;
+    font-size: 1.4cqh;
+    letter-spacing: 0.08em;
+    vertical-align: middle;
     color: var(--accent);
+  }
+  .song.sel .orig-tag {
+    color: #fff;
+  }
+  .orig-tag.big {
+    margin-left: 0;
+    padding: 0.2cqh 1cqh;
+    font-size: 2cqh;
   }
 
   /* 玩家的 Rating：顏色照級距（rating.js 的 ratingTier） */
