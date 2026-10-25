@@ -163,7 +163,7 @@
         <p class="meta">BPM <b>{songOf(track).bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
         <div class="levels" role="radiogroup">
           {#each LEVELS as l (l.id)}
-            <button type="button" role="radio" aria-checked={level === l.id} class="lv" class:on={level === l.id} onclick={() => { play('move'); level = l.id; }}>
+            <button type="button" role="radio" aria-checked={level === l.id} class="lv {l.id}" class:on={level === l.id} onclick={() => { play('move'); level = l.id; }}>
               {l.name}<b>{chartInfo?.levels[l.id].rating}</b>
             </button>
           {/each}
@@ -251,23 +251,25 @@
     background: #e6ebf5;
     color: var(--navy);
   }
-  /* 全難度排序時，等級前面標難度（顏色跟難度按鈕一樣） */
+  /* 每個難度的顏色：右邊的難度按鈕、全難度排序時等級前面的標示都用這個 */
+  .easy {
+    --lv-c: #1fb36b;
+  }
+  .normal {
+    --lv-c: var(--accent);
+  }
+  .hard {
+    --lv-c: #e08a12;
+  }
+  .expert {
+    --lv-c: #c81e4a;
+  }
+  /* 全難度排序時，等級前面標難度 */
   .lvl small {
     font-size: 1.3cqh;
     margin-right: 0.4cqh;
     letter-spacing: 0;
-  }
-  .lvl.easy small {
-    color: #1fb36b;
-  }
-  .lvl.normal small {
-    color: var(--accent);
-  }
-  .lvl.hard small {
-    color: #e08a12;
-  }
-  .lvl.expert small {
-    color: #c81e4a;
+    color: var(--lv-c);
   }
   .song.sel .lvl {
     background: #fff;
@@ -493,14 +495,17 @@
   .lv b {
     font-size: 2.4cqh;
     font-style: italic;
+    color: var(--lv-c);
+  }
+  .lv {
+    box-shadow: inset 0 -0.4cqh 0 var(--lv-c);
   }
   .lv.on {
-    background: var(--accent);
+    background: var(--lv-c);
     color: #fff;
   }
-  /* EXPERT：選到時是深紅，跟其他難度分開 */
-  .lv:last-child.on {
-    background: #c81e4a;
+  .lv.on b {
+    color: #fff;
   }
   .label {
     font-weight: 900;

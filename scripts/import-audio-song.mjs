@@ -10,7 +10,7 @@
 //   2. MIDI → 對齊拍子的譜面來源 → src/lib/game/audio-songs/<id>.json，並更新 audio-songs/index.js
 //   3. 重跑 npm run charts（四個難度的譜面寫進 crates/beat-core/charts.json）
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { parseMidi } from '../src/lib/game/midi.js';
 import { sourceFromMidi } from '../src/lib/game/audio-source.js';
@@ -31,6 +31,30 @@ const duration = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries',
 mkdirSync('public/audio', { recursive: true });
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', audioIn, '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '44100', '-ac', '2', '-b:a', '192k', `public/audio/${id}.mp3`]);
 
+// 1b. 琴鍵音（keysound）：song.json 有 keysound 的話，用分軌做兩個檔：
+//   <id>-bgm.mp3  旋律那幾軌以外的分軌混在一起（伴奏，一直播）
+//   <id>-keys.mp3 旋律那幾軌（打中音符時才切一段出來播）
+//   兩個檔用同一個音量（照全部分軌加起來的響度調到 -14 LUFS），所以都打中時跟原曲一樣
+const ks = conf.keysound;
+if (ks) {
+  const stemDir = join(dir, ks.stems ?? 'stems');
+  const stems = readdirSync(stemDir).filter((f) => /\.(wav|flac|mp3)$/i.test(f));
+  const keys = stems.filter((f) => ks.keys.includes(f));
+  const rest = stems.filter((f) => !ks.keys.includes(f));
+  if (keys.length !== ks.keys.length) throw new Error(`找不到旋律的分軌：${ks.keys.filter((f) => !keys.includes(f)).join('、')}`);
+  const mix = (files) => [...files.flatMap((f) => ['-i', join(stemDir, f)])];
+  const amix = (n) => (n > 1 ? `amix=inputs=${n}:normalize=0:duration=longest,` : '');
+  // 全部分軌加起來的響度（ebur128 印在 stderr 最後的「I: -14.1 LUFS」）
+  const report = spawnSync('ffmpeg', ['-hide_banner', ...mix(stems), '-filter_complex', `${amix(stems.length)}ebur128=framelog=quiet`, '-f', 'null', '-'], { encoding: 'utf8' }).stderr;
+  const lufs = Number([...report.matchAll(/I:\s+(-?[\d.]+) LUFS/g)].at(-1)?.[1]);
+  if (!Number.isFinite(lufs)) throw new Error('量不到分軌的響度');
+  const gain = `volume=${(-14 - lufs).toFixed(2)}dB,alimiter=limit=0.89:level=false`;
+  const encode = (files, out) =>
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', ...mix(files), '-filter_complex', `${amix(files.length)}${gain}`, '-ar', '44100', '-ac', '2', '-b:a', '192k', out]);
+  encode(rest, `public/audio/${id}-bgm.mp3`);
+  encode(keys, `public/audio/${id}-keys.mp3`);
+  console.log(`琴鍵音：伴奏 ${rest.length} 軌、旋律 ${keys.join('、')}（分軌合計 ${lufs} LUFS）`);
+}
 // 2. MIDI → 譜面來源
 const offsetMs = conf.offsetMs ?? 0;
 const lengthMs = Math.round(duration * 1000 - offsetMs);
@@ -58,6 +82,7 @@ const data = {
   offsetMs,
   lengthMs,
   credit: conf.credit ?? '',
+  keys: !!ks,
   source,
 };
 writeFileSync(`src/lib/game/audio-songs/${id}.json`, JSON.stringify(data) + '\n');

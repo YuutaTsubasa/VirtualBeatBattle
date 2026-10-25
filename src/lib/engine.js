@@ -18,6 +18,8 @@ import { options, fallMs } from './game/options.svelte.js';
 import { onFrame, sendProgress } from './net.svelte.js';
 import { audioContext, buses } from './audio/synth.js';
 import { Player } from './audio/music.js';
+import { createKeys, keySlices } from './audio/keysound.js';
+import { holdAudio } from './audio/sound.svelte.js';
 import { ui } from './ui.svelte.js';
 
 // 打完後先停一下才跳結果（毫秒）
@@ -42,12 +44,11 @@ const wasmReady = init();
 // ───── 音檔的曲子（Suno 之類）：先下載、解碼好再開始 ─────
 const audioBuffers = new Map(); // 網址 → Promise<AudioBuffer | null>
 
-/** 這一首是音檔的話先載好（載不到就算了：照樣可以玩，只是沒聲音） */
-function loadTrackAudio(songId) {
-  const tr = trackOf(songId);
+/** 下載＋解碼一個音檔（載不到就是 null） */
+function loadAudio(path) {
   const ctx = audioContext();
-  if (!tr.audio || !ctx) return Promise.resolve(null);
-  const url = import.meta.env.BASE_URL + tr.audio;
+  if (!ctx) return Promise.resolve(null);
+  const url = import.meta.env.BASE_URL + path;
   if (!audioBuffers.has(url)) {
     audioBuffers.set(
       url,
@@ -61,6 +62,20 @@ function loadTrackAudio(songId) {
     );
   }
   return audioBuffers.get(url);
+}
+
+/**
+ * 這一首是音檔的話先載好（載不到就算了：照樣可以玩，只是沒聲音）。回傳 { music, keys }。
+ * 自己打、而且有琴鍵音：music 是拿掉旋律的伴奏、keys 是旋律；觀戰（keys = false）聽完整的原曲
+ */
+async function loadTrackAudio(songId, keys = true) {
+  const tr = trackOf(songId);
+  if (!tr.audio) return { music: null, keys: null };
+  if (keys && tr.keys) {
+    const [music, sound] = await Promise.all([loadAudio(tr.keys.bgm), loadAudio(tr.keys.sound)]);
+    if (music && sound) return { music, keys: sound };
+  }
+  return { music: await loadAudio(tr.audio), keys: null };
 }
 
 /** 播音檔：音檔的 offset 秒是第 1 拍，對齊到時鐘的 beatAt（曲子的 0 毫秒）。回傳 { stop(fade) }，介面跟 Player 一樣 */
@@ -82,6 +97,14 @@ function playBuffer(buffer, beatAt, offset) {
       src.stop(t + fade + 0.1);
     },
   };
+}
+
+/** 開始一首前：暫停時停住的 AudioContext 叫醒（暫停選單按「從頭開始」） */
+async function wakeAudio() {
+  holdAudio(false);
+  const ctx = audioContext();
+  // 還沒有使用者操作過的話 resume 可能一直不回來（連線開始是房主的訊息觸發的）：最多等 0.3 秒
+  if (ctx?.state === 'suspended') await Promise.race([ctx.resume().catch(() => {}), new Promise((r) => setTimeout(r, 300))]);
 }
 
 // 音樂的時鐘（秒）：開始一首時 AudioContext 在跑就用它（暫停時 suspend，時間也跟著停），
@@ -114,6 +137,7 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
   let you = null;
   let start = 0; // 曲子 0 毫秒對應的時鐘時間
   let player = null; // 這一首的音樂
+  let keyPlayer = null; // 琴鍵音（音檔曲子打中音符時播旋律）
   let musicOn = false;
   let doneAt = 0;
   let ended = false;
@@ -188,8 +212,10 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
     if (!useAudioClock || !ctx) return;
     if (tr.audioSong) {
       // 音檔：開始前已經載好了（loadTrackAudio）
-      loadTrackAudio(info.song).then((buffer) => {
-        if (buffer && musicOn && info?.song === tr.id) player = playBuffer(buffer, start, tr.audioSong.offsetMs / 1000);
+      loadTrackAudio(info.song, state !== 'spectate' && options.keysound).then(({ music, keys }) => {
+        if (!music || !musicOn || info?.song !== tr.id) return;
+        player = playBuffer(music, start, tr.audioSong.offsetMs / 1000);
+        if (keys && chart) keyPlayer = createKeys(keys, keySlices(chart.notes, tr.audioSong));
       });
       return;
     }
@@ -203,6 +229,7 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
   function handle(v) {
     for (const e of v.events) {
       if (EVENT_SOUND[e.type]) play(EVENT_SOUND[e.type]);
+      if (e.type === 'judge' && e.j !== 'M' && !e.tail) keyPlayer?.hit(e.i);
       onEvent(e, v);
     }
     render.handleEvents(v.events, v);
@@ -267,6 +294,8 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
   function stopMusic() {
     player?.stop(0.3);
     player = null;
+    keyPlayer?.stop(0.3);
+    keyPlayer = null;
     musicOn = false;
   }
 
@@ -304,9 +333,10 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
     /** 單機：song、level、character、lv（角色等級）；demo = 交給電腦打 */
     async startLocal({ song, level, character, lv, demo = false }) {
       await wasmReady;
+      await wakeAudio();
       race = null;
       you = null;
-      await Promise.all([render.prepare({ song, character }), loadTrackAudio(song)]);
+      await Promise.all([render.prepare({ song, character }), loadTrackAudio(song, options.keysound)]);
       // 音檔有前奏（第 1 拍在後面）：倒數拉長，讓前奏完整播完
       const intro = (trackOf(song).audioSong?.offsetMs ?? 0) / 1000;
       begin({ song, level, character, lv, demo }, 'local', Math.max(LEAD, intro + 0.6));
@@ -314,15 +344,17 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
     /** 連線比賽：倒數照房主的時間對齊 */
     async startOnline({ song, level, character, lv, seat, t }) {
       await wasmReady;
+      await wakeAudio();
       you = seat;
-      await Promise.all([render.prepare({ song, character }, 1500), loadTrackAudio(song)]);
+      await Promise.all([render.prepare({ song, character }, 1500), loadTrackAudio(song, options.keysound)]);
       begin({ song, level, character, lv, demo: false }, 'online', Math.max(0.05, (COUNTDOWN - t) / 60));
     },
     /** 連線觀戰（沒有座位、或開始後才進來）：聽同一首曲子、看大家的進度 */
     async spectate({ song, level, t }) {
       await wasmReady;
+      await wakeAudio();
       you = null;
-      await Promise.all([render.prepare({ song }, 1500), loadTrackAudio(song)]);
+      await Promise.all([render.prepare({ song }, 1500), loadTrackAudio(song, false)]);
       begin({ song, level, character: null, lv: 1, demo: false }, 'spectate', (COUNTDOWN - t) / 60);
     },
     pause() {
@@ -330,17 +362,22 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
       state = 'paused';
       input.releaseAll();
       pausedAt = clock();
-      if (useAudioClock) audioContext().suspend();
+      if (useAudioClock) {
+        holdAudio(true);
+        audioContext().suspend();
+      }
     },
     resume() {
       if (state !== 'paused') return;
       // AudioContext 暫停時時間也停了；用 performance.now 當時鐘的話，把暫停的時間補回去
+      holdAudio(false);
       if (useAudioClock) audioContext().resume();
       else start += clock() - pausedAt;
       state = 'local';
     },
     // 回到選單：停掉遊戲（不再出聲）
     stop() {
+      holdAudio(false);
       if (state === 'paused' && useAudioClock) audioContext().resume();
       stopMusic();
       lp?.free();

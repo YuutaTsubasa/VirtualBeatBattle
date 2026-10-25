@@ -1,11 +1,11 @@
-// 節奏遊戲的個人設定（存在這台電腦）：音符速度、判定時間的校正
+// 節奏遊戲的個人設定（存在這台電腦）：音符速度、判定時間的校正、琴鍵音（打中音符才播旋律）
 const KEY = 'vbb_options';
 
 function load() {
   try {
-    return { speed: 5, offset: 0, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') };
+    return { speed: 5, offset: 0, keysound: true, ...JSON.parse(localStorage.getItem(KEY) ?? '{}') };
   } catch {
-    return { speed: 5, offset: 0 };
+    return { speed: 5, offset: 0, keysound: true };
   }
 }
 

@@ -75,16 +75,17 @@ const LIST = [
 // 背景：台麻館的曲子用麻將館、排球王的曲子用排球王的海灘（各畫風都有，src/lib/style-assets.json），其他用魔王那一大關的遠景
 const GAME_BG = { mahjong: 'games/mahjong-parlor.webp', volleyball: 'games/volleyball-court.webp' };
 // 音檔的曲子（Suno 之類，npm run import-song 接進來的）：放在原創曲的後面
-const AUDIO_TRACKS = AUDIO_SONGS.map((s) => ({ id: s.id, game: s.game, song: null, title: s.title, world: s.world, bg: s.bg, boss: s.boss, audio: `audio/${s.id}.mp3`, audioSong: s }));
+// keys：有琴鍵音的話，伴奏（bgm，旋律拿掉）與旋律（sound，打中才播）兩個檔
+const AUDIO_TRACKS = AUDIO_SONGS.map((s) => ({ id: s.id, game: s.game, song: null, title: s.title, world: s.world, bg: s.bg, boss: s.boss, audio: `audio/${s.id}.mp3`, keys: s.keys ? { bgm: `audio/${s.id}-bgm.mp3`, sound: `audio/${s.id}-keys.mp3` } : null, audioSong: s }));
 const firstOther = LIST.findIndex((tr) => tr.game !== 'original');
 export const TRACKS = [...LIST.slice(0, firstOther), ...AUDIO_TRACKS, ...LIST.slice(firstOther)].map((tr) => ({ ...tr, bg: tr.bg ?? GAME_BG[tr.game] ?? null }));
 
-/** 這一首的背景圖（畫面與選曲的封面共用） */
 // 有音檔曲子（Suno）之後，選曲畫面與大廳先只放音檔曲子、PC-98 的收錄曲藏起來（資料與譜面都留著；要放回來把 HIDE_PC98 改成 false）
 const HIDE_PC98 = true;
 export const SHOWN_TRACKS = HIDE_PC98 && AUDIO_TRACKS.length ? TRACKS.filter((tr) => tr.audioSong) : TRACKS;
 export const SHOWN_GAMES = GAMES.filter((g) => SHOWN_TRACKS.some((tr) => tr.game === g.id));
 
+/** 這一首的背景圖（畫面與選曲的封面共用） */
 export const backgroundOf = (track) => track.bg ?? `stages/${['city', 'forest', 'sea', 'ice', 'mine', 'castle'][track.world]}-3/far.webp`;
 
 /** 難度：id、名稱 */

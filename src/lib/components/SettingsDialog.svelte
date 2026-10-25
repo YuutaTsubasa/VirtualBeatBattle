@@ -109,6 +109,13 @@
           <output>{options.offset > 0 ? '+' : ''}{options.offset}ms</output>
         </label>
         <small class="hint">{t('常常太晚（SLOW）就往 + 調、太早（FAST）就往 − 調；藍牙耳機通常要 +100 以上。')}</small>
+        <div class="row mute">
+          <span>{t('琴鍵音')}</span>
+          <button type="button" class="vbtn small toggle" class:active={options.keysound} aria-pressed={options.keysound} onclick={() => setOption('keysound', !options.keysound)}>
+            {options.keysound ? t('開啟') : t('關閉')}
+          </button>
+          <small>{t('打中音符才播旋律（有分軌的曲子）')}</small>
+        </div>
       </div>
       </section>
       </div>

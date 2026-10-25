@@ -6,13 +6,18 @@
   "audio": "song.wav",
   "parts": {
     "melody": [
-      "midi/Momentum Building (Guitar).mid",
-      "midi/Momentum Building (Brass).mid"
+      "midi/Momentum Building (Guitar).mid"
     ],
     "bass": "midi/Momentum Building (Bass).mid",
     "drums": "midi/Momentum Building (Drums).mid"
   },
   "world": 0,
   "credit": "Suno（Momentum Building）",
-  "game": "mahjong"
+  "game": "mahjong",
+  "keysound": {
+    "stems": "stems",
+    "keys": [
+      "2 Guitar.wav"
+    ]
+  }
 }

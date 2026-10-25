@@ -45,11 +45,17 @@ export function toggleMute() {
   return soundSettings.muted;
 }
 
+// 遊戲暫停時 AudioContext 是故意停住的（音樂的時鐘跟著停）：這時按鍵、點擊不要把它叫醒，不然曲子會在選單後面自己跑下去
+let held = false;
+export function holdAudio(on) {
+  held = on;
+}
+
 // 瀏覽器規定要使用者先互動過才能出聲：第一次點擊或按鍵時啟動
 let unlocked = false;
 function unlock() {
   const ctx = audioContext();
-  if (!ctx) return;
+  if (!ctx || held) return;
   applyVolumes();
   const go = () => {
     if (unlocked) return;

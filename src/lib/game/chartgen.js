@@ -13,6 +13,7 @@
 import { compile } from '../audio/music.js';
 
 const LANES = 6;
+const SLOW_BPM = 120;
 
 // 各難度的規則：最短間隔（拍）、長押最短長度（拍）、同時押多久一次（拍，0 = 不要）、補鼓點、地雷（每幾拍一顆）
 //   fillGrid：鼓點補到多細（拍）；hats：Hi-hat 也拿來補；arp：把琶音也排進去（八分音符；slow 這個 BPM 以下的慢歌排到十六分音符）
@@ -69,25 +70,33 @@ export function generateChart(song, level, repeat = 1) {
   return chartFrom(sourceOf(song), level, repeat);
 }
 
+/** 拍 → 毫秒：音檔曲子的速度會飄，有 beatMs（每一拍在第幾毫秒）就照它內插；PC-98 曲子速度固定 */
+export function beatToMs(src, beat) {
+  const map = src.beatMs;
+  if (!map) return (beat * 60000) / src.bpm;
+  const i = Math.max(0, Math.min(map.length - 2, Math.floor(beat)));
+  return map[i] + (beat - i) * (map[i + 1] - map[i]);
+}
+
 /**
  * 從譜面來源排出一個難度的譜面（一輪的音符，以拍為單位），再展開成重複 repeat 次、換成毫秒。
  * 回傳 { notes, lengthMs }
  */
 export function chartFrom(src, level, repeat = 1) {
-  const rule = RULES[level];
+  // 慢歌（SLOW_BPM 以下）一拍很長：旋律的格子細一倍，鼓點改成「兩隻手分工」（旋律那隻手照彈，另一隻手同時打鼓），不然音符太稀
+  const slow = src.bpm < SLOW_BPM;
+  const plain = RULES[level];
+  const rule = slow ? { ...plain, grid: Math.max(0.25, plain.grid / 2), gap: Math.max(0.25, plain.gap / 2) } : plain;
   const { length, melody, snares, kicks, hats } = src;
-  const spb = 60 / src.bpm;
 
   // 一輪的音符：{ beat, lane, len（拍）, kind }
   const round = [];
-  // 每一軌什麼時候空出來（長押中不能再放）
-  const free = new Array(LANES).fill(-Infinity);
+  // 同一軌的前後要空一點（長押中不能再放）。旋律、伴奏、鼓點是分好幾輪排的，所以要看前後兩邊、不能只記「最後一顆」
+  const after = (n) => n.beat + n.len + (n.kind === 1 ? 0.25 : rule.gap / 2);
   const put = (beat, lane, len = 0, kind = 0) => {
-    if (free[lane] > beat - 1e-6) return false;
-    // 同一時間同一軌只能有一顆
-    if (round.some((n) => n.lane === lane && Math.abs(n.beat - beat) < 1e-6)) return false;
-    round.push({ beat, lane, len, kind });
-    free[lane] = beat + len + (kind === 1 ? 0.25 : rule.gap / 2);
+    const me = { beat, lane, len, kind };
+    if (round.some((n) => n.lane === lane && beat < after(n) - 1e-6 && n.beat < after(me) - 1e-6)) return false;
+    round.push(me);
     return true;
   };
 
@@ -100,6 +109,7 @@ export function chartFrom(src, level, repeat = 1) {
     const lane = walk(prevLane, prevMidi, n.midi);
     const len = n.dur >= rule.hold ? n.dur - 0.5 : 0;
     if (!put(n.beat, lane, len)) continue;
+    round.at(-1).mel = true;
     lastBeat = n.beat;
     prevLane = lane;
     prevMidi = n.midi;
@@ -131,14 +141,19 @@ export function chartFrom(src, level, repeat = 1) {
   // 困難以上：旋律空下來的地方用小鼓、大鼓（極限再加 Hi-hat）補，放在上一顆的另一側
   if (rule.fill) {
     const fillGrid = rule.fillGrid ?? 0.5;
-    const taken = (beat, gap) => round.some((n) => Math.abs(n.beat - beat) < gap - 1e-6 || (n.len && beat > n.beat && beat < n.beat + n.len));
+    // 慢歌只看同一隻手那一側有沒有音符（另一隻手可以同時按）
+    const taken = (beat, gap, side) =>
+      round.some((n) => (!slow || sideOf(n.lane) === side) && (Math.abs(n.beat - beat) < gap - 1e-6 || (n.len && beat > n.beat && beat < n.beat + n.len)));
     const drums = [...snares.map((b) => [b, 's']), ...kicks.map((b) => [b, 'k']), ...(rule.hats ? hats.map((b) => [b, 'h']) : [])].sort((a, b) => a[0] - b[0]);
     let flip = 0;
     let hatN = 0;
     for (const [beat, kind] of drums) {
-      if (beat >= length || !onGrid(beat, fillGrid) || taken(beat, fillGrid - 0.01)) continue;
-      const near = round.filter((n) => n.beat < beat).at(-1);
+      if (beat >= length || !onGrid(beat, fillGrid)) continue;
+      // 慢歌：鼓放在「這時候正在彈旋律的那隻手」的另一側
+      const near = slow ? round.filter((n) => n.mel && n.beat < beat + 1e-6).at(-1) : round.filter((n) => n.beat < beat).at(-1);
       const base = near ? mirror(near.lane) : 2;
+      // 慢歌：那一側同一格沒有音符就可以放（兩隻手各打各的）
+      if (taken(beat, slow ? 0.25 : fillGrid - 0.01, sideOf(base))) continue;
       // 小鼓放靠外側、大鼓放靠內側，左右輪流
       // Hi-hat 在那一側的三條之間輪流（不要同一軌連打）
       const lane = kind === 's' ? (sideOf(base) ? 5 - flip : flip) : kind === 'h' ? sideOf(base) * 3 + [1, 0, 2][hatN++ % 3] : sideOf(base) ? 3 + flip : 2 - flip;
@@ -162,13 +177,7 @@ export function chartFrom(src, level, repeat = 1) {
   round.sort((a, b) => a.beat - b.beat || a.lane - b.lane);
 
   // 展開成 repeat 輪：第二、四輪左右鏡像（簡單不鏡像，讓新手熟悉）
-  // 拍 → 毫秒：音檔曲子的速度會飄，有 beatMs（每一拍在第幾毫秒）就照它內插；PC-98 曲子速度固定
-  const msOf = (beat) => {
-    const map = src.beatMs;
-    if (!map) return beat * spb * 1000;
-    const i = Math.max(0, Math.min(map.length - 2, Math.floor(beat)));
-    return map[i] + (beat - i) * (map[i + 1] - map[i]);
-  };
+  const msOf = (beat) => beatToMs(src, beat);
   const notes = [];
   for (let k = 0; k < repeat; k++) {
     const flipped = level !== 'easy' && k % 2 === 1;

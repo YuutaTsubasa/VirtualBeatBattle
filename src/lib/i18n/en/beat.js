@@ -177,4 +177,7 @@ export default {
   '之後的傷害是 OVERKILL': 'Further damage is OVERKILL',
   '全難度 ↑': 'All charts ↑',
   '全難度 ↓': 'All charts ↓',
+  '琴鍵音': 'Keysounds',
+  '開啟': 'On',
+  '打中音符才播旋律（有分軌的曲子）': 'Melody plays only when you hit notes (songs with stems)',
 };
