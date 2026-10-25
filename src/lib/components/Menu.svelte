@@ -84,4 +84,36 @@
     border-top: 1.3cqh solid transparent;
     border-bottom: 1.3cqh solid transparent;
   }
+
+  /* 直式：選單寬一點、字小一點；橫排的按鈕放不下就換行 */
+  @container stage (aspect-ratio < 1) {
+    .menu {
+      width: max(var(--menu-width), 68cqw);
+    }
+    .menu.row {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1cqh 2cqw;
+      width: auto;
+    }
+    .menu.row :global(.vbtn.primary) {
+      font-size: 2.6cqh;
+      min-height: 6cqh;
+      padding: 0.6cqh 3cqh;
+    }
+    .menu-item {
+      font-size: 2.4cqh;
+      padding: 0.9cqh 2cqh 0.9cqh 5cqh;
+      letter-spacing: 0.08em;
+    }
+    .menu-item:focus {
+      padding-left: 6cqh;
+    }
+    .menu-item:focus::before {
+      left: 2cqh;
+      border-left-width: 1.4cqh;
+      border-top-width: 0.9cqh;
+      border-bottom-width: 0.9cqh;
+    }
+  }
 </style>

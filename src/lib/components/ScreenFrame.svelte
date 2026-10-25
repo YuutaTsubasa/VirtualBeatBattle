@@ -6,11 +6,11 @@
   // en：英文小字與浮水印（SONG SELECT、SESSION LOBBY…）；subtitle：標題旁邊一行說明
   let { title, en = '', subtitle = '', children, foot } = $props();
 
-  // 標題太長（英文、日文）時縮小字級：中文字約 1 字寬，英數約 0.6
-  const titleSize = $derived.by(() => {
+  // 標題太長（英文、日文）時縮小字級：中文字約 1 字寬，英數約 0.6（字級在 CSS 用 --title-w 算）
+  const titleWidth = $derived.by(() => {
     let w = 0;
     for (const ch of title) w += /[　-鿿＀-￯]/.test(ch) ? 1 : 0.6;
-    return `min(9cqh, ${(34 / Math.max(w, 1)).toFixed(2)}cqw)`;
+    return Math.max(w, 1).toFixed(2);
   });
 </script>
 
@@ -20,7 +20,7 @@
   <div class="frame">
     <header class="frame-head">
       <div class="title-box">
-        <h2 class="pop-title pop-text" style:font-size={titleSize}>
+        <h2 class="pop-title pop-text" style:--title-w={titleWidth}>
           <i class="bolt" aria-hidden="true"></i>{title}<i class="bolt right" aria-hidden="true"></i>
         </h2>
         {#if en}<span class="en-sub">{en}</span>{/if}
@@ -72,6 +72,7 @@
     gap: 1cqh;
     white-space: nowrap;
     color: var(--navy);
+    font-size: min(9cqh, calc(34cqw / var(--title-w)));
   }
   /* 藍色的電波（標題左右的閃電斜線） */
   .bolt {
@@ -109,5 +110,41 @@
     display: flex;
     align-items: center;
     gap: 1.6cqw;
+  }
+
+  /* 直式：標題小一點，說明另起一行 */
+  @container stage (aspect-ratio < 1) {
+    .watermark {
+      font-size: 6cqh;
+      top: 9cqh;
+      right: 4cqw;
+    }
+    .frame-head {
+      flex-wrap: wrap;
+      row-gap: 0.6cqh;
+    }
+    .pop-title {
+      font-size: min(5.6cqh, calc(66cqw / var(--title-w)));
+    }
+    .bolt {
+      width: 2.4cqh;
+      height: 5cqh;
+    }
+    .bolt.right {
+      width: 1.6cqh;
+      height: 3cqh;
+    }
+    .en-sub {
+      margin-left: 3.2cqh;
+    }
+    .sub {
+      order: 3;
+      flex-basis: 100%;
+      align-self: auto;
+      margin: 0;
+      font-size: 1.7cqh;
+      white-space: normal;
+      padding: 0.3cqh 1.6cqh;
+    }
   }
 </style>

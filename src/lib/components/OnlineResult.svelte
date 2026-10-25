@@ -339,4 +339,99 @@
     justify-content: flex-end;
     gap: 1cqw;
   }
+
+  /* 直式：本次演奏在上（精簡），排名表在下 */
+  @container stage (aspect-ratio < 1) {
+    .online-result {
+      padding: 2cqh 4cqw 1.6cqh;
+    }
+    .watermark {
+      font-size: 7cqh;
+      top: 8cqh;
+    }
+    .corner {
+      top: 1.6cqh;
+      right: 4cqw;
+    }
+    header {
+      column-gap: 4cqw;
+    }
+    h2 {
+      font-size: 4.4cqh;
+    }
+    .bolt {
+      width: 2.2cqh;
+      height: 4.4cqh;
+    }
+    .song {
+      font-size: 1.8cqh;
+    }
+    .body {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 1.4cqh;
+    }
+    .mine {
+      order: -1;
+      padding: 1cqh 4cqw;
+    }
+    .table {
+      padding: 1cqh 3cqw;
+    }
+    .label {
+      font-size: 1.8cqh;
+    }
+    .row {
+      grid-template-columns: 4.4cqh minmax(0, 1fr) 20cqw 10cqw 11cqw;
+      gap: 1.6cqw;
+      padding: 0.4cqh 1cqw;
+      font-size: 1.6cqh;
+    }
+    .row.head {
+      font-size: 1.2cqh;
+    }
+    .rank {
+      font-size: 2.2cqh;
+    }
+    .who img {
+      width: 3.4cqh;
+      height: 3.4cqh;
+    }
+    .you {
+      font-size: 1.1cqh;
+    }
+    .foot-note {
+      font-size: 1.3cqh;
+    }
+    .place b {
+      font-size: 5.4cqh;
+    }
+    .place span {
+      font-size: 2.2cqh;
+    }
+    .grade {
+      font-size: 5cqh;
+    }
+    .who-big img {
+      width: 7cqh;
+      height: 7cqh;
+    }
+    .who-big p {
+      font-size: 1.8cqh;
+    }
+    .tag {
+      font-size: 1.3cqh;
+    }
+    .gauge {
+      height: 1cqh;
+    }
+    .watch {
+      font-size: 2.2cqh;
+    }
+    .actions {
+      justify-content: center;
+      gap: 1cqh 3cqw;
+      flex-wrap: wrap;
+    }
+  }
 </style>

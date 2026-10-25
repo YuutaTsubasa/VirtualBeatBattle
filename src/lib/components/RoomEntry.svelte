@@ -432,4 +432,66 @@
     gap: 1.4cqh;
     align-items: center;
   }
+
+  /* 直式：玩家資料在上（放不下就捲動），角色名冊在下 */
+  @container stage (aspect-ratio < 1) {
+    .state-card {
+      min-width: 80cqw;
+      max-width: 90cqw;
+      padding: 3cqh 6cqw 2.6cqh;
+    }
+    .state-card b,
+    .state-card code {
+      font-size: 3cqh;
+    }
+    .state-card small {
+      font-size: 1.7cqh;
+    }
+    .ring,
+    .bang {
+      width: 6cqh;
+      height: 6cqh;
+    }
+    .small-primary {
+      font-size: 2.2cqh !important;
+      min-height: 5.4cqh !important;
+    }
+    .profile {
+      flex: 1 1 0;
+      min-height: 0;
+    }
+    .roster {
+      flex: none;
+    }
+    .warn-line {
+      font-size: 1.6cqh;
+    }
+    .warn-line i {
+      width: 2.4cqh;
+      height: 2.4cqh;
+    }
+    .modes .vbtn {
+      font-size: 1.7cqh;
+    }
+    .frame-pic {
+      width: 7cqh;
+      height: 7cqh;
+    }
+    .chosen b {
+      font-size: 2.6cqh;
+    }
+    .chosen small {
+      font-size: 1.4cqh;
+    }
+    .badge {
+      font-size: 1.5cqh;
+    }
+    .tip {
+      font-size: 1.6cqh;
+      margin: 0;
+    }
+    .actions {
+      margin-left: auto;
+    }
+  }
 </style>

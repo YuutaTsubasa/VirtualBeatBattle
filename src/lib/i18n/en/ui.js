@@ -9,7 +9,6 @@ export default {
   設定: 'Settings',
   返回: 'Back',
   '載入中…': 'Loading…',
-  '請把裝置轉成橫向 ↻': 'Please rotate your device to landscape ↻',
 
   // 單機模式
   選擇遊玩模式: 'Choose a mode',

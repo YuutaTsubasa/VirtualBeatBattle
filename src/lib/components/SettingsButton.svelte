@@ -38,4 +38,13 @@
     height: 100%;
     display: block;
   }
+
+  @container stage (aspect-ratio < 1) {
+    .settings-btn {
+      width: 5.4cqh;
+      height: 5.4cqh;
+      padding: 0.5cqh;
+      box-shadow: 0.3cqh 0.3cqh 0 var(--navy);
+    }
+  }
 </style>

@@ -607,4 +607,165 @@
   .demo {
     min-height: 7cqh;
   }
+
+  /* 直式：上面是選到的曲子（封面＋資料），下面曲目清單；底部兩個頭像一列、按鈕一列 */
+  @container stage (aspect-ratio < 1) {
+    .pick {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 1.2cqh;
+    }
+    .detail {
+      order: -1;
+      grid-template-columns: 34cqw minmax(0, 1fr);
+      gap: 3cqw;
+    }
+    .cover {
+      height: 20cqh;
+      padding: 0.5cqh;
+    }
+    .boss-art {
+      width: 13cqh;
+      height: 13cqh;
+      right: -1.6cqh;
+      bottom: -1cqh;
+    }
+    .info {
+      gap: 0.3cqh;
+    }
+    .from {
+      flex-direction: row;
+      align-items: center;
+      gap: 2cqw;
+      margin: 0;
+    }
+    .from span {
+      font-size: 1.2cqh;
+      letter-spacing: 0.06em;
+    }
+    .from img {
+      height: 3.6cqh;
+      max-width: 60%;
+    }
+    .own-logo {
+      width: 18cqh;
+    }
+    h3 {
+      font-size: 3.2cqh;
+    }
+    .boss,
+    .meta {
+      font-size: 1.5cqh;
+    }
+    .meta i {
+      height: 1.4cqh;
+    }
+    .levels {
+      margin: 0.4cqh 0;
+      gap: 1cqw;
+    }
+    .lv {
+      padding: 0.5cqh 0;
+      font-size: 1.2cqh;
+      flex-direction: column;
+      gap: 0;
+    }
+    .lv b {
+      font-size: 1.9cqh;
+    }
+    .label {
+      font-size: 1.2cqh;
+    }
+    .best {
+      font-size: 3cqh;
+      gap: 2cqw;
+    }
+    .best .rank {
+      font-size: 2.2cqh;
+    }
+    .best .fc {
+      font-size: 1.2cqh;
+    }
+    .notes {
+      font-size: 1.3cqh;
+    }
+    .filters {
+      gap: 1cqw;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filters button {
+      flex: none;
+      padding: 0.6cqh 2.4cqw;
+      font-size: 1.5cqh;
+    }
+    .song {
+      grid-template-columns: 6cqw 8cqh minmax(0, 1fr) auto auto;
+      gap: 2cqw;
+      padding: 0.6cqh 2cqw;
+      min-height: 6.6cqh;
+    }
+    .bpm {
+      display: none;
+    }
+    .no {
+      font-size: 1.8cqh;
+    }
+    .thumb {
+      width: 8cqh;
+      height: 5cqh;
+    }
+    .names b {
+      font-size: 1.9cqh;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .names small {
+      font-size: 1.2cqh;
+    }
+    .mark {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.2cqh;
+    }
+    .mark i {
+      font-size: 1.2cqh;
+    }
+    .lvl {
+      font-size: 1.8cqh;
+      min-width: 3.6cqh;
+    }
+    /* 底部：頭像兩個一列，按鈕跟返回一列 */
+    .bar {
+      display: contents;
+    }
+    .who {
+      order: -1;
+      flex: 1 1 40%;
+      min-width: 0;
+      gap: 2cqw;
+      padding-right: 0;
+      border-right: none;
+    }
+    .who img,
+    .boss-face {
+      width: 5cqh;
+      height: 5cqh;
+      flex: none;
+    }
+    .who b {
+      font-size: 1.8cqh;
+    }
+    .who small {
+      font-size: 1.3cqh;
+    }
+    .gauge {
+      width: 26cqw;
+    }
+    .demo {
+      min-height: 5cqh;
+      margin-left: auto;
+    }
+  }
 </style>

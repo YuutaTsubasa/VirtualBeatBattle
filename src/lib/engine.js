@@ -172,7 +172,8 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
   const pointers = new Map();
   function toStage(e) {
     const r = canvas.getBoundingClientRect();
-    return { x: ((e.clientX - r.left) / r.width) * 960, y: ((e.clientY - r.top) / r.height) * 540 };
+    const { W, H } = render.stageSize(); // 直的畫面是 540×960
+    return { x: ((e.clientX - r.left) / r.width) * W, y: ((e.clientY - r.top) / r.height) * H };
   }
   function onPointerDown(e) {
     if (!lp || !playing()) return;

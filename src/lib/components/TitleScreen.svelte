@@ -302,4 +302,92 @@
     left: 4cqw;
     bottom: 1.4cqh;
   }
+
+  /* 直式：插圖在上面（底邊斜切），Logo 與選單在下面的白色區 */
+  @container stage (aspect-ratio < 1) {
+    .art {
+      top: 0;
+      bottom: auto;
+      width: 100cqw;
+      height: 47cqh;
+      clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%);
+    }
+    .hero {
+      right: 0;
+      height: 46cqh;
+    }
+    .tagline {
+      left: 6cqw;
+      bottom: 8cqh;
+      font-size: 2.6cqh;
+    }
+    .side {
+      width: 100%;
+      padding: 47cqh 6cqw 0;
+    }
+    .logo-box {
+      width: 74cqw;
+      margin: 0 auto;
+    }
+    .menu {
+      left: 6cqw;
+      top: 58cqh;
+      width: 88cqw;
+      gap: 1.8cqh;
+    }
+    .solo {
+      height: 12cqh;
+      gap: 5cqw;
+      padding: 0 6cqw 0 9cqw;
+      clip-path: polygon(2.4cqh 0, 100% 0, calc(100% - 2.4cqh) 100%, 0 100%);
+    }
+    .play {
+      border-left-width: 3.6cqh;
+      border-top-width: 2.4cqh;
+      border-bottom-width: 2.4cqh;
+    }
+    .solo .label b {
+      font-size: 4.4cqh;
+    }
+    .solo .label small {
+      font-size: 1.3cqh;
+    }
+    .eq {
+      height: 5cqh;
+      gap: 1cqw;
+    }
+    .eq i {
+      width: 1.4cqw;
+    }
+    .rooms {
+      gap: 3cqw;
+    }
+    .room {
+      height: 8cqh;
+      gap: 2.4cqw;
+      padding: 0 3cqw 0 5cqw;
+      clip-path: polygon(1.4cqh 0, 100% 0, calc(100% - 1.4cqh) 100%, 0 100%);
+    }
+    .room .label b {
+      font-size: 2.3cqh;
+      letter-spacing: 0.04em;
+    }
+    .room .label small {
+      font-size: 1cqh;
+    }
+    .ic {
+      width: 4cqh;
+      height: 4cqh;
+    }
+    .tools {
+      gap: 8cqw;
+      justify-content: center;
+    }
+    .tool {
+      font-size: 2cqh !important;
+    }
+    .foot {
+      left: 6cqw;
+    }
+  }
 </style>

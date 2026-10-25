@@ -1,14 +1,15 @@
 // 畫面：背景、魔王、六條軌道與音符、站在判定線上的角色（同時押時另一邊出現半透明分身）、特效、HUD。只讀取狀態，不改它。
 //
-// 版面（960×540 的畫面座標）：
+// 版面（橫的 960×540、直的 540×960 的畫面座標；視窗比寬還高就是直的）：
 //   單機：軌道在正中間，魔王在軌道上方（音符就是魔王丟過來的攻擊），左邊角色資訊、右邊分數
 //   連線 2 人：像 DJMAX 一樣左右並排（自己在左），魔王在中間上方、各自一條血條
 //   連線 3～12 人：自己的軌道偏左，右邊是大家的迷你畫面（像 DJMAX 線上：名牌、RATE、BREAK、縮小的軌道、分數）
 //   觀戰：魔王＋所有人的迷你畫面
+//   直的：單機的資訊放在上面、軌道在下半；2 人時對手縮小放上面；3 人以上大家的一列一列在上面、自己的軌道在下面
 // 譜面格式見 crates/beat-core/src/play.rs 的 chart_json()，狀態見 view()。
 // 角色與魔王的動作圖沿用虛擬跑跑樂（虛擬闖天下的格子），背景沿用六大關的遠景。
 
-import { W, H, LANES, LANE_COLORS, SLOT_COLORS, COUNTDOWN, atkOfLevel } from './constants.js';
+import { W as WIDE_W, H as WIDE_H, LANES, LANE_COLORS, SLOT_COLORS, COUNTDOWN, atkOfLevel } from './constants.js';
 import { getCharacter } from './characters.js';
 import { WORLDS } from './stages.js';
 import { trackOf, backgroundOf, bossOf } from './tracks.js';
@@ -21,6 +22,12 @@ import { t, displayName } from '../i18n.svelte.js';
 // 內部解析度：一般風格 2 倍（1920×1080）比較銳利；像素風格用較低的倍數再放大（見 style-assets.js）
 let SCALE = 2;
 let cfg = currentConfig();
+
+// 畫面座標的大小：橫的 960×540，直的 540×960（engine 的觸控換算用 stageSize()）
+let W = WIDE_W;
+let H = WIDE_H;
+let portraitMode = false;
+export const stageSize = () => ({ W, H });
 
 const ART_PATHS = {
   spark: 'effects/hit-spark.webp',
@@ -93,6 +100,13 @@ function outlinedText(g, text, x, y, size, fill = pal.text, align = 'center', st
   g.strokeText(text, x, y);
   g.fillStyle = fill;
   g.fillText(text, x, y);
+}
+
+/** 字太長（直的畫面比較窄）就縮小到寬度放得下 */
+function fitSize(g, str, size, maxW) {
+  g.font = `900 ${size}px ${FONT}`;
+  const w = g.measureText(str).width;
+  return w > maxW ? Math.max(10, Math.floor((size * maxW) / w)) : size;
 }
 
 function roundRect(g, x, y, w, h, r) {
@@ -225,6 +239,8 @@ function quad(g, f, u0, u1, r0, r1) {
 
 // 軌道一路收窄到魔王的腳下（像一條通往魔王的路）：音符從魔王腳邊出來，魔王本身不會被軌道擋住
 const SOLO = { mode: 'solo', main: field(480, 74, { top: 198, judge: 446, Z: 5 }), rival: null, boss: { x: 480, y: 202, h: 170 } };
+// 直的：上面是魔王血條、角色資訊與分數，軌道在下半，一樣收窄到魔王腳下
+const SOLO_TALL = { mode: 'solo', main: field(270, 76, { top: 384, judge: 810, Z: 5 }), rival: null, boss: { x: 270, y: 388, h: 190 } };
 let layout = SOLO;
 
 // 版面（art-work/rhythm-ui-concept-v1）：
@@ -232,6 +248,7 @@ let layout = SOLO;
 //   2 人（DUEL）：左右各半，每半邊是名牌（體力、魔王剩餘）＋左邊分數與連擊＋軌道
 //   3 人以上：左邊自己的名牌與軌道，右邊大家的一列一列（小軌道、分數、連擊、準確率、魔王剩餘）
 function computeLayout(race, you, spectate) {
+  if (portraitMode) return computeTallLayout(race, you, spectate);
   if (spectate) return { mode: 'spectate', main: null, rival: null, boss: { x: 480, y: 210, h: 190 } };
   const n = race?.players?.length ?? 1;
   if (!race || n <= 1) return SOLO;
@@ -240,6 +257,21 @@ function computeLayout(race, you, spectate) {
     return { mode: 'duo', main: field(310, 52, { top: 104, judge: 446, Z: 3 }), rival: { f: field(790, 44, { top: 112, judge: 446 }), seat: rival?.seat }, boss: { x: 480, y: 260, h: 230 } };
   }
   return { mode: 'multi', main: field(250, 60, { top: 214, judge: 446, Z: 4.5 }), rival: null, boss: { x: 250, y: 218, h: 120 } };
+}
+
+// 直的版面：
+//   2 人：上面是對手（名牌、分數、縮小的直軌道，魔王在左邊），下面是自己的名牌與斜的軌道
+//   3 人以上：上面大家的一列一列，下面自己的名牌與軌道
+function computeTallLayout(race, you, spectate) {
+  // 觀戰：大家的一列一列在上面，魔王站在下面空出來的地方
+  if (spectate) return { mode: 'spectate', main: null, rival: null, boss: { x: 270, y: 900, h: 300 } };
+  const n = race?.players?.length ?? 1;
+  if (!race || n <= 1) return SOLO_TALL;
+  if (n === 2) {
+    const rival = race.players.find((p) => p.seat !== you);
+    return { mode: 'duo', main: field(270, 66, { top: 560, judge: 820, Z: 3 }), rival: { f: field(380, 34, { top: 112, judge: 380 }), seat: rival?.seat }, boss: { x: 120, y: 440, h: 150 } };
+  }
+  return { mode: 'multi', main: field(270, 70, { top: 560, judge: 820, Z: 4.5 }), rival: null, boss: { x: 270, y: 562, h: 100 } };
 }
 
 /** 觸控：畫面座標 (x, y) 落在自己的哪一條軌道（判定線上方一點到畫面底部都算） */
@@ -257,7 +289,7 @@ export function laneAt(x, y) {
 
 // body：本體；clone：分身（同時押的另一側、或打到另一側時出現）
 const me = {
-  x: 480,
+  x: WIDE_W / 2,
   pose: 'idle',
   poseT: 0,
   hurt: 0,
@@ -290,7 +322,7 @@ export function reset() {
   streaks.length = 0;
   banners.length = 0;
   others.clear();
-  me.x = 480;
+  me.x = W / 2;
   me.hurt = me.attack = 0;
   me.trail.length = 0;
   me.clone.alpha = 0;
@@ -810,28 +842,29 @@ function rateOf(q) {
   return n ? ((c[0] + c[1] * 0.7 + c[2] * 0.3) / n) * 100 : 100;
 }
 
-/** 單機左邊：方形頭像、名字、等級、PLAYER HP */
-function drawSoloInfo(g, info, v) {
+/** 單機左邊：方形頭像、名字、等級、PLAYER HP（(x, y) 是頭像的左上角；直的時候放在上面、不畫直排英文） */
+function drawSoloInfo(g, info, v, x = 24, y = 196) {
   const c = getCharacter(info.character);
-  portrait(g, info.character, moodOf(v, me.hurt), 24, 196, 64, 'rgba(255,255,255,0.6)');
-  text(g, c.name, 98, 214, 20, '#fff', 'left', 900, false);
-  text(g, `Lv.${info.lv}`, 98, 240, 16, '#cfe0ff');
+  portrait(g, info.character, moodOf(v, me.hurt), x, y, 64, 'rgba(255,255,255,0.6)');
+  text(g, c.name, x + 74, y + 18, 20, '#fff', 'left', 900, false);
+  text(g, `Lv.${info.lv}`, x + 74, y + 44, 16, '#cfe0ff');
   g.fillStyle = 'rgba(255,255,255,0.35)';
-  g.fillRect(24, 272, 230, 1);
+  g.fillRect(x, y + 76, 230, 1);
   const hp = v ? v.hp / v.hp_max : 1;
-  text(g, 'PLAYER HP', 24, 290, 13, '#fff');
-  slant(g, 24, 302, 180, 9, hp, hp > 0.3 ? '#2fc6ff' : '#ff3b55');
-  text(g, `${Math.round(hp * 100)}%`, 214, 306, 13, '#fff');
-  text(g, `ATK ${atkOfLevel(info.lv)}  ${c.specialName}`, 24, 330, 11, 'rgba(207,224,255,0.8)', 'left', 700, false);
+  text(g, 'PLAYER HP', x, y + 94, 13, '#fff');
+  slant(g, x, y + 106, 180, 9, hp, hp > 0.3 ? '#2fc6ff' : '#ff3b55');
+  text(g, `${Math.round(hp * 100)}%`, x + 190, y + 110, 13, '#fff');
+  text(g, `ATK ${atkOfLevel(info.lv)}  ${c.specialName}`, x, y + 134, 11, 'rgba(207,224,255,0.8)', 'left', 700, false);
+  if (portraitMode) return;
   // 左下的直排英文
   g.save();
   g.globalAlpha = 0.35;
-  ['VIRTUAL', 'BEAT', 'BATTLE'].forEach((w, i) => text(g, w, 24, 400 + i * 14, 11, '#9cc8ff', 'left', 800));
+  ['VIRTUAL', 'BEAT', 'BATTLE'].forEach((w, i) => text(g, w, x, y + 204 + i * 14, 11, '#9cc8ff', 'left', 800));
   g.restore();
 }
 
 /** 分數與連擊（單機在右邊；2 人時在各自軌道的左邊） */
-function drawScoreCombo(g, x, y, score, combo, { size = 1, judge = null } = {}) {
+function drawScoreCombo(g, x, y, score, combo, { size = 1, judge = null, judgeAt = null } = {}) {
   text(g, 'SCORE', x, y, 13 * size, 'rgba(255,255,255,0.75)');
   text(g, pad7(score), x, y + 28 * size, 32 * size, '#fff', 'left', 900, false);
   text(g, 'COMBO', x, y + 66 * size, 13 * size, 'rgba(255,255,255,0.75)');
@@ -842,10 +875,12 @@ function drawScoreCombo(g, x, y, score, combo, { size = 1, judge = null } = {}) 
   text(g, String(combo ?? 0), x, y + 102 * size, Math.round(46 * size * k), grad, 'left', 900, false);
   if (judge && judge.life > 0) {
     const pop = judge.life > 28 ? 1 + (judge.life - 28) / 20 : 1;
+    // judgeAt：判定字另外放（直的單機放在軌道中間），沒有就放在連擊底下
+    const [jx, jy, align] = judgeAt ?? [x, y + 150 * size, 'left'];
     g.save();
     g.globalAlpha = Math.min(1, judge.life / 10);
-    text(g, JUDGE_TEXT[judge.j], x, y + 150 * size, Math.round(30 * size * pop), JUDGE_COLOR[judge.j]);
-    if (judge.j !== 'P' && judge.j !== 'M' && Math.abs(judge.off) > 42) text(g, judge.off < 0 ? 'FAST' : 'SLOW', x + 4, y + 176 * size, 13, judge.off < 0 ? '#7fd8ff' : '#ff9a6b');
+    text(g, JUDGE_TEXT[judge.j], jx, jy, Math.round(30 * size * pop), JUDGE_COLOR[judge.j], align);
+    if (judge.j !== 'P' && judge.j !== 'M' && Math.abs(judge.off) > 42) text(g, judge.off < 0 ? 'FAST' : 'SLOW', jx + (judgeAt ? 0 : 4), jy + 26 * size, 13, judge.off < 0 ? '#7fd8ff' : '#ff9a6b', align);
     g.restore();
   }
 }
@@ -960,12 +995,20 @@ function drawRows(g, players, x, y, w, h, chart, ms, fall) {
 function drawRival(g, f, p, chart, ms, fall) {
   const o = trackOther(p, f);
   const q = p.p ?? {};
+  // 直的時候對手在上半：軌道（直的會一路畫到畫面底）只畫到自己的名牌上面
+  g.save();
+  if (portraitMode) {
+    g.beginPath();
+    g.rect(0, 0, W, f.judge + 76);
+    g.clip();
+  }
   drawField(g, f, chart, '', ms, fall, { me: false, held: keysOf(p, o), ghost: new Set(q.miss ?? []) });
   const h = CELL_H * (f.laneW / 58) * 1.05;
   const feet = Math.min(H - 6, f.judge + h * 0.82);
   o.x += (laneX(f, o.lane) - o.x) * 0.3;
   const pose = q.down ? 'down' : o.hurt > 0 ? 'hurt' : o.attack > 0 ? o.pose : 'idle';
   drawPerson(g, p.character, pose, o.x, feet, h, { facing: o.x < f.cx ? 1 : -1 });
+  g.restore();
   return o;
 }
 
@@ -1054,15 +1097,15 @@ function drawEffects(g) {
     g.save();
     g.globalAlpha = Math.min(1, b.life / 20);
     if (b.small) {
-      // 小提示：魔王血條底下一條窄窄的帶子，左右兩邊淡掉
-      const y = 74;
+      // 小提示：魔王血條底下一條窄窄的帶子，左右兩邊淡掉（直的時候放在資訊列底下）
+      const y = portraitMode ? 262 : 74;
       const sb = g.createLinearGradient(W / 2 - 220, 0, W / 2 + 220, 0);
       sb.addColorStop(0, 'rgba(10,40,140,0)');
       sb.addColorStop(0.5, 'rgba(10,40,140,0.7)');
       sb.addColorStop(1, 'rgba(10,40,140,0)');
       g.fillStyle = sb;
       g.fillRect(W / 2 - 220, y - 18, 440, b.sub ? 50 : 36);
-      outlinedText(g, b.text, W / 2 + (1 - inK) * 80, y, 26, b.color);
+      outlinedText(g, b.text, W / 2 + (1 - inK) * 80, y, fitSize(g, b.text, 26, W - 40), b.color);
       if (b.sub) outlinedText(g, b.sub, W / 2, y + 22, 11, pal.cream);
       g.restore();
       b.life--;
@@ -1074,8 +1117,8 @@ function drawEffects(g) {
     bg.addColorStop(1, 'rgba(20,80,245,0)');
     g.fillStyle = bg;
     g.fillRect(0, H / 2 - 52, W, 104);
-    outlinedText(g, b.text, W / 2 + (1 - inK) * 200, H / 2 - 12, 46, b.color);
-    if (b.sub) outlinedText(g, b.sub, W / 2, H / 2 + 30, 17, pal.cream);
+    outlinedText(g, b.text, W / 2 + (1 - inK) * 200, H / 2 - 12, fitSize(g, b.text, 46, W - 40), b.color);
+    if (b.sub) outlinedText(g, b.sub, W / 2, H / 2 + 30, fitSize(g, b.sub, 17, W - 40), pal.cream);
     g.restore();
     b.life--;
     void k;
@@ -1124,7 +1167,7 @@ export function prepare({ song, character }, ms = 4000) {
 export function draw(canvas, s) {
   updatePalette();
   cfg = currentConfig();
-  if (SCALE !== cfg.canvasScale || canvas.width !== Math.round(W * cfg.canvasScale)) resize(canvas);
+  if (SCALE !== cfg.canvasScale || canvas.width !== Math.round(W * cfg.canvasScale) || tallOf(canvas) !== portraitMode) resize(canvas);
   const g = canvas.getContext('2d');
   // 上一格要是畫到一半出錯，save／clip 會留著：整個重設（反正每格都整張重畫）
   g.reset?.();
@@ -1167,7 +1210,18 @@ export function draw(canvas, s) {
     drawCountdown(g, null, ms, bossName);
   } else {
     const f = layout.main;
-    if (layout.mode === 'solo') {
+    if (layout.mode === 'solo' && portraitMode) {
+      // 右上角留給暫停鈕
+      drawBossBar(g, 24, 40, 410, v?.dmg ?? 0, v?.boss_max ?? 1, { name: bossName });
+      drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
+      if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
+      drawSoloInfo(g, info, v, 20, 72);
+      text(g, `${t(tr.title)} / ${(info.level ?? '').toUpperCase()}`, 20, 228, 13, '#cfe0ff');
+      drawScoreCombo(g, 330, 92, v?.score, v?.combo, { judge: judgeShow, judgeAt: [f.cx, f.judge - 160, 'center'] });
+      drawEq(g, W - 20, H - 6, ms, chart?.bpm, true);
+      drawEq(g, 20, H - 6, ms, chart?.bpm);
+      if (info.demo) text(g, t('示範中（電腦）'), f.cx, f.top - 20, 14, '#ffd84a', 'center');
+    } else if (layout.mode === 'solo') {
       drawBossBar(g, 300, 34, 360, v?.dmg ?? 0, v?.boss_max ?? 1, { name: bossName });
       drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
       if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
@@ -1180,19 +1234,23 @@ export function draw(canvas, s) {
     } else if (layout.mode === 'duo') {
       drawHeader(g, t(tr.title), info.level, 'DUEL');
       // 自己（左半邊）
+      // 直的：對手在上面（名牌、分數在左、縮小的軌道在右），自己在下面
+      const pos = portraitMode
+        ? { me: [16, 462, W - 32], meScore: [22, 534, 0.7], rival: [16, 50, W - 32], rivalScore: [22, 116, 0.7] }
+        : { me: [16, 56, 448], meScore: [22, 130, 0.78], rival: [496, 56, 448], rivalScore: [502, 130, 0.78] };
       const meP = { seat: you ?? 0, name: mine?.name ?? '', character: info.character };
-      drawPlate(g, 16, 56, 448, meP, myP, { you: true, hurt: me.hurt });
+      drawPlate(g, pos.me[0], pos.me[1], pos.me[2], meP, myP, { you: true, hurt: me.hurt });
       drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
       if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
-      drawScoreCombo(g, 22, 130, v?.score, v?.combo, { size: 0.78, judge: judgeShow });
+      drawScoreCombo(g, pos.meScore[0], pos.meScore[1], v?.score, v?.combo, { size: pos.meScore[2], judge: judgeShow });
       // 對手（右半邊）
       const rival = players.find((p) => p.seat === layout.rival.seat);
       if (rival) {
         const rf = layout.rival.f;
         const o = drawRival(g, rf, rival, chart, ms, fall);
         const q = rival.p ?? {};
-        drawPlate(g, 496, 56, 448, rival, q, { hurt: o.hurt });
-        drawScoreCombo(g, 502, 130, q.score, q.combo, { size: 0.78, judge: o.jLife > 0 ? { j: o.j, off: 0, life: o.jLife } : null });
+        drawPlate(g, pos.rival[0], pos.rival[1], pos.rival[2], rival, q, { hurt: o.hurt });
+        drawScoreCombo(g, pos.rivalScore[0], pos.rivalScore[1], q.score, q.combo, { size: pos.rivalScore[2], judge: o.jLife > 0 ? { j: o.j, off: 0, life: o.jLife } : null });
       }
       drawEq(g, 20, H - 6, ms, chart?.bpm);
       drawEq(g, W - 20, H - 6, ms, chart?.bpm, true);
@@ -1201,21 +1259,24 @@ export function draw(canvas, s) {
       text(g, t('多人演奏'), 22, 26, 22, '#fff');
       text(g, `${players.length} PLAYERS`, 24, 46, 10, '#cfe0ff', 'left', 800);
       text(g, `${t(tr.title)}  /  ${(info.level ?? '').toUpperCase()}  /  6 KEY`, 150, 28, 13, '#cfe0ff');
+      // 直的：大家的一列一列在上面，自己的名牌、分數、軌道往下移
+      const dy = portraitMode ? 354 : 0;
       const order = [...players].sort((a, b) => (b.p?.score ?? 0) - (a.p?.score ?? 0));
       const rank = Math.max(1, order.findIndex((p) => p.seat === you) + 1);
       const meP = { seat: you ?? 0, name: mine?.name ?? '', character: info.character };
-      drawPlate(g, 16, 56, 440, meP, myP, { you: true, rank, total: players.length, hurt: me.hurt });
+      drawPlate(g, 16, 56 + dy, portraitMode ? W - 32 : 440, meP, myP, { you: true, rank, total: players.length, hurt: me.hurt });
       drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
       if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
       // 自己的連擊與判定放在軌道中間
       if (judgeShow && judgeShow.life > 0) text(g, JUDGE_TEXT[judgeShow.j], f.cx, f.judge - 70, 26, JUDGE_COLOR[judgeShow.j], 'center');
       // 自己的分數與連擊：軌道左邊的空位
-      text(g, 'SCORE', 14, 128, 10, 'rgba(255,255,255,0.7)');
-      text(g, pad7(v?.score), 14, 146, 14, '#fff', 'left', 900, false);
-      text(g, 'COMBO', 14, 176, 10, 'rgba(255,255,255,0.7)');
-      text(g, String(v?.combo ?? 0), 14, 200, 26, '#ffd24a', 'left', 900, false);
+      text(g, 'SCORE', 14, 128 + dy, 10, 'rgba(255,255,255,0.7)');
+      text(g, pad7(v?.score), 14, 146 + dy, 14, '#fff', 'left', 900, false);
+      text(g, 'COMBO', 14, 176 + dy, 10, 'rgba(255,255,255,0.7)');
+      text(g, String(v?.combo ?? 0), 14, 200 + dy, 26, '#ffd24a', 'left', 900, false);
       const rest = players.filter((p) => p.seat !== you);
-      drawRows(g, rest, 472, 56, W - 488, H - 66, chart, ms, fall);
+      if (portraitMode) drawRows(g, rest, 16, 60, W - 32, 340, chart, ms, fall);
+      else drawRows(g, rest, 472, 56, W - 488, H - 66, chart, ms, fall);
       drawEq(g, 20, H - 6, ms, chart?.bpm);
     }
     drawCountdown(g, f, ms, bossName);
@@ -1232,9 +1293,15 @@ export function draw(canvas, s) {
   }
 }
 
+/** 畫布在畫面上是直的嗎（#stage 在直的視窗是 9:16） */
+const tallOf = (canvas) => canvas.clientHeight > canvas.clientWidth;
+
 export function resize(canvas) {
   cfg = currentConfig();
   SCALE = cfg.canvasScale ?? 2;
+  portraitMode = tallOf(canvas);
+  W = portraitMode ? WIDE_H : WIDE_W;
+  H = portraitMode ? WIDE_W : WIDE_H;
   canvas.width = Math.round(W * SCALE);
   canvas.height = Math.round(H * SCALE);
 }

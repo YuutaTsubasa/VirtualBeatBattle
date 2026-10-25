@@ -56,4 +56,29 @@
     align-items: center;
     gap: 2.4cqh;
   }
+
+  @container stage (aspect-ratio < 1) {
+    .dialog {
+      min-width: 82cqw;
+      padding: 0 5cqw 2.6cqh;
+      border-radius: 2.4cqh;
+    }
+    .dialog.wide {
+      min-width: 92cqw;
+    }
+    .dialog-title {
+      margin-top: -3.4cqh;
+    }
+    h2 {
+      font-size: 5cqh;
+    }
+    p {
+      font-size: 1.7cqh;
+      padding: 0.3cqh 1.6cqh;
+    }
+    .dialog-body {
+      padding-top: 1.6cqh;
+      gap: 1.6cqh;
+    }
+  }
 </style>

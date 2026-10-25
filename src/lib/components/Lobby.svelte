@@ -637,4 +637,128 @@
     background: var(--accent);
     color: #fff;
   }
+
+  /* 直式：上面 12 個座位（4×3），下面邀請、曲子、聊天依序排（放不下就捲動） */
+  @container stage (aspect-ratio < 1) {
+    .seats {
+      flex: none;
+      height: 38cqh;
+      gap: 0.8cqh 1.6cqw;
+    }
+    .no {
+      font-size: 1.7cqh;
+    }
+    .info {
+      gap: 0.1cqh 1.2cqw;
+      padding: 0.3cqh 1.2cqw 0.4cqh;
+    }
+    .who {
+      font-size: 1.5cqh;
+    }
+    .role,
+    .status {
+      font-size: 1.1cqh;
+    }
+    .seat-actions :global(.vbtn.small) {
+      font-size: 1.2cqh;
+      padding: 0.2cqh 1.2cqw;
+      letter-spacing: 0;
+      --cut: 0.5cqh;
+    }
+    .pic.plus::before,
+    .pic.plus::after {
+      width: 2cqh;
+    }
+    .pic.plus::after {
+      width: 0.3cqh;
+      height: 2cqh;
+    }
+    .side {
+      flex: 1 1 0;
+      gap: 1.8cqh;
+      padding-top: 1.2cqh;
+      overflow-y: auto;
+    }
+    .side > :global(.panel) {
+      flex: none;
+    }
+    .side .panel-head {
+      font-size: 1.9cqh;
+    }
+    .side .panel-body {
+      padding: 1cqh 3cqw 0.8cqh;
+      gap: 0.6cqh;
+    }
+    .code-label {
+      font-size: 1.7cqh;
+    }
+    .room-code {
+      font-size: 3.4cqh;
+    }
+    .count {
+      font-size: 1.6cqh;
+    }
+    .count b {
+      font-size: 2.4cqh;
+    }
+    .copy-row code {
+      font-size: 1.6cqh;
+    }
+    .small,
+    .tabs button {
+      font-size: 1.4cqh;
+    }
+    .signal-down b {
+      font-size: 1.7cqh;
+    }
+    .signal-down small {
+      font-size: 1.4cqh;
+    }
+    .song-top {
+      gap: 3cqw;
+    }
+    .song-top img {
+      width: 9cqh;
+      height: 6cqh;
+    }
+    .song-info b {
+      font-size: 2.2cqh;
+    }
+    .song-info small,
+    .chips i {
+      font-size: 1.3cqh;
+    }
+    .rules {
+      font-size: 1.6cqh;
+      gap: 0.4cqh 3cqw !important;
+    }
+    .rules :global(.stepper) {
+      min-height: 3.8cqh;
+      font-size: 1.7cqh;
+    }
+    .chat {
+      flex: none;
+      height: 24cqh;
+    }
+    .chat ol {
+      font-size: 1.6cqh;
+    }
+    .chat input {
+      font-size: 1.7cqh;
+    }
+    .bang {
+      width: 2.4cqh;
+      height: 2.4cqh;
+    }
+    .spinner {
+      width: 4.4cqh;
+      height: 4.4cqh;
+    }
+    .char-dialog {
+      width: 94cqw;
+    }
+    .char-dialog .panel-body {
+      min-height: 30cqh;
+    }
+  }
 </style>

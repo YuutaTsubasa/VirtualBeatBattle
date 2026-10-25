@@ -74,10 +74,10 @@
     engine = createEngine(canvas, { onEnd });
     window.__vbb = engine;
     const off = onFrame(onRaceFrame);
-    // 單機遊戲中切到背景、或手機轉成直的：自動暫停
+    // 單機遊戲中切到背景、或手機轉了方向（版面會整個換掉）：自動暫停
     const portrait = matchMedia('(orientation: portrait) and (pointer: coarse)');
-    const autoPause = () => {
-      if ((document.hidden || portrait.matches) && screen === 'play' && !roomPhase) pause();
+    const autoPause = (e) => {
+      if ((document.hidden || e?.type === 'change') && screen === 'play' && !roomPhase) pause();
     };
     document.addEventListener('visibilitychange', autoPause);
     portrait.addEventListener('change', autoPause);
@@ -364,7 +364,6 @@
       <p>{t('載入中…')} {percent}%</p>
     </div>
   {/if}
-  <div class="rotate-hint">{t('請把裝置轉成橫向 ↻')}</div>
 </div>
 
 <style>
@@ -396,6 +395,29 @@
   }
   .pause-btn:hover {
     background: var(--sky-light);
+  }
+  @container stage (aspect-ratio < 1) {
+    .pause-btn {
+      top: 1.2cqh;
+      right: 2.4cqw;
+      width: 5cqh;
+      height: 5cqh;
+      gap: 0.6cqh;
+    }
+    .pause-btn i {
+      width: 0.7cqh;
+      height: 2cqh;
+    }
+    .loading .bar {
+      width: 70cqw;
+      height: 1.8cqh;
+    }
+    .loading p {
+      font-size: 2cqh;
+    }
+    .loading-logo {
+      width: 80cqw;
+    }
   }
   .loading {
     position: absolute;

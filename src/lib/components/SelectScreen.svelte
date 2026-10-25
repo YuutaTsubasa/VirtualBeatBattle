@@ -448,4 +448,103 @@
     font-size: 11cqh;
     color: var(--navy);
   }
+
+  /* 直式：上面角色資料（插圖矮一點），下面名冊 */
+  @container stage (aspect-ratio < 1) {
+    .select {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 1.4cqh;
+    }
+    .hero {
+      flex: none;
+      height: 17cqh;
+    }
+    .no {
+      font-size: 9cqh;
+      left: 3cqw;
+      top: 1.4cqh;
+    }
+    .tagline {
+      font-size: 1.8cqh;
+    }
+    .lock {
+      height: 8cqh;
+    }
+    h3 {
+      font-size: 4.2cqh;
+    }
+    .slashes {
+      width: 2.6cqh;
+      height: 3.2cqh;
+    }
+    .intro {
+      font-size: 1.6cqh;
+      letter-spacing: 0.08em;
+    }
+    .metrics {
+      gap: 2.4cqw;
+      padding: 0.4cqh 0;
+    }
+    .lv,
+    .atk b {
+      font-size: 2.6cqh;
+    }
+    .xp-num,
+    .atk {
+      font-size: 1.5cqh;
+    }
+    .ability {
+      gap: 3cqw;
+      padding: 0.6cqh 2cqw;
+    }
+    .icon {
+      width: 5.4cqh;
+      height: 5.4cqh;
+      font-size: 3.2cqh;
+    }
+    .ability small {
+      font-size: 1.3cqh;
+    }
+    .ability b {
+      font-size: 2.2cqh;
+    }
+    .ability p {
+      font-size: 1.5cqh;
+    }
+    .note-line {
+      display: none;
+    }
+    .roster-head b {
+      font-size: 2.4cqh;
+    }
+    .roster-head small {
+      font-size: 1.1cqh;
+    }
+    .grid {
+      gap: 1cqh 2cqw;
+    }
+    .nm {
+      font-size: 1.6cqh;
+      padding: 0.3cqh 1.6cqw;
+    }
+    .nm::after {
+      width: 1.8cqh;
+      height: 1.2cqh;
+    }
+    .mystery b {
+      font-size: 2cqh;
+    }
+    .mystery small {
+      font-size: 1.1cqh;
+      text-align: center;
+    }
+    .mystery img {
+      width: 3.4cqh;
+      height: 3.4cqh;
+    }
+    .dice {
+      font-size: 6cqh;
+    }
+  }
 </style>

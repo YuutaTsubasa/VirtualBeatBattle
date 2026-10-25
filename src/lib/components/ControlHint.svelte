@@ -32,6 +32,15 @@
     letter-spacing: 0.08em;
     white-space: nowrap;
   }
+  @container stage (aspect-ratio < 1) {
+    .control-hint {
+      font-size: 1.6cqh;
+      letter-spacing: 0.04em;
+      gap: 1.2cqh 4cqw;
+      flex-wrap: wrap;
+      white-space: normal;
+    }
+  }
   span {
     display: flex;
     align-items: center;

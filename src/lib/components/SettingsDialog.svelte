@@ -301,4 +301,66 @@
     align-items: center;
     gap: 2cqw;
   }
+
+  /* 直式：聲音、遊玩上下排，畫面風格三個一列 */
+  @container stage (aspect-ratio < 1) {
+    .settings {
+      width: 96cqw;
+      padding: 2.4cqh 1.6cqw 1cqh 1cqw;
+      font-size: 1.9cqh;
+    }
+    .settings :global(.panel-head) {
+      font-size: 2.8cqh;
+      margin-top: -2cqh;
+    }
+    .panel-body {
+      max-height: 88cqh;
+      padding: 1cqh 3cqw 1.4cqh;
+      gap: 0.7cqh;
+    }
+    .cols {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.7cqh;
+    }
+    h3 {
+      font-size: 2cqh;
+      letter-spacing: 0.08em;
+    }
+    .styles {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1cqh 2cqw;
+    }
+    .style-card {
+      padding: 0.5cqh;
+    }
+    .pic {
+      aspect-ratio: 1.8;
+    }
+    .style-card b {
+      font-size: 1.6cqh;
+    }
+    .wip {
+      font-size: 1.2cqh;
+    }
+    .langs {
+      flex-wrap: wrap;
+    }
+    .row {
+      grid-template-columns: 9cqh minmax(0, 1fr) 7cqh;
+      gap: 2cqw;
+    }
+    .row.mute {
+      grid-template-columns: 9cqh auto minmax(0, 1fr);
+    }
+    .row .toggle {
+      min-width: 12cqh;
+    }
+    .row small,
+    .hint {
+      font-size: 1.4cqh;
+    }
+    .note {
+      font-size: 1.4cqh;
+    }
+  }
 </style>

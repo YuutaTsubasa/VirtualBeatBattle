@@ -128,4 +128,41 @@
     line-height: 1.35;
     gap: 0.5cqh;
   }
+
+  /* 直式：按鍵表在上、小技巧在下（捲動） */
+  @container stage (aspect-ratio < 1) {
+    .keys-panel {
+      flex: none;
+    }
+    .tips-panel {
+      flex: 1;
+      min-height: 0;
+    }
+    table {
+      font-size: 1.6cqh;
+      border-spacing: 0 0.5cqh;
+    }
+    thead th {
+      font-size: 1.4cqh;
+      white-space: normal;
+    }
+    thead img {
+      width: 3.6cqh;
+    }
+    tbody th {
+      padding: 0.6cqh 1.6cqh 0.6cqh 1cqh;
+      white-space: normal;
+    }
+    tbody td {
+      padding: 0.6cqh 0.4cqh;
+    }
+    ul,
+    :global(html[lang='ja']) ul,
+    :global(html[lang='en']) ul {
+      font-size: 1.7cqh;
+      line-height: 1.45;
+      gap: 0.6cqh;
+      padding-left: 2cqh;
+    }
+  }
 </style>

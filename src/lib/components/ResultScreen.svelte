@@ -376,4 +376,120 @@
     flex-wrap: wrap;
     gap: 1cqw;
   }
+
+  /* 直式：上面評價與判定數，下面魔王戰果與按鈕 */
+  @container stage (aspect-ratio < 1) {
+    .result-screen {
+      flex-direction: column;
+    }
+    .corner {
+      top: 1.4cqh;
+      right: 4cqw;
+    }
+    .left {
+      width: 100%;
+      padding: 2cqh 0 0;
+      gap: 0.8cqh;
+    }
+    .tag {
+      padding: 1cqh 10cqw 1cqh 5cqw;
+      clip-path: polygon(0 0, 100% 0, calc(100% - 2.4cqh) 100%, 0 100%);
+    }
+    .tag b {
+      font-size: 3.8cqh;
+    }
+    .song {
+      margin-left: 5cqw;
+      font-size: 1.9cqh;
+    }
+    .grade {
+      margin-left: 5cqw;
+      gap: 4cqw;
+    }
+    .rank {
+      font-size: 11cqh;
+    }
+    .new {
+      font-size: 1.5cqh;
+    }
+    .score > b {
+      font-size: 5cqh;
+    }
+    .mc {
+      font-size: 1.5cqh;
+      gap: 2cqw;
+      flex-wrap: wrap;
+    }
+    .mc b {
+      font-size: 2.2cqh;
+    }
+    .fc {
+      font-size: 1.2cqh;
+    }
+    .counts {
+      margin: 0 5cqw;
+      width: auto;
+      grid-template-columns: 1fr auto 1fr auto;
+      column-gap: 4cqw;
+      font-size: 1.9cqh;
+    }
+    .right {
+      flex: 1;
+      min-height: 0;
+      margin: 1.4cqh 4cqw 1.6cqh;
+      padding: 1.8cqh 4cqw 1.4cqh;
+      gap: 1cqh;
+    }
+    .boss-art {
+      width: 15cqh;
+      height: 15cqh;
+      top: -3cqh;
+    }
+    .head {
+      font-size: 2.6cqh;
+    }
+    .verdict {
+      font-size: 3.6cqh;
+    }
+    .verdict.fail {
+      font-size: 3cqh;
+    }
+    .label {
+      font-size: 1.5cqh;
+    }
+    .dmg,
+    .exp {
+      font-size: 1.8cqh;
+      gap: 3cqw;
+    }
+    .gauge {
+      height: 1.1cqh;
+    }
+    .me {
+      gap: 3cqw;
+    }
+    .me img {
+      width: 8cqh;
+      height: 8cqh;
+    }
+    .me-info p {
+      font-size: 1.9cqh;
+    }
+    .me-info .up {
+      font-size: 2.4cqh;
+    }
+    .me-info small {
+      font-size: 1.4cqh;
+    }
+    .unlock {
+      font-size: 1.8cqh;
+    }
+    .line {
+      font-size: 1.6cqh;
+    }
+    .actions {
+      justify-content: center;
+      gap: 1cqh 2cqw;
+    }
+  }
 </style>

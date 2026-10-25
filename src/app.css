@@ -55,13 +55,18 @@ html, body {
   overflow: hidden;
 }
 
-/* 16:9 舞台，維持比例塞滿視窗 */
+/* 16:9 舞台，維持比例塞滿視窗；視窗比寬還高（手機直放）就是 9:16 的直式舞台。
+   直的時候 cqw 很窄，各畫面在 @container stage (aspect-ratio < 1) 裡另外排。
+   高度用 dvh：手機瀏覽器的網址列不會蓋住舞台底下 */
 #stage {
   position: absolute;
   inset: 0;
   margin: auto;
   width: min(100vw, calc(100vh * 16 / 9));
   height: min(100vh, calc(100vw * 9 / 16));
+  width: min(100vw, calc(100dvh * 16 / 9));
+  height: min(100dvh, calc(100vw * 9 / 16));
+  container-name: stage;
   container-type: size;
   overflow: hidden;
   touch-action: manipulation;
@@ -69,6 +74,14 @@ html, body {
   user-select: none;
   -webkit-user-select: none;
   background: var(--sky-light);
+}
+@media (max-aspect-ratio: 1 / 1) {
+  #stage {
+    width: min(100vw, calc(100vh * 9 / 16));
+    height: min(100vh, calc(100vw * 16 / 9));
+    width: min(100vw, calc(100dvh * 9 / 16));
+    height: min(100dvh, calc(100vw * 16 / 9));
+  }
 }
 #stage input, #stage textarea { user-select: text; -webkit-user-select: text; }
 #stage canvas { width: 100%; height: 100%; display: block; }
@@ -462,21 +475,43 @@ input:focus { border-color: var(--teal); box-shadow: 0 0 0 0.3cqh var(--sky-line
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
-/* 手機直放時提示轉橫向 */
-.rotate-hint { display: none; }
-@media (orientation: portrait) and (pointer: coarse) {
-  .rotate-hint {
-    display: flex;
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    align-items: center;
-    justify-content: center;
-    background: var(--navy-deep);
-    color: #fff;
-    font-size: 22px;
-    font-weight: 800;
+/* ---------- 直式舞台（9:16）：共用版面 ----------
+   cqh 在直的舞台上比較大（寬只有高的 56%），字與按鈕縮一點；
+   選單畫面改成上下排：標題列、內容、底部（返回＋主要按鈕一列，提示另起一列） */
+@container stage (aspect-ratio < 1) {
+  .screen { font-size: 2.2cqh; gap: 1.6cqh; }
+  .en-sub { font-size: 1.3cqh; letter-spacing: 0.25em; }
+  .frame {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    padding: 1.6cqh 4cqw 1.6cqh;
+    gap: 1.2cqh;
   }
+  .frame-main { flex-direction: column; gap: 1.2cqh; padding-top: 0.8cqh; }
+  .frame-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1cqh 3cqw;
+  }
+  /* 底部中間的提示：放到第一列、佔滿一整列 */
+  .frame-foot > :is(.hint-bar, .control-hint) { order: -1; flex-basis: 100%; white-space: normal; text-align: center; justify-content: center; }
+  .frame-foot > :only-child { margin-left: auto; }
+  .vbtn { font-size: 2.2cqh; min-height: 5.6cqh; padding: 0.8cqh 2.8cqh; letter-spacing: 0.06em; text-indent: 0.06em; --cut: 1.2cqh; }
+  .vbtn.small { min-height: 4.4cqh; padding: 0.4cqh 2cqh; font-size: 1.8cqh; --cut: 0.9cqh; }
+  .vbtn.primary { min-height: 6.4cqh; padding: 0.8cqh 4cqh 0.8cqh 3.4cqh; font-size: 2.6cqh; letter-spacing: 0.08em; --cut: 1.6cqh; }
+  .vbtn.primary::before { border-left-width: 1.6cqh; border-top-width: 1cqh; border-bottom-width: 1cqh; margin-right: 0.6cqh; }
+  .vbtn.back { padding: 0.6cqh 2.4cqh; font-size: 2cqh; min-height: 5cqh; }
+  .hint-bar { font-size: 1.6cqh; letter-spacing: 0.06em; gap: 1cqh; }
+  .panel-head { font-size: 2cqh; margin: -1.4cqh 0 0 1cqh; }
+  .panel-body { padding: 1.2cqh 1.6cqh; gap: 1cqh; }
+  .field { font-size: 2.1cqh; }
+  .field small { font-size: 1.6cqh; }
+  .note { font-size: 1.8cqh; padding: 0.8cqh 1.2cqh; }
+  .card > span:not(.tags):not(.lock) { font-size: 1.7cqh; }
+  .card .tag { font-size: 1.4cqh; }
+  .toasts { width: 90cqw; align-items: center; }
+  .toast { font-size: 2cqh; }
+  .net-banner { font-size: 2cqh; padding: 1cqh 2.4cqh; max-width: 92cqw; }
 }
 
 /* ---------- 畫風：介面配色與字體 ----------
