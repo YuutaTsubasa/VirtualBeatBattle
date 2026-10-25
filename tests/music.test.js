@@ -82,6 +82,8 @@ test('every playable track points at a looping song with a melody and known chor
   for (const tr of TRACKS) {
     assert.ok(!ids.has(tr.id), `重複的 id：${tr.id}`);
     ids.add(tr.id);
+    // 音檔的曲子（Suno）沒有 PC-98 音軌
+    if (tr.audioSong) continue;
     const song = songOf(tr);
     assert.ok(song?.loop, `${tr.id}：找不到會循環的曲子 ${tr.game}/${tr.song}`);
     assert.ok(song.tracks.some((t) => t.mml && (t.kind === 'fm' || t.kind === 'ssg')), `${tr.id}：沒有旋律`);

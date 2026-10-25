@@ -14,7 +14,8 @@
     "tauri": "tauri",
     "server": "cargo run --manifest-path src-tauri/Cargo.toml --bin beat-server --",
     "charts": "node scripts/gen-charts.mjs",
-    "render-song": "node scripts/render-song.mjs"
+    "render-song": "node scripts/render-song.mjs",
+    "import-song": "node scripts/import-audio-song.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "~2.11.0"

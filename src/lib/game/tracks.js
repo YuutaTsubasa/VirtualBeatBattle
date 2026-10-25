@@ -7,6 +7,7 @@
 
 import { SONGS as RUNNERS } from '../audio/songs.js';
 import { compile } from '../audio/music.js';
+import AUDIO_SONGS from './audio-songs/index.js';
 import { SONGS as ORIGINAL } from '../audio/library/original.js';
 import { SONGS as MAHJONG } from '../audio/library/mahjong.js';
 import { CHARACTER_THEMES } from '../audio/library/mahjong-themes.js';
@@ -73,7 +74,10 @@ const LIST = [
 
 // 背景：台麻館的曲子用麻將館、排球王的曲子用排球王的海灘（各畫風都有，src/lib/style-assets.json），其他用魔王那一大關的遠景
 const GAME_BG = { mahjong: 'games/mahjong-parlor.webp', volleyball: 'games/volleyball-court.webp' };
-export const TRACKS = LIST.map((tr) => ({ ...tr, bg: tr.bg ?? GAME_BG[tr.game] ?? null }));
+// 音檔的曲子（Suno 之類，npm run import-song 接進來的）：放在原創曲的後面
+const AUDIO_TRACKS = AUDIO_SONGS.map((s) => ({ id: s.id, game: s.game, song: null, title: s.title, world: s.world, bg: s.bg, boss: s.boss, audio: `audio/${s.id}.mp3`, audioSong: s }));
+const firstOther = LIST.findIndex((tr) => tr.game !== 'original');
+export const TRACKS = [...LIST.slice(0, firstOther), ...AUDIO_TRACKS, ...LIST.slice(firstOther)].map((tr) => ({ ...tr, bg: tr.bg ?? GAME_BG[tr.game] ?? null }));
 
 /** 這一首的背景圖（畫面與選曲的封面共用） */
 export const backgroundOf = (track) => track.bg ?? `stages/${['city', 'forest', 'sea', 'ice', 'mine', 'castle'][track.world]}-3/far.webp`;
@@ -88,13 +92,14 @@ export const LEVELS = [
 
 export const trackOf = (id) => TRACKS.find((t) => t.id === id) ?? TRACKS[0];
 
-/** 這一首的曲子資料（bpm、音軌） */
-export const songOf = (track) => gameOf(track.game).songs[track.song];
+/** 這一首的曲子資料（bpm、音軌）；音檔的曲子只有 bpm（audio: true） */
+export const songOf = (track) => (track.audioSong ? { bpm: track.audioSong.bpm, loop: false, audio: true, tracks: [] } : gameOf(track.game).songs[track.song]);
 
 // 曲子整首重複幾次：重複到大約一分半（太短的循環最多重複 24 次）
 const TARGET_SECONDS = 92;
 const repeats = new Map();
 export function repeatOf(track) {
+  if (track.audioSong) return 1;
   if (!repeats.has(track.id)) {
     const song = songOf(track);
     const sec = (compile(song).length * 60) / song.bpm;

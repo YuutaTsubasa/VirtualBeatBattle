@@ -23,11 +23,6 @@ const RULES = {
   expert: { grid: 0.25, gap: 0.25, hold: 1.5, chordEvery: 1, fill: true, fillGrid: 0.25, hats: true, arp: { slow: 120 }, mines: 5 },
 };
 
-/** 旋律音軌：第一條有 MML 的 FM／方波音軌 */
-function melodyOf(song, events) {
-  const lead = song.tracks.find((tr) => tr.mml && (tr.kind === 'fm' || tr.kind === 'ssg'));
-  return events.filter((e) => e.tr === lead && e.midi != null);
-}
 
 const onGrid = (beat, grid) => Math.abs(beat / grid - Math.round(beat / grid)) < 1e-6;
 
@@ -48,17 +43,40 @@ const mirror = (lane) => LANES - 1 - lane;
 const sideOf = (lane) => (lane < 3 ? 0 : 1);
 
 /**
- * 產生一首曲子某個難度的譜面（一輪的音符，以拍為單位），再展開成重複 repeat 次、換成毫秒。
+ * 譜面的來源（以拍為單位）：{ bpm, length（拍）, melody: [{ beat, dur, midi }], backing: [{ beat, midi }], kicks, snares, hats: [beat] }。
+ * PC-98 的曲子從音軌展開（旋律＝第一條有 MML 的 FM／方波音軌；伴奏＝琶音、貝斯、第二旋律）；
+ * 音檔的曲子（Suno）從 MIDI 轉出來（scripts/import-audio-song.mjs 寫成 src/lib/game/audio-songs/<id>.json）。
+ */
+export function sourceOf(song) {
+  const { events, length } = compile(song);
+  const lead = song.tracks.find((tr) => tr.mml && (tr.kind === 'fm' || tr.kind === 'ssg'));
+  // 伴奏：琶音、貝斯（台麻館的貝斯是 FM 音軌）、第二旋律（方波）
+  const backing = (tr) => tr !== lead && (tr.kind === 'arp' || tr.kind === 'bass' || tr.patch === 'bass' || tr.kind === 'ssg');
+  const drum = (k) => events.filter((e) => e.drum === k).map((e) => e.beat);
+  return {
+    bpm: song.bpm,
+    length,
+    melody: events.filter((e) => e.tr === lead && e.midi != null).map(({ beat, dur, midi }) => ({ beat, dur, midi })),
+    backing: events.filter((e) => e.midi != null && backing(e.tr)).map(({ beat, midi }) => ({ beat, midi })),
+    kicks: drum('k'),
+    snares: drum('s'),
+    hats: drum('h'),
+  };
+}
+
+/** PC-98 曲子某個難度的譜面（重複 repeat 輪）：回傳 { notes, lengthMs } */
+export function generateChart(song, level, repeat = 1) {
+  return chartFrom(sourceOf(song), level, repeat);
+}
+
+/**
+ * 從譜面來源排出一個難度的譜面（一輪的音符，以拍為單位），再展開成重複 repeat 次、換成毫秒。
  * 回傳 { notes, lengthMs }
  */
-export function generateChart(song, level, repeat = 1) {
+export function chartFrom(src, level, repeat = 1) {
   const rule = RULES[level];
-  const { events, length } = compile(song);
-  const spb = 60 / song.bpm;
-  const melody = melodyOf(song, events);
-  const snares = events.filter((e) => e.drum === 's').map((e) => e.beat);
-  const kicks = events.filter((e) => e.drum === 'k').map((e) => e.beat);
-  const hats = events.filter((e) => e.drum === 'h').map((e) => e.beat);
+  const { length, melody, snares, kicks, hats } = src;
+  const spb = 60 / src.bpm;
 
   // 一輪的音符：{ beat, lane, len（拍）, kind }
   const round = [];
@@ -94,12 +112,10 @@ export function generateChart(song, level, repeat = 1) {
 
   // 極限譜面：伴奏（琶音、貝斯…）排在旋律的另一隻手那一側（八分音符，慢歌十六分音符），兩手輪流
   if (rule.arp) {
-    const arpGrid = song.bpm <= rule.arp.slow ? 0.25 : 0.5;
-    // 伴奏：琶音、貝斯（台麻館的貝斯是 FM 音軌）、第二旋律（方波）；同一拍只取一個音
-    const lead = song.tracks.find((tr) => tr.mml && (tr.kind === 'fm' || tr.kind === 'ssg'));
-    const backing = (tr) => tr !== lead && (tr.kind === 'arp' || tr.kind === 'bass' || tr.patch === 'bass' || tr.kind === 'ssg');
+    const arpGrid = src.bpm <= rule.arp.slow ? 0.25 : 0.5;
+    // 同一拍只取一個伴奏音
     const seen = new Set();
-    const arp = events.filter((e) => e.midi != null && backing(e.tr) && onGrid(e.beat, arpGrid) && !seen.has(e.beat) && seen.add(e.beat));
+    const arp = src.backing.filter((e) => onGrid(e.beat, arpGrid) && !seen.has(e.beat) && seen.add(e.beat));
     let aLane = null;
     let aMidi = null;
     for (const n of arp) {

@@ -16,7 +16,7 @@ import { COUNTDOWN } from './game/constants.js';
 import { trackOf, songOf, repeatOf } from './game/tracks.js';
 import { options, fallMs } from './game/options.svelte.js';
 import { onFrame, sendProgress } from './net.svelte.js';
-import { audioContext } from './audio/synth.js';
+import { audioContext, buses } from './audio/synth.js';
 import { Player } from './audio/music.js';
 import { ui } from './ui.svelte.js';
 
@@ -38,6 +38,51 @@ const EVENT_SOUND = {
 };
 
 const wasmReady = init();
+
+// ───── 音檔的曲子（Suno 之類）：先下載、解碼好再開始 ─────
+const audioBuffers = new Map(); // 網址 → Promise<AudioBuffer | null>
+
+/** 這一首是音檔的話先載好（載不到就算了：照樣可以玩，只是沒聲音） */
+function loadTrackAudio(songId) {
+  const tr = trackOf(songId);
+  const ctx = audioContext();
+  if (!tr.audio || !ctx) return Promise.resolve(null);
+  const url = import.meta.env.BASE_URL + tr.audio;
+  if (!audioBuffers.has(url)) {
+    audioBuffers.set(
+      url,
+      fetch(url)
+        .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.status))))
+        .then((data) => ctx.decodeAudioData(data))
+        .catch(() => {
+          audioBuffers.delete(url);
+          return null;
+        }),
+    );
+  }
+  return audioBuffers.get(url);
+}
+
+/** 播音檔：音檔的 offset 秒是第 1 拍，對齊到時鐘的 beatAt（曲子的 0 毫秒）。回傳 { stop(fade) }，介面跟 Player 一樣 */
+function playBuffer(buffer, beatAt, offset) {
+  const ctx = audioContext();
+  const gain = ctx.createGain();
+  gain.connect(buses.bgm);
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.connect(gain);
+  const want = beatAt - offset; // 音檔開頭要在這個時間播
+  const now = ctx.currentTime + 0.02;
+  if (want >= now) src.start(want);
+  else src.start(now, now - want); // 已經晚了：從中間開始，保持對齊
+  return {
+    stop(fade = 0.4) {
+      const t = ctx.currentTime;
+      gain.gain.setTargetAtTime(0, t, Math.max(fade, 0.01) / 3);
+      src.stop(t + fade + 0.1);
+    },
+  };
+}
 
 // 音樂的時鐘（秒）：開始一首時 AudioContext 在跑就用它（暫停時 suspend，時間也跟著停），
 // 沒有聲音的環境就用 performance.now
@@ -137,12 +182,23 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
   function startMusic() {
     if (musicOn || !info) return;
     const tr = trackOf(info.song);
-    player = new Player();
     const ctx = audioContext();
-    // 時鐘是 AudioContext 才排程音樂（不出聲的環境照樣可以玩）
-    if (useAudioClock && ctx) player.play(songOf(tr), { at: Math.max(start, ctx.currentTime + 0.02), repeat: repeatOf(tr) });
     musicOn = true;
+    // 時鐘是 AudioContext 才排程音樂（不出聲的環境照樣可以玩）
+    if (!useAudioClock || !ctx) return;
+    if (tr.audioSong) {
+      // 音檔：開始前已經載好了（loadTrackAudio）
+      loadTrackAudio(info.song).then((buffer) => {
+        if (buffer && musicOn && info?.song === tr.id) player = playBuffer(buffer, start, tr.audioSong.offsetMs / 1000);
+      });
+      return;
+    }
+    player = new Player();
+    player.play(songOf(tr), { at: Math.max(start, ctx.currentTime + 0.02), repeat: repeatOf(tr) });
   }
+
+  // 音檔的第 1 拍不在檔案開頭（前奏）時，要提早開始播
+  const leadIn = () => (info ? (trackOf(info.song).audioSong?.offsetMs ?? 0) / 1000 : 0);
 
   function handle(v) {
     for (const e of v.events) {
@@ -156,7 +212,7 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
     input.pollPads();
     if (!ready || state === 'idle' || state === 'paused') return;
     // 倒數快結束時才排程音樂（之前都還可能跟房主對時）
-    if (!musicOn && clock() >= start - 0.4) startMusic();
+    if (!musicOn && clock() >= start - 0.4 - leadIn()) startMusic();
     const ms = songMs();
     // 倒數 3、2、1
     const count = Math.ceil(-ms / 1000);
@@ -250,21 +306,23 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
       await wasmReady;
       race = null;
       you = null;
-      await render.prepare({ song, character });
-      begin({ song, level, character, lv, demo }, 'local', LEAD);
+      await Promise.all([render.prepare({ song, character }), loadTrackAudio(song)]);
+      // 音檔有前奏（第 1 拍在後面）：倒數拉長，讓前奏完整播完
+      const intro = (trackOf(song).audioSong?.offsetMs ?? 0) / 1000;
+      begin({ song, level, character, lv, demo }, 'local', Math.max(LEAD, intro + 0.6));
     },
     /** 連線比賽：倒數照房主的時間對齊 */
     async startOnline({ song, level, character, lv, seat, t }) {
       await wasmReady;
       you = seat;
-      await render.prepare({ song, character }, 1500);
+      await Promise.all([render.prepare({ song, character }, 1500), loadTrackAudio(song)]);
       begin({ song, level, character, lv, demo: false }, 'online', Math.max(0.05, (COUNTDOWN - t) / 60));
     },
     /** 連線觀戰（沒有座位、或開始後才進來）：聽同一首曲子、看大家的進度 */
     async spectate({ song, level, t }) {
       await wasmReady;
       you = null;
-      await render.prepare({ song }, 1500);
+      await Promise.all([render.prepare({ song }, 1500), loadTrackAudio(song)]);
       begin({ song, level, character: null, lv: 1, demo: false }, 'spectate', (COUNTDOWN - t) / 60);
     },
     pause() {

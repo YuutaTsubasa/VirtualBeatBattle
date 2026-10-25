@@ -1,6 +1,6 @@
 // 全部曲子 × 難度的譜面資料（scripts/gen-charts.mjs 寫成 charts.json 與 charts-meta.json；測試拿來比對有沒有過期）
 import { TRACKS, LEVELS, songOf, repeatOf } from './tracks.js';
-import { generateChart, ratingOf } from './chartgen.js';
+import { generateChart, chartFrom, ratingOf } from './chartgen.js';
 
 export function buildCharts() {
   return {
@@ -9,8 +9,9 @@ export function buildCharts() {
       const charts = {};
       let lengthMs = 0;
       for (const { id } of LEVELS) {
-        const { notes, lengthMs: len } = generateChart(song, id, repeatOf(tr));
-        lengthMs = len;
+        // 音檔的曲子：從 MIDI 轉出來的來源排譜，長度就是音檔的長度
+        const { notes, lengthMs: len } = tr.audioSong ? chartFrom(tr.audioSong.source, id, 1) : generateChart(song, id, repeatOf(tr));
+        lengthMs = tr.audioSong ? tr.audioSong.lengthMs : len;
         charts[id] = { rating: ratingOf(notes, len), notes };
       }
       return { id: tr.id, bpm: song.bpm, length_ms: lengthMs, charts };

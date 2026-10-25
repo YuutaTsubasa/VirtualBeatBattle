@@ -10,7 +10,8 @@ const SRC = join(ROOT, 'src');
 const CJK = /[぀-ヿ㐀-鿿！-｠]/;
 
 // 不是畫面上的字：資料清單、音色表
-const SKIP_FILES = new Set(['src/lib/audio/synth.js', 'src/lib/audio/songs.js', 'src/lib/audio/music.js']);
+// midi.js 的錯誤訊息只給匯入工具（scripts/import-audio-song.mjs）看，不會出現在畫面上
+const SKIP_FILES = new Set(['src/lib/audio/synth.js', 'src/lib/audio/songs.js', 'src/lib/audio/music.js', 'src/lib/game/midi.js']);
 // 不用翻的字：語言名稱（每種語言都用自己的寫法）、程式裡比對用的字
 const IGNORE = new Set(['中文', '日本語', '左邊']);
 
