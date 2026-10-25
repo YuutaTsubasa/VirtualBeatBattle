@@ -8,6 +8,7 @@
   import { sheetOf } from '../game/sheets.js';
   import { asset } from '../art-style.svelte.js';
   import SettingsButton from './SettingsButton.svelte';
+  import { formatRating, ratingTier } from '../game/rating.js';
 
   // result：App 的 onEnd 組好的結果；actions：[{ label, action, primary }]
   let { result, actions, demo = false } = $props();
@@ -45,6 +46,15 @@
         {#if result.record && !demo}<span class="new">{t('新紀錄')}</span>{/if}
         <b>{pad(result.score)}</b>
         <span class="mc">MAX COMBO <b>{result.maxCombo}</b>{#if result.ap}<i class="fc ap">ALL PERFECT</i>{:else if result.fc}<i class="fc">FULL COMBO</i>{/if}</span>
+        <!-- 這一次的譜面 Rating、玩家 Rating 前後（電腦示範不算） -->
+        {#if result.rating && !demo}
+          {@const gain = result.rating.after - result.rating.before}
+          <span class="rt">
+            {t('這個譜面')} <b>{formatRating(result.rating.chart)}</b>
+            <i></i>RATING <b class="tier-{ratingTier(result.rating.after)}">{formatRating(result.rating.after)}</b>
+            {#if gain >= 0.005}<em>+{formatRating(gain)}</em>{/if}
+          </span>
+        {/if}
       </div>
     </div>
     <dl class="counts">
@@ -201,6 +211,43 @@
   .mc b {
     font-size: 3.2cqh;
     font-style: italic;
+  }
+  .rt {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8cqw;
+    font-weight: 900;
+    font-size: 1.9cqh;
+    color: var(--navy-soft);
+  }
+  .rt b {
+    font-size: 2.8cqh;
+    font-style: italic;
+    color: var(--navy);
+  }
+  .rt i {
+    width: var(--line);
+    height: 2cqh;
+    margin: 0 0.6cqw;
+    align-self: center;
+    background: var(--sky-line);
+  }
+  .rt em {
+    font-style: normal;
+    font-size: 2.2cqh;
+    color: #1fb36b;
+  }
+  .rt .tier-green {
+    color: #1fb36b;
+  }
+  .rt .tier-orange {
+    color: #e08a12;
+  }
+  .rt .tier-red {
+    color: #c81e4a;
+  }
+  .rt .tier-purple {
+    color: #8a3ad6;
   }
   .fc {
     padding: 0.2cqh 1.2cqh;

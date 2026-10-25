@@ -1,5 +1,7 @@
 // 存在這台電腦的進度：每個角色的等級與經驗值、每首曲子各難度的最佳成績、選過的角色
 import { MAX_LEVEL, xpToNext } from './constants.js';
+import { playerRating } from './rating.js';
+import META from './charts-meta.json' with { type: 'json' };
 
 const LEVELS_KEY = 'vbb_levels';
 const BEST_KEY = 'vbb_best';
@@ -67,6 +69,11 @@ export function recordBest(song, level, { score, rank, fc, ap = false, killed })
   };
   write(BEST_KEY, all);
   return record;
+}
+
+/** 玩家的 Rating（rating.js）：{ rating, top }，照這台電腦存的最佳成績算 */
+export function myRating() {
+  return playerRating(read(BEST_KEY, {}), (song, level) => META[song]?.levels[level]?.rating ?? null);
 }
 
 /** 打倒過幾隻魔王（任何難度都算） */

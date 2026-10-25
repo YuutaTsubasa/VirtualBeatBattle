@@ -6,10 +6,11 @@
   // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
   import { previewTrack, stopPreview } from '../audio/preview.js';
-  import { SHOWN_TRACKS as TRACKS, LEVELS, SHOWN_GAMES as GAMES, gameOf, songOf, coverOf, bossOf } from '../game/tracks.js';
+  import { SHOWN_TRACKS as TRACKS, LEVELS, SHOWN_GAMES as GAMES, gameOf, songOf, coverOf, bossOf, trackOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { getCharacter } from '../game/characters.js';
-  import { levelOf, bestOf } from '../game/progress.js';
+  import { levelOf, bestOf, myRating } from '../game/progress.js';
+  import { chartRating, formatRating, ratingTier } from '../game/rating.js';
   import { atkOfLevel, xpToNext, MAX_LEVEL } from '../game/constants.js';
   import { sheetOf } from '../game/sheets.js';
   import { asset } from '../art-style.svelte.js';
@@ -23,13 +24,19 @@
   // onstart({ song, level, demo })、onback()
   let { character, pick, onstart, onback } = $props();
 
-  // 上次選的曲子現在不在清單裡（例如 PC-98 的曲子先藏起來了）就選第一首
+  // 上次選的曲子現在不在清單裡（例如 PC-98 的曲子先藏起來了）就選第一首；上次玩的是某一首的原曲就選那一首、切到原曲
   const firstPick = untrack(() => pick?.song);
-  let songId = $state(TRACKS.some((tr) => tr.id === firstPick) ? firstPick : TRACKS[0].id);
+  const pickedAsOriginal = TRACKS.find((tr) => tr.original && tr.original === firstPick);
+  let songId = $state(pickedAsOriginal?.id ?? (TRACKS.some((tr) => tr.id === firstPick) ? firstPick : TRACKS[0].id));
+  // 「原曲」按鈕：Suno 的新版選到時，可以切到 PC-98 的原曲（看、聽、玩）；選別首或換篩選就切回來
+  let showOriginal = $state(!!pickedAsOriginal);
   let level = $state(untrack(() => pick?.level) ?? 'normal');
   const c = $derived(getCharacter(character));
   const lv = $derived(levelOf(character));
-  const track = $derived(TRACKS.find((tr) => tr.id === songId) ?? TRACKS[0]);
+  const picked = $derived(TRACKS.find((tr) => tr.id === songId) ?? TRACKS[0]);
+  const original = $derived(picked.original ? trackOf(picked.original) : null);
+  // 右邊顯示、試聽、開始演奏的是這一首（原曲或新版）
+  const track = $derived(showOriginal && original ? original : picked);
   const chartInfo = $derived(META[track.id]);
   const game = $derived(gameOf(track.game));
   // 依來源遊戲篩選（all = 全部）
@@ -71,7 +78,10 @@
     }
     requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
   }
-  const best = $derived(bestOf(songId, level));
+  const best = $derived(bestOf(track.id, level));
+  const rating = myRating();
+  // 這個譜面的最佳成績換算的 Rating
+  const chartValue = $derived(best ? chartRating(chartInfo?.levels[level].rating ?? 0, best.score) : null);
   // 現在的等級全 Perfect 大約打得掉魔王幾成（不算角色能力）
   const estimate = $derived(Math.round(75 * (atkOfLevel(lv.lv) / 100)));
   const minutes = (ms) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
@@ -96,9 +106,15 @@
   // 試聽選到的那一首
   $effect(() => previewTrack(track));
 
+  function toggleOriginal() {
+    play('move');
+    showOriginal = !showOriginal;
+  }
+
   function setFilter(id) {
     play('move');
     filter = id;
+    showOriginal = false;
     // 選到的曲子不在篩選結果裡：改選這款遊戲的第一首
     if (id !== 'all' && track.game !== id) songId = TRACKS.find((tr) => tr.game === id).id;
     requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
@@ -106,13 +122,14 @@
 
   function choose(id, lv = null) {
     if (id !== songId || (lv && lv !== level)) play('move');
+    if (id !== songId) showOriginal = false;
     songId = id;
     if (lv) level = lv;
   }
 
   function start(demo = false) {
     play('select');
-    onstart({ song: songId, level, demo });
+    onstart({ song: track.id, level, demo });
   }
 </script>
 
@@ -165,7 +182,15 @@
             {#if game.logo}<img src={asset(game.logo)} alt={t(game.name)} />{:else}<span class="own-logo"><Logo /></span>{/if}
           {/key}
         </div>
-        <h3 class="pop-text">{t(track.title)}</h3>
+        <div class="title-row">
+          <h3 class="pop-text">{t(track.title)}</h3>
+          {#if original}
+            <button type="button" class="orig" class:on={showOriginal} aria-pressed={showOriginal} onclick={toggleOriginal} title={t('切換新版／PC-98 原曲')}>
+              {showOriginal ? t('新版') : t('原曲')}
+            </button>
+          {/if}
+        </div>
+        {#if showOriginal}<p class="orig-tag">PC-98 {t('原曲')}</p>{/if}
         <p class="boss">BOSS {bossName}</p>
         <p class="meta">BPM <b>{songOf(track).bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
         <div class="levels" role="radiogroup">
@@ -181,7 +206,7 @@
           {#if best}<i class="rank">{best.rank}</i>{/if}
           {#if best?.ap}<i class="fc ap">ALL PERFECT</i>{:else if best?.fc}<i class="fc">FULL COMBO</i>{/if}
         </p>
-        <span class="notes">{t('音符數')} {chartInfo?.levels[level].notes}</span>
+        <span class="notes">{t('音符數')} {chartInfo?.levels[level].notes}{#if chartValue != null}<i></i>{t('這個譜面')} RATING <b>{formatRating(chartValue)}</b>{/if}</span>
       </div>
     </div>
   </div>
@@ -199,6 +224,9 @@
           <b>{bossName}</b><small>{t('戰力推估')} {estimate}%</small>
           <i class="gauge red" class:ok={estimate >= 100}><i style:width="{Math.min(100, estimate)}%"></i></i>
         </span>
+      </div>
+      <div class="rating tier-{ratingTier(rating.rating)}" title={t('最好的 10 個譜面的平均')}>
+        <small>RATING</small><b>{formatRating(rating.rating)}</b>
       </div>
       <button type="button" class="vbtn small demo" onclick={() => start(true)}>▶ {t('電腦示範')}</button>
       <button type="button" class="vbtn primary" onclick={() => start()}>{t('開始演奏')}</button>
@@ -549,6 +577,83 @@
     font-weight: 800;
     font-size: 1.9cqh;
     color: var(--muted);
+  }
+  .notes i {
+    display: inline-block;
+    width: var(--line);
+    height: 1.8cqh;
+    margin: 0 1.2cqh;
+    vertical-align: middle;
+    background: var(--sky-line);
+  }
+  .notes b {
+    color: var(--navy);
+  }
+
+  /* 曲名旁的「原曲」按鈕：按下去切到 PC-98 原曲（亮起來），再按切回新版 */
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 1.4cqh;
+  }
+  .orig {
+    flex: none;
+    padding: 0.5cqh 1.4cqh;
+    border: var(--line) solid var(--accent);
+    background: #fff;
+    color: var(--accent);
+    font-weight: 900;
+    font-size: 1.8cqh;
+    letter-spacing: 0.1em;
+  }
+  .orig.on {
+    background: var(--accent);
+    color: #fff;
+  }
+  .orig-tag {
+    margin: 0;
+    font-weight: 900;
+    font-size: 1.7cqh;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+  }
+
+  /* 玩家的 Rating：顏色照級距（rating.js 的 ratingTier） */
+  .rating {
+    display: grid;
+    justify-items: center;
+    padding: 0.4cqh 1.6cqh;
+    border: var(--line) solid currentColor;
+    background: #fff;
+    line-height: 1.1;
+    --c: var(--navy-soft);
+    color: var(--c);
+  }
+  .rating small {
+    font-weight: 900;
+    font-size: 1.3cqh;
+    letter-spacing: 0.14em;
+  }
+  .rating b {
+    font-size: 2.8cqh;
+    font-style: italic;
+  }
+  .rating.tier-green {
+    --c: #1fb36b;
+  }
+  .rating.tier-orange {
+    --c: #e08a12;
+  }
+  .rating.tier-red {
+    --c: #c81e4a;
+  }
+  .rating.tier-purple {
+    --c: #8a3ad6;
+  }
+  .rating.tier-rainbow b {
+    background: linear-gradient(90deg, #ff3b55, #ffb020, #1fb36b, #2f7bff, #8a3ad6);
+    background-clip: text;
+    color: transparent;
   }
 
   /* 底部一條 */

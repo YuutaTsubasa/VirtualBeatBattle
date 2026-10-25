@@ -5,7 +5,9 @@
   import { onMount } from 'svelte';
   import { createEngine } from './lib/engine.js';
   import { getCharacter, pickLine, unlockHidden } from './lib/game/characters.js';
-  import { savedCharacter, saveCharacter, savedPick, savePick, levelOf, feedXp, recordBest } from './lib/game/progress.js';
+  import { savedCharacter, saveCharacter, savedPick, savePick, levelOf, feedXp, recordBest, myRating } from './lib/game/progress.js';
+  import { chartRating } from './lib/game/rating.js';
+  import META from './lib/game/charts-meta.json' with { type: 'json' };
   import { trackOf, bossOf } from './lib/game/tracks.js';
   import { WORLDS } from './lib/game/stages.js';
   import { COUNTDOWN } from './lib/game/constants.js';
@@ -193,7 +195,9 @@
     const c = getCharacter(character);
     const demo = playing.demo;
     const feed = demo ? null : feedXp(character, v.xp);
+    const ratingBefore = myRating().rating;
     const record = demo ? false : recordBest(playing.song, playing.level, { score: v.score, rank: v.rank, fc: v.fc, ap: v.ap, killed: v.killed });
+    const rating = { chart: chartRating(META[playing.song]?.levels[playing.level]?.rating ?? 0, v.score), before: ratingBefore, after: myRating().rating };
     const unlocked = !demo && v.killed && unlockHidden();
     result = {
       title: t(trackOf(playing.song).title),
@@ -211,6 +215,7 @@
       xp: v.xp,
       feed,
       record,
+      rating,
       unlocked,
       line: pickLine(c, v.killed ? 'win' : 'lose'),
     };

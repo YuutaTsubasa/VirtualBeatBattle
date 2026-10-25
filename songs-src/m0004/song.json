@@ -7,14 +7,20 @@
   "offsetMs": 0,
   "audio": "song.wav",
   "parts": {
-    "melody": ["midi/Arcade Sparkle (Synth).mid", "midi/Arcade Sparkle (Keyboard).mid"],
+    "melody": [
+      "midi/Arcade Sparkle (Synth).mid",
+      "midi/Arcade Sparkle (Keyboard).mid"
+    ],
     "bass": "midi/Arcade Sparkle (Bass).mid",
     "drums": "midi/Arcade Sparkle (Drums).mid"
   },
   "keysound": {
     "stems": "stems",
-    "keys": ["Arcade Sparkle (Guitar).wav"]
+    "keys": [
+      "Arcade Sparkle (Guitar).wav"
+    ]
   },
   "world": 0,
-  "credit": "Suno（Arcade Sparkle）"
+  "credit": "Suno（Arcade Sparkle）",
+  "original": "vr-title"
 }

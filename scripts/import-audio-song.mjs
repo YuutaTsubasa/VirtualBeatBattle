@@ -83,6 +83,7 @@ const data = {
   offsetMs,
   lengthMs,
   credit: conf.credit ?? '',
+  original: conf.original ?? null,
   keys: !!ks,
   source,
 };
