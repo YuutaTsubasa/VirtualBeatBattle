@@ -175,4 +175,6 @@ export default {
   '預設': 'Default',
   '終焉指揮者': 'The Final Conductor',
   '之後的傷害是 OVERKILL': 'Further damage is OVERKILL',
+  '全難度 ↑': 'All charts ↑',
+  '全難度 ↓': 'All charts ↓',
 };

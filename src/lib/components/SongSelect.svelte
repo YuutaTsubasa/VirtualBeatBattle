@@ -31,8 +31,11 @@
   const game = $derived(gameOf(track.game));
   // 依來源遊戲篩選（all = 全部）
   let filter = $state('all');
-  // 排序：default（收錄順序）、asc（選到的難度的等級，低→高）、desc（高→低）；記在這台電腦
-  const SORTS = ['default', 'asc', 'desc'];
+  // 排序（記在這台電腦）：default 收錄順序、asc／desc 照選到的難度的等級（低→高／高→低）、
+  // all-asc／all-desc 把每一首的四個難度拆開、全部的譜面一起照等級排（點一列就同時選曲子和難度）
+  const SORTS = ['default', 'asc', 'desc', 'all-asc', 'all-desc'];
+  const SORT_LABEL = { default: '預設', asc: '等級 ↑', desc: '等級 ↓', 'all-asc': '全難度 ↑', 'all-desc': '全難度 ↓' };
+  const allLevels = $derived(sort.startsWith('all-'));
   let sort = $state(loadSort());
   function loadSort() {
     try {
@@ -42,13 +45,17 @@
       return 'default';
     }
   }
-  const ratingOf = (tr) => META[tr.id]?.levels[level]?.rating ?? 0;
+  const ratingOf = (tr, lv = level) => META[tr.id]?.levels[lv]?.rating ?? 0;
+  // 列表的每一列：{ key, tr, lv }（lv 是全難度排序時那一列的難度，其他時候是 null＝跟著上面選的難度）
   const shown = $derived.by(() => {
-    const list = filter === 'all' ? TRACKS : TRACKS.filter((tr) => tr.game === filter);
-    if (sort === 'default') return list;
-    const k = sort === 'asc' ? 1 : -1;
-    // 等級一樣的話照 BPM，再一樣就照收錄順序
-    return [...list].sort((a, b) => k * (ratingOf(a) - ratingOf(b)) || k * (songOf(a).bpm - songOf(b).bpm) || TRACKS.indexOf(a) - TRACKS.indexOf(b));
+    const songs = filter === 'all' ? TRACKS : TRACKS.filter((tr) => tr.game === filter);
+    let rows = allLevels ? songs.flatMap((tr) => LEVELS.map((l) => ({ key: `${tr.id}:${l.id}`, tr, lv: l.id }))) : songs.map((tr) => ({ key: tr.id, tr, lv: null }));
+    if (sort === 'default') return rows;
+    const k = sort.endsWith('asc') ? 1 : -1;
+    const r = (row) => ratingOf(row.tr, row.lv ?? level);
+    // 等級一樣的話照 BPM，再一樣就照收錄順序、難度順序
+    const order = (row) => TRACKS.indexOf(row.tr) * 10 + (row.lv ? LEVELS.findIndex((l) => l.id === row.lv) : 0);
+    return [...rows].sort((a, b) => k * (r(a) - r(b)) || k * (songOf(a.tr).bpm - songOf(b.tr).bpm) || order(a) - order(b));
   });
 
   function cycleSort() {
@@ -89,9 +96,10 @@
     requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
   }
 
-  function choose(id) {
-    if (id !== songId) play('move');
+  function choose(id, lv = null) {
+    if (id !== songId || (lv && lv !== level)) play('move');
     songId = id;
+    if (lv) level = lv;
   }
 
   function start(demo = false) {
@@ -105,7 +113,7 @@
     <div class="list-col">
       <div class="filters" role="tablist">
         <button type="button" class="sort" class:on={sort !== 'default'} onclick={cycleSort} title={t('排序')}>
-          {sort === 'asc' ? t('等級 ↑') : sort === 'desc' ? t('等級 ↓') : t('預設')}
+          {t(SORT_LABEL[sort])}
         </button>
         <button type="button" role="tab" aria-selected={filter === 'all'} class:on={filter === 'all'} onclick={() => setFilter('all')}>{t('全部')} <i>{TRACKS.length}</i></button>
         {#each GAMES as g (g.id)}
@@ -113,9 +121,11 @@
         {/each}
       </div>
       <div class="songs" bind:this={list}>
-        {#each shown as tr (tr.id)}
-          {@const b = bestOf(tr.id, level)}
-          <button type="button" class="song" class:sel={tr.id === songId} onclick={() => choose(tr.id)} onfocus={() => choose(tr.id)} ondblclick={() => start()}>
+        {#each shown as row (row.key)}
+          {@const tr = row.tr}
+          {@const lv = row.lv ?? level}
+          {@const b = bestOf(tr.id, lv)}
+          <button type="button" class="song" class:sel={tr.id === songId && lv === level} onclick={() => choose(tr.id, row.lv)} onfocus={() => choose(tr.id, row.lv)} ondblclick={() => start()}>
             <span class="no">{String(TRACKS.indexOf(tr) + 1).padStart(2, '0')}</span>
             <img class="thumb" src={art(tr)} alt="" />
             <span class="names">
@@ -127,7 +137,7 @@
               {#if b?.killed}<i class="down">{t('擊破')}</i>{/if}
               {#if b}<i class="rank">{b.rank}</i>{/if}
             </span>
-            <span class="lvl">{ratingOf(tr)}</span>
+            <span class="lvl {lv}">{#if row.lv}<small>{LEVELS.find((l) => l.id === lv).name.slice(0, 2)}</small>{/if}{ratingOf(tr, lv)}</span>
             <span class="bpm"><i class="eq"></i>{songOf(tr).bpm}</span>
           </button>
         {/each}
@@ -238,6 +248,24 @@
     font-size: 2.2cqh;
     background: #e6ebf5;
     color: var(--navy);
+  }
+  /* 全難度排序時，等級前面標難度（顏色跟難度按鈕一樣） */
+  .lvl small {
+    font-size: 1.3cqh;
+    margin-right: 0.4cqh;
+    letter-spacing: 0;
+  }
+  .lvl.easy small {
+    color: #1fb36b;
+  }
+  .lvl.normal small {
+    color: var(--accent);
+  }
+  .lvl.hard small {
+    color: #e08a12;
+  }
+  .lvl.expert small {
+    color: #c81e4a;
   }
   .song.sel .lvl {
     background: #fff;

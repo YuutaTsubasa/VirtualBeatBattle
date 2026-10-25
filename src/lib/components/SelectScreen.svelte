@@ -32,8 +32,14 @@
     cursor = i;
   }
 
-  function choose(i) {
-    // 點已經在看的那一張（或鍵盤 Enter）才決定
+  // 滑鼠／觸控按下去的時候，這一張是不是本來就在看了（按下去會先 focus、focus 又會切過去看，
+  // 所以要在 focus 之前記下來，不然第一下點就直接決定了）
+  let wasLooking = false;
+
+  function choose(i, e) {
+    // 滑鼠／觸控：點已經在看的那一張才決定，第一下只是看資料
+    if (e.detail > 0 && !wasLooking) return look(i);
+    // 鍵盤 Enter／手把 A（detail = 0）：方向鍵移過來就已經在看了，直接決定
     if (i !== cursor) return look(i);
     pick();
   }
@@ -105,8 +111,9 @@
             class="pass"
             class:sel={i === cursor}
             class:locked={!unlocked}
+            onpointerdown={() => (wasLooking = i === cursor)}
             onfocus={() => look(i)}
-            onclick={() => choose(i)}
+            onclick={(e) => choose(i, e)}
             ondblclick={() => pick(c)}
           >
             {#if unlocked}
