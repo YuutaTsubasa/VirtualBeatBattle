@@ -77,7 +77,7 @@ const GAME_BG = { mahjong: 'games/mahjong-parlor.webp', volleyball: 'games/volle
 // 音檔的曲子（Suno 之類，npm run import-song 接進來的）：放在原創曲的後面
 // keys：有琴鍵音的話，伴奏（bgm，旋律拿掉）與旋律（sound，打中才播）兩個檔
 // original：這首是哪一首 PC-98 收錄曲的新版（選曲畫面的「原曲」按鈕切過去）
-const AUDIO_TRACKS = AUDIO_SONGS.map((s) => ({ id: s.id, game: s.game, song: null, title: s.title, world: s.world, bg: s.bg, boss: s.boss, rival: s.rival, original: s.original ?? null, audio: `audio/${s.id}.mp3`, keys: s.keys ? { bgm: `audio/${s.id}-bgm.mp3`, sound: `audio/${s.id}-keys.mp3` } : null, audioSong: s }));
+const AUDIO_TRACKS = AUDIO_SONGS.map((s) => ({ id: s.id, game: s.game, song: null, title: s.title, world: s.world, bg: s.bg, cover: s.cover ?? undefined, boss: s.boss, rival: s.rival, original: s.original ?? null, audio: `audio/${s.id}.mp3`, keys: s.keys ? { bgm: `audio/${s.id}-bgm.mp3`, sound: `audio/${s.id}-keys.mp3` } : null, audioSong: s }));
 const firstOther = LIST.findIndex((tr) => tr.game !== 'original');
 export const TRACKS = [...LIST.slice(0, firstOther), ...AUDIO_TRACKS, ...LIST.slice(firstOther)].map((tr) => ({ ...tr, bg: tr.bg ?? GAME_BG[tr.game] ?? null }));
 

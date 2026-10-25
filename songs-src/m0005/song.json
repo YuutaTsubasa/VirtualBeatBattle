@@ -1,0 +1,25 @@
+{
+  "title": "霓虹頻率",
+  "game": "original",
+  "original": "og-edm",
+  "bpm": 152,
+  "tempoMap": true,
+  "offsetBeats": -0.025,
+  "midiShiftMs": 12,
+  "offsetMs": 0,
+  "audio": "song.wav",
+  "parts": {
+    "melody": ["midi/冒険の鼓動 (Synth).mid", "midi/冒険の鼓動 (Keyboard).mid"],
+    "bass": "midi/冒険の鼓動 (Bass).mid",
+    "drums": "midi/冒険の鼓動 (Drums).mid"
+  },
+  "keysound": {
+    "stems": "stems",
+    "keys": ["冒険の鼓動 (Synth).wav", "冒険の鼓動 (Keyboard).wav"]
+  },
+  "world": 0,
+  "bg": "games/og-edm.webp",
+  "cover": "covers/og-edm.webp",
+  "boss": { "key": "neon-dj", "name": "霓虹 DJ" },
+  "credit": "Suno（冒険の鼓動）"
+}

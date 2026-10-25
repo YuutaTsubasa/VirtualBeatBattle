@@ -77,6 +77,7 @@ const data = {
   game: conf.game ?? 'original',
   world: conf.world ?? 0,
   bg: conf.bg ?? null,
+  cover: conf.cover ?? null,
   boss: conf.boss ?? null,
   rival: conf.rival ?? null,
   bpm: conf.bpm,
