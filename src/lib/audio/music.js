@@ -16,7 +16,11 @@
 
 import { audioContext, buses, fmNote, ssgNote, drum, parseMML, chordNotes } from './synth.js';
 
-export { SONGS } from './songs.js';
+import { SONGS as GAME_SONGS } from './songs.js';
+import { UI_SONGS } from './ui-songs.js';
+
+// setBgm／playJingle 用的曲子：收錄的跑跑樂曲子（songs.js）＋本作自己的介面曲（ui-songs.js 的 ui-*）
+export const SONGS = { ...GAME_SONGS, ...UI_SONGS };
 
 /** 把曲子展開成依時間排序的事件（譜面產生器 src/lib/game/chartgen.js 也用這個） */
 export function compile(song) {

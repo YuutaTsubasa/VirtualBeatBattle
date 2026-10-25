@@ -41,6 +41,24 @@ test('every chord name in the progressions is understood', () => {
   }
 });
 
+// 介面曲：會循環的每小節剛好 4 拍、旋律與伴奏一樣長
+test('every bar of the interface songs is exactly 4 beats', async () => {
+  const { UI_SONGS } = await import('../src/lib/audio/ui-songs.js');
+  assert.ok(UI_SONGS['ui-title'] && UI_SONGS['ui-menu'] && UI_SONGS['ui-clear'] && UI_SONGS['ui-fail']);
+  for (const [name, song] of Object.entries(UI_SONGS)) {
+    if (!song.loop) continue;
+    const lengths = new Set();
+    for (const tr of song.tracks) {
+      if (tr.mml) {
+        bars(tr.mml).forEach((bar, i) => assert.equal(parseMML(bar).length, 4, `${name} ${tr.kind} 第 ${i + 1} 小節`));
+        lengths.add(parseMML(tr.mml).length);
+      }
+      if (tr.prog) lengths.add(beatsOfProg(tr.prog));
+    }
+    assert.equal(lengths.size, 1, `${name}: ${[...lengths].join(' / ')}`);
+  }
+});
+
 // 原創曲：跟本作的曲子一樣，每小節剛好 4 拍、旋律與伴奏一樣長
 test('every bar of the original songs is exactly 4 beats', async () => {
   const { SONGS: ORIGINAL } = await import('../src/lib/audio/library/original.js');

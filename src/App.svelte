@@ -146,20 +146,20 @@
           raceMine = { feed, xp: v.xp, character: mine.character };
           if (v.killed && unlockHidden()) toast(t('隱藏角色「阿翼」加入了！'), 'ok');
         }
-        playJingle(s.results?.[0]?.seat === net.seat ? 'win' : 'lose');
+        playJingle(s.results?.[0]?.seat === net.seat ? 'ui-clear' : 'ui-fail');
       }
     }
   }
 
   const view = $derived(roomPhase ? `online-${roomPhase}` : screen);
 
-  // 背景音樂：依畫面切換（src/lib/audio/songs.js）；打歌的時候由 engine 自己放那一首
+  // 背景音樂：依畫面切換（介面曲在 src/lib/audio/ui-songs.js）；打歌的時候由 engine 自己放那一首
   const scene = $derived.by(() => {
-    if (view === 'online-lobby') return 'menu';
-    if (view === 'online-playing') return raceResults ? 'menu' : null;
-    if (screen === 'title') return 'title';
+    if (view === 'online-lobby') return 'ui-menu';
+    if (view === 'online-playing') return raceResults ? 'ui-menu' : null;
+    if (screen === 'title') return 'ui-title';
     if (screen === 'play' || screen === 'pause') return null;
-    return 'menu';
+    return 'ui-menu';
   });
   $effect(() => setBgm(scene));
 
@@ -213,7 +213,7 @@
       unlocked,
       line: pickLine(c, v.killed ? 'win' : 'lose'),
     };
-    playJingle(v.killed ? 'win' : 'lose');
+    playJingle(v.killed ? 'ui-clear' : 'ui-fail');
     screen = 'result';
   }
 

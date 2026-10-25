@@ -246,11 +246,12 @@ export const sfx = {
     if (!ready()) return;
     ssgNote(out(), 76, now(), 0.05, 0.8);
   },
-  /** GO → */
+  /** GO：銅管和弦＋往上掃的雜訊 */
   go() {
     if (!ready()) return;
     const t = now();
-    [72, 76, 79].forEach((m, i) => ssgNote(out(), m, t + i * 0.07, 0.07, 1.4));
+    [76, 80, 83, 88].forEach((m) => fmNote(out(), 'brass', m, t, 0.22, 0.55));
+    noiseHit(out(), t, { type: 'highpass', freq: 4000, q: 0.7, vol: 0.18, decay: 0.18 });
   },
   /** 魔王登場 */
   alarm() {
@@ -329,10 +330,12 @@ export const sfx = {
     const t = now();
     [79, 76, 72, 69, 65, 62, 57].forEach((m, i) => ssgNote(out(), m, t + i * 0.045, 0.05, 0.7));
   },
-  /** 倒數的「嗶」（3、2、1） */
+  /** 倒數 3、2、1：清脆的鐘聲 */
   count() {
     if (!ready()) return;
-    ssgNote(out(), 81, now(), 0.09, 1.2);
+    const t = now();
+    fmNote(out(), 'bell', 81, t, 0.12, 0.9);
+    ssgNote(out(), 93, t, 0.04, 0.4);
   },
   /** 過終點：短短的上行和弦 */
   goal() {
@@ -350,33 +353,40 @@ export const sfx = {
     }
   },
 
-  // ── 介面（PC-98 遊戲選單的感覺：游標移動嗶一聲、確定往上、取消往下） ──
+  // ── 介面（PC-98 的 FM 鐘聲＋方波：游標移動嗶一聲、確定往上、取消往下） ──
+  /** 游標移動：很短的高音鐘聲（FM） */
   cursor() {
     if (!ready()) return;
-    ssgNote(out(), 88, now(), 0.022, 1.2);
+    fmNote(out(), 'bell', 96, now(), 0.04, 0.55);
   },
+  /** 決定：往上跳的兩個音（FM 鐘聲＋方波疊一層），像訊號接通 */
   confirm() {
     if (!ready()) return;
     const t = now();
-    ssgNote(out(), 84, t, 0.045, 2);
-    ssgNote(out(), 91, t + 0.055, 0.07, 2);
+    fmNote(out(), 'bell', 88, t, 0.06, 0.8);
+    fmNote(out(), 'bell', 95, t + 0.05, 0.12, 0.8);
+    ssgNote(out(), 100, t + 0.05, 0.05, 0.5);
   },
+  /** 返回：往下的兩個音 */
   back() {
     if (!ready()) return;
     const t = now();
-    ssgNote(out(), 86, t, 0.045, 1.8);
-    ssgNote(out(), 79, t + 0.055, 0.07, 1.8);
+    fmNote(out(), 'bell', 91, t, 0.05, 0.7);
+    fmNote(out(), 'bell', 84, t + 0.05, 0.1, 0.7);
   },
+  /** 選定角色：上行的琶音（E 大調和弦） */
   pick() {
     if (!ready()) return;
     const t = now();
-    fmNote(out(), 'bell', 84, t, 0.12, 0.8);
-    fmNote(out(), 'bell', 91, t + 0.07, 0.2, 0.8);
+    [76, 80, 83, 88].forEach((m, i) => fmNote(out(), 'bell', m, t + i * 0.045, 0.14, 0.7));
+    ssgNote(out(), 100, t + 0.18, 0.08, 0.4);
   },
+  /** 不行（鎖住的角色）：低低的兩下方波＋雜訊 */
   deny() {
     if (!ready()) return;
     const t = now();
-    ssgNote(out(), 47, t, 0.06, 2);
-    ssgNote(out(), 47, t + 0.09, 0.06, 2);
+    ssgNote(out(), 45, t, 0.06, 1.6);
+    ssgNote(out(), 44, t + 0.09, 0.08, 1.6);
+    noiseHit(out(), t, { type: 'lowpass', freq: 800, q: 0.7, vol: 0.12, decay: 0.05 });
   },
 };
