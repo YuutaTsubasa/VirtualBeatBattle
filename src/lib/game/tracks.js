@@ -1,4 +1,4 @@
-// 可以玩的曲子：收錄系列四款遊戲的曲子（虛擬台麻館、虛擬排球王、虛擬闖天下、虛擬跑跑樂），每一首都是一隻魔王。
+// 可以玩的曲子：收錄系列四款遊戲的曲子（虛擬台麻館＋每個角色的主題曲、虛擬排球王、虛擬闖天下、虛擬跑跑樂），每一首都是一隻魔王。
 // 曲子本身在 src/lib/audio/library/（照搬各遊戲的 songs.js）與 src/lib/audio/songs.js（跑跑樂，也是本作選單的曲子），
 // 譜面由 chartgen.js 從曲子的旋律與鼓點自動產生，存在 crates/beat-core/charts.json（npm run charts）。
 // 魔王的圖與名字沿用虛擬闖天下的六大關（stages.js 的 WORLDS），world 決定這首是哪一隻魔王、用哪一張背景。
@@ -7,12 +7,14 @@
 import { SONGS as RUNNERS } from '../audio/songs.js';
 import { compile } from '../audio/music.js';
 import { SONGS as MAHJONG } from '../audio/library/mahjong.js';
+import { CHARACTER_THEMES } from '../audio/library/mahjong-themes.js';
 import { SONGS as VOLLEYBALL } from '../audio/library/volleyball.js';
 import { SONGS as QUEST } from '../audio/library/quest.js';
 
 /** 來源的遊戲：名稱、Logo（public/games/）、曲庫 */
 export const GAMES = [
-  { id: 'mahjong', name: '虛擬台麻館', short: '台麻館', logo: 'games/mahjong.webp', songs: MAHJONG },
+  // 台麻館的角色主題曲用 char-<角色 id> 當 key
+  { id: 'mahjong', name: '虛擬台麻館', short: '台麻館', logo: 'games/mahjong.webp', songs: { ...MAHJONG, ...Object.fromEntries(Object.entries(CHARACTER_THEMES).map(([id, song]) => [`char-${id}`, song])) } },
   { id: 'volleyball', name: '虛擬排球王', short: '排球王', logo: 'games/volleyball.webp', songs: VOLLEYBALL },
   { id: 'quest', name: '虛擬闖天下', short: '闖天下', logo: 'games/quest.webp', songs: QUEST },
   { id: 'runners', name: '虛擬跑跑樂', short: '跑跑樂', logo: 'games/runners.webp', songs: RUNNERS },
@@ -25,6 +27,18 @@ export const TRACKS = [
   { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1 },
   { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2 },
   { id: 'mj-tension', game: 'mahjong', song: 'tension', title: '海底撈月', world: 4 },
+  // 台麻館的角色主題曲（阿翼是隱藏角色，曲名不寫名字）
+  { id: 'mj-xiaocui', game: 'mahjong', song: 'char-xiaocui', title: '小翠的主題曲', world: 0 },
+  { id: 'mj-yuehua', game: 'mahjong', song: 'char-yuehua', title: '月華的主題曲', world: 3 },
+  { id: 'mj-aming', game: 'mahjong', song: 'char-aming', title: '阿明的主題曲', world: 4 },
+  { id: 'mj-tangtang', game: 'mahjong', song: 'char-tangtang', title: '糖糖的主題曲', world: 1 },
+  { id: 'mj-xiaochun', game: 'mahjong', song: 'char-xiaochun', title: '小春的主題曲', world: 0 },
+  { id: 'mj-lanjie', game: 'mahjong', song: 'char-lanjie', title: '蘭姐的主題曲', world: 2 },
+  { id: 'mj-cangya', game: 'mahjong', song: 'char-cangya', title: '蒼牙的主題曲', world: 1 },
+  { id: 'mj-jinye', game: 'mahjong', song: 'char-jinye', title: '金爺的主題曲', world: 4 },
+  { id: 'mj-leo', game: 'mahjong', song: 'char-leo', title: '雷歐的主題曲', world: 5 },
+  { id: 'mj-alie', game: 'mahjong', song: 'char-alie', title: '阿烈的主題曲', world: 3 },
+  { id: 'mj-ayi', game: 'mahjong', song: 'char-ayi', title: '隱藏來客的主題曲', world: 5 },
   { id: 'vb-title', game: 'volleyball', song: 'title', title: '晴天的海灘', world: 2 },
   { id: 'vb-menu', game: 'volleyball', song: 'menu', title: '海邊的午後', world: 1 },
   { id: 'vb-match', game: 'volleyball', song: 'match', title: '全力扣殺', world: 0 },

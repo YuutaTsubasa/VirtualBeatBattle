@@ -43,11 +43,12 @@ mod tests {
     /// 每份譜面都讀得到、長押裡面不會再疊音符、照時間按就是全 Perfect
     #[test]
     fn every_chart_loads_and_is_playable() {
-        assert_eq!(songs().len(), 27);
+        assert_eq!(songs().len(), 38);
         for s in songs() {
             for level in [Level::Easy, Level::Normal, Level::Hard] {
                 let notes = &s.chart(level).notes;
-                assert!(notes.len() > 100, "{} {:?} 音符太少", s.id, level);
+                // 慢歌（例如月華的主題曲 92 BPM）的簡單譜面大約九十幾顆
+                assert!(notes.len() > 60, "{} {:?} 音符太少", s.id, level);
                 for (i, n) in notes.iter().enumerate() {
                     for m in &notes[i + 1..] {
                         if m.lane == n.lane && n.len > 0 {
