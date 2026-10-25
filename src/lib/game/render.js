@@ -203,7 +203,8 @@ function quad(g, f, u0, u1, r0, r1) {
   g.closePath();
 }
 
-const SOLO = { mode: 'solo', main: field(480, 70, { top: 60, judge: 440, Z: 3.6 }), rival: null, boss: { x: 480, y: 236, h: 250 } };
+// 軌道一路收窄到魔王的腳下（像一條通往魔王的路）：音符從魔王腳邊出來，魔王本身不會被軌道擋住
+const SOLO = { mode: 'solo', main: field(480, 74, { top: 198, judge: 446, Z: 5 }), rival: null, boss: { x: 480, y: 202, h: 170 } };
 let layout = SOLO;
 
 // 版面（art-work/rhythm-ui-concept-v1）：
@@ -218,7 +219,7 @@ function computeLayout(race, you, spectate) {
     const rival = race.players.find((p) => p.seat !== you);
     return { mode: 'duo', main: field(310, 52, { top: 104, judge: 446, Z: 3 }), rival: { f: field(790, 44, { top: 112, judge: 446 }), seat: rival?.seat }, boss: { x: 480, y: 260, h: 230 } };
   }
-  return { mode: 'multi', main: field(250, 58, { top: 104, judge: 446, Z: 3 }), rival: null, boss: { x: 250, y: 250, h: 190 } };
+  return { mode: 'multi', main: field(250, 60, { top: 214, judge: 446, Z: 4.5 }), rival: null, boss: { x: 250, y: 218, h: 120 } };
 }
 
 /** 觸控：畫面座標 (x, y) 落在自己的哪一條軌道（判定線上方一點到畫面底部都算） */
@@ -462,7 +463,8 @@ let scanFrom = 0;
 // ghost：別人的畫面（沒有每顆的判定）時傳「最近漏掉的音符」的 Set，其他過了判定線就當作打到了
 function drawField(g, f, chart, statuses, ms, fall, { me: isMe = true, held: heldLanes = held, keys = null, ghost = null } = {}) {
   const { judge, laneW } = f;
-  const rTop = 1.12;
+  // 斜的軌道畫到最遠處（魔王腳下）為止；直的（別人的畫面）往上多延伸一點
+  const rTop = f.Z > 1 ? 1 : 1.12;
   const rBottom = rAtY(f, H + 2);
   g.save();
   // 底板：遠處幾乎透明（看得到後面的魔王），越近越暗
@@ -536,7 +538,7 @@ function drawNotes(g, f, chart, statuses, ms, fall, ghost) {
   for (let i = Math.max(0, scanFrom - 4); i < notes.length; i++) {
     const [nt, lane, len, kind, chord] = notes[i];
     const r = (nt - ms) / fall;
-    if (r > 1.08) break;
+    if (r > (f.Z > 1 ? 1 : 1.08)) break;
     const st = ghost ? (ghost.has(i) ? 'M' : nt <= ms ? (len && nt + len > ms ? 'h' : 'P') : '0') : (statuses[i] ?? '0');
     if ('PGDx'.includes(st)) continue;
     const u = (lane + 0.5) / LANES;
@@ -547,21 +549,24 @@ function drawNotes(g, f, chart, statuses, ms, fall, ghost) {
     if (len > 0) {
       const holding = st === 'h';
       if (holding) head = 0;
-      const tail = Math.min(1.1, (nt + len - ms) / fall);
+      const tail = Math.min(f.Z > 1 ? 1 : 1.1, (nt + len - ms) / fall);
       if (tail > rBottom) {
         const a = proj(f, u, head);
         const b = proj(f, u, tail);
+        // 長押的身體：亮青色的實心長條＋兩邊白色的邊（在深藍的軌道上要一眼看得出來）；按住時更亮、會閃
         const bodyGrad = g.createLinearGradient(0, b.y, 0, a.y);
-        bodyGrad.addColorStop(0, 'rgba(47,140,255,0.25)');
-        bodyGrad.addColorStop(1, holding ? 'rgba(120,200,255,0.9)' : 'rgba(47,140,255,0.6)');
+        bodyGrad.addColorStop(0, holding ? 'rgba(150,220,255,0.75)' : 'rgba(90,170,255,0.62)');
+        bodyGrad.addColorStop(1, holding ? 'rgba(200,240,255,0.95)' : 'rgba(130,205,255,0.85)');
         g.fillStyle = bodyGrad;
-        quad(g, f, u - wu * 0.32, u + wu * 0.32, Math.max(head, rBottom), tail);
+        quad(g, f, u - wu * 0.36, u + wu * 0.36, Math.max(head, rBottom), tail);
         g.fill();
-        if (holding) {
-          g.strokeStyle = `rgba(255,255,255,${0.4 + Math.sin(frame * 0.5) * 0.25})`;
-          g.lineWidth = 2;
-          g.stroke();
-        }
+        g.strokeStyle = holding ? `rgba(255,255,255,${0.75 + Math.sin(frame * 0.5) * 0.25})` : 'rgba(255,255,255,0.8)';
+        g.lineWidth = holding ? 2.5 : 1.5;
+        g.stroke();
+        // 中間一條細的亮線（遠處也看得出是一條）
+        g.fillStyle = 'rgba(255,255,255,0.35)';
+        quad(g, f, u - wu * 0.06, u + wu * 0.06, Math.max(head, rBottom), tail);
+        g.fill();
         if (tail < 1.08) {
           const e = proj(f, u, tail);
           g.fillStyle = '#cfe6ff';
@@ -573,6 +578,8 @@ function drawNotes(g, f, chart, statuses, ms, fall, ghost) {
       g.globalAlpha = 1;
       continue;
     }
+    // 斜的軌道：音符在最遠處（魔王腳下）慢慢浮現
+    if (f.Z > 1 && head > 0.9) g.globalAlpha *= Math.max(0, (1 - head) / 0.1);
     const pt = proj(f, u, head);
     if (kind === 1) drawMine(g, pt.x, pt.y, laneW * pt.s);
     else drawTap(g, pt.x, pt.y, w * pt.s, null, chord, pt.s);
