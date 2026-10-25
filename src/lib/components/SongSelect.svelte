@@ -106,6 +106,7 @@
   let list;
   onMount(() => {
     list.querySelector('.song.sel')?.focus({ preventScroll: true });
+    centerTab();
     return stopPreview;
   });
   // 試聽選到的那一首
@@ -118,10 +119,28 @@
   }
 
   let tabs;
+  // 選到的分頁捲到那一條的中間（捲到底就停在最左／最右），兩旁的分頁都看得到、可以直接點
+  function centerTab() {
+    const on = tabs?.querySelector('.on');
+    if (!on) return;
+    tabs.scrollTo({ left: on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2 });
+  }
+  // 滑鼠滾輪在分頁那一條上：上下轉也能左右捲（放得下、捲不動的時候不攔，讓頁面照常）
+  function wheelTabs(e) {
+    if (!tabs || tabs.scrollWidth <= tabs.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    tabs.scrollBy({ left: e.deltaY, behavior: 'instant' });
+  }
+  // Svelte 的 onwheel 是 passive（不能 preventDefault），所以自己掛
+  $effect(() => {
+    const el = tabs;
+    el?.addEventListener('wheel', wheelTabs, { passive: false });
+    return () => el?.removeEventListener('wheel', wheelTabs);
+  });
   function setFilter(id) {
     play('move');
     filter = id;
-    requestAnimationFrame(() => tabs?.querySelector('.on')?.scrollIntoView({ inline: 'nearest', block: 'nearest' }));
+    requestAnimationFrame(centerTab);
     // 選到的曲子不在篩選結果裡：改選這款遊戲的第一首
     if (id !== 'all' && track.game !== id) songId = TRACKS.find((tr) => tr.game === id).id;
     requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
@@ -262,6 +281,7 @@
     gap: 0.3cqw;
   }
   .tabs {
+    position: relative;
     flex: 1;
     min-width: 0;
     display: flex;
