@@ -21,7 +21,7 @@ const RULES = {
   easy: { grid: 1, gap: 1, hold: 2, chordEvery: 0, fill: false, mines: 0 },
   normal: { grid: 0.5, gap: 0.5, hold: 1.5, chordEvery: 4, fill: false, mines: 0 },
   hard: { grid: 0.25, gap: 0.25, hold: 1.5, chordEvery: 2, fill: true, fillGrid: 0.5, mines: 8 },
-  expert: { grid: 0.25, gap: 0.25, hold: 1.5, chordEvery: 1, fill: true, fillGrid: 0.25, hats: true, arp: { slow: 120 }, mines: 5 },
+  expert: { grid: 0.25, gap: 0.25, hold: 1.5, chordEvery: 1, chordBeat: 1, fill: true, fillGrid: 0.25, hats: true, arp: { slow: 120 }, mines: 5 },
 };
 
 
@@ -102,19 +102,27 @@ export function chartFrom(src, level, repeat = 1) {
 
   let lastBeat = -Infinity;
   let prevLane = null;
+  let prevLane2 = null;
+  let bounce = 0;
   let prevMidi = null;
   let lastChord = -Infinity;
   for (const n of melody) {
     if (!onGrid(n.beat, rule.grid) || n.beat - lastBeat < rule.gap - 1e-6) continue;
-    const lane = walk(prevLane, prevMidi, n.midi);
+    let lane = walk(prevLane, prevMidi, n.midi);
+    // 同一個音很快地重複（電音的主旋律常常這樣）：不要同一軌連打，在同一隻手的三條之間滾過去
+    if (lane === prevLane && n.midi === prevMidi && n.beat - lastBeat < 1 - 1e-6) lane = sideOf(lane) * 3 + ((lane % 3) + 1) % 3;
+    // 旋律在兩個音之間來回跳（八度彈跳）：會變成兩軌一直來回，跳回去時換到那隻手的下一條
+    else if (lane === prevLane2 && lane !== prevLane) lane = sideOf(lane) * 3 + ((lane % 3) + 1 + (bounce++ % 2)) % 3;
     const len = n.dur >= rule.hold ? n.dur - 0.5 : 0;
     if (!put(n.beat, lane, len)) continue;
     round.at(-1).mel = true;
     lastBeat = n.beat;
+    prevLane2 = prevLane;
     prevLane = lane;
     prevMidi = n.midi;
     // 同時押：小鼓的位置、而且離上一次夠遠，在另一隻手那一側補一顆
-    const strong = onGrid(n.beat, 4) || snares.some((s) => Math.abs(s - n.beat) < 1e-6);
+    // （極限：每一拍的正拍都算，同時押多很多）
+    const strong = onGrid(n.beat, rule.chordBeat ?? 4) || snares.some((s) => Math.abs(s - n.beat) < 1e-6);
     if (rule.chordEvery && strong && n.beat - lastChord >= rule.chordEvery - 1e-6) {
       if (put(n.beat, mirror(lane))) lastChord = n.beat;
     }
@@ -145,8 +153,11 @@ export function chartFrom(src, level, repeat = 1) {
     const taken = (beat, gap, side) =>
       round.some((n) => (!slow || sideOf(n.lane) === side) && (Math.abs(n.beat - beat) < gap - 1e-6 || (n.len && beat > n.beat && beat < n.beat + n.len)));
     const drums = [...snares.map((b) => [b, 's']), ...kicks.map((b) => [b, 'k']), ...(rule.hats ? hats.map((b) => [b, 'h']) : [])].sort((a, b) => a[0] - b[0]);
-    let flip = 0;
-    let hatN = 0;
+    // 每一種鼓在那一側輪流用的軌道（左手、右手）：小鼓偏外側、大鼓偏內側、Hi-hat 三條都用；跟上一顆同一軌就換下一個
+    // （輪到第幾條是每隻手各自算的，不然左右交替時每隻手都剛好停在同一條，變成兩軌來回）
+    const ORDER = { s: [[0, 1, 2], [5, 4, 3]], k: [[2, 1, 0], [3, 4, 5]], h: [[1, 0, 2], [4, 5, 3]] };
+    const turn = {};
+    let lastFill = -1;
     for (const [beat, kind] of drums) {
       if (beat >= length || !onGrid(beat, fillGrid)) continue;
       // 慢歌：鼓放在「這時候正在彈旋律的那隻手」的另一側
@@ -154,11 +165,13 @@ export function chartFrom(src, level, repeat = 1) {
       const base = near ? mirror(near.lane) : 2;
       // 慢歌：那一側同一格沒有音符就可以放（兩隻手各打各的）
       if (taken(beat, slow ? 0.25 : fillGrid - 0.01, sideOf(base))) continue;
-      // 小鼓放靠外側、大鼓放靠內側，左右輪流
-      // Hi-hat 在那一側的三條之間輪流（不要同一軌連打）
-      const lane = kind === 's' ? (sideOf(base) ? 5 - flip : flip) : kind === 'h' ? sideOf(base) * 3 + [1, 0, 2][hatN++ % 3] : sideOf(base) ? 3 + flip : 2 - flip;
-      flip = (flip + 1) % 2;
-      put(beat, Math.max(0, Math.min(LANES - 1, lane)));
+      const order = ORDER[kind][sideOf(base)];
+      const key = kind + sideOf(base);
+      const k = turn[key] ?? 0;
+      turn[key] = k + 1;
+      let lane = order[k % 3];
+      if (lane === lastFill || lane === near?.lane) lane = order.find((l) => l !== lastFill && l !== near?.lane) ?? lane;
+      if (put(beat, lane)) lastFill = lane;
     }
   }
 
