@@ -1,0 +1,712 @@
+{
+  "request": "2026-10-25-1900-anime90-first-batch.md",
+  "requestSha256": "18b1fc6e57f5eaf64b464c0dce3ebc8e2e196a514d925c29c8a87f216d103420",
+  "createdAt": "2026-10-25T15:18:20.075Z",
+  "generatedWith": "built-in image_gen",
+  "count": 70,
+  "characters": 10,
+  "actionsPerCharacter": 7,
+  "promptCount": 74,
+  "assets": [
+    {
+      "asset": "characters/yuehua/sprites/back-idle.png",
+      "sha256": "83d45b57cbcd263690b1bf427ea2dd07307c04e513cf85e8115edacc48f143bc",
+      "sourceSha256": "862a6811938ff74891ec36268e7f423e955e155927ead735113708f24af4fd20",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/yuehua/sprites/back-strike1.png",
+      "sha256": "86ed2eed6aa1399e99af822130536e40972e88f1bba881a3ca3a5e552f76a6ad",
+      "sourceSha256": "7ed18bf19dcff245503e4af58e3124a08c293a418d6674b9bc17892fc97f2046",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/yuehua/sprites/back-strike2.png",
+      "sha256": "cc9348b44315d31d6602835a9e0c4f1bb62e82fe6c38d5314d52e7166fd87af5",
+      "sourceSha256": "f8bdfa0893c9891941a4c543b37f475d93547e4203dc716e0eb07dcb232541cf",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/yuehua/sprites/back-sweep.png",
+      "sha256": "31b2caac0bae579b10ad76c4b1c446823c81a66da9a2b9638e6f8a56ac37149f",
+      "sourceSha256": "56bb0cc65a5ed088d39a2ddd076d657693ac5bf5a8e55f4db944df106de0aaff",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/yuehua/sprites/back-hold.png",
+      "sha256": "379919c0caec3030b9bba7febcf2063a165fa953e39ed42b0692125070f5a308",
+      "sourceSha256": "a207931f150e098476c6dc554f459f2e7b676efd4b3f9d808b76d97ef5cac591",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/yuehua/sprites/back-release.png",
+      "sha256": "66bce5c51c2c2b198c962b6cda234b655200cb715ba8727a202360e596ccd012",
+      "sourceSha256": "befdd46b23600753e2c394fb4ce28a62937b14c8ab7f32997445fd542de7e5f6",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/yuehua/sprites/back-hurt.png",
+      "sha256": "aded0984e2c5e8d5f55437ae1ff3cfd0d479460a66877e38c0464c80700f93c3",
+      "sourceSha256": "5287c0301ca3f665b594d69211e1547c8485289a9acb198a31cf2d64c261ba0c",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/aming/sprites/back-idle.png",
+      "sha256": "8420fbe7a7f9c8965e2f170a1ab807d8ded2a68f852edd1c82860a6db10997e4",
+      "sourceSha256": "d1aec3a5c76eb40cb8cd81f28b460bb037cb621c57f5f2cc88b47cc1df397ad4",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/aming/sprites/back-strike1.png",
+      "sha256": "fde62a2a9a8af10a0025bcb3781c8d4d98ef14a3804bdbe6a95f9ffd668b90f3",
+      "sourceSha256": "ebc4ac581f47ddc354b6833b24f4d339acd67ea2183179885883f1794ccc1d8e",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/aming/sprites/back-strike2.png",
+      "sha256": "c64b3da42abc9aeb53f331a856462824163fd1714e04aa019a31ad279abe78a2",
+      "sourceSha256": "87bbb385391469ba3120d4b9166e4afb6382a928250878fba37809d4dbe477b6",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/aming/sprites/back-sweep.png",
+      "sha256": "9d15069fbbfd652e5311e4749527a8e90044bf448d572b7053272539e8ed17a5",
+      "sourceSha256": "951488be37464ea6f355d71801fd1476ccb3c6b43aca96fc80d79276a0ec38fe",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/aming/sprites/back-hold.png",
+      "sha256": "30d47a7d6b846d4b6058b2ed3fe6508bde571be1e46ea51955233b8b85c778b7",
+      "sourceSha256": "8969e93b306839b04773ec809c9b92789d3cc777bb8e082741eed9167ce6512c",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/aming/sprites/back-release.png",
+      "sha256": "949cb51242ec90687c8dfbc4a8cf2763fea5dee0d6169f465ab140fb68ae7340",
+      "sourceSha256": "a7df226fd58d2b89d1723e84cf59c59f9fe4326de814dc226b73d345dd6af1cf",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/aming/sprites/back-hurt.png",
+      "sha256": "9b95c9e95b3497437271399a6fee81126d91faae0ade0146d4c9cebc69d0a5f0",
+      "sourceSha256": "43782a5fd63b3fdb9eb96c905d5bf3f030b02da7195368d0c936a48451f66abe",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/tangtang/sprites/back-idle.png",
+      "sha256": "25164b48c1528ba27b8e8532fafa0caa685d763bcb4c8b5e17f247cd46be521a",
+      "sourceSha256": "3d218c5f665c1ce67fa531cb82bba98f8c8929af4cef3eb10f8c1ee68f3ce7fa",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/tangtang/sprites/back-strike1.png",
+      "sha256": "63abaeaf86977793c095d2420961e75b6c055877b90114db3fe289c9759860bb",
+      "sourceSha256": "2ed5755994c390f811a854214d167d4695089f492eb12690c21337215b77fd67",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/tangtang/sprites/back-strike2.png",
+      "sha256": "30869fa8e3319573281fc80c620c1bce2ba8bfe11b4f570c423ef294212779f7",
+      "sourceSha256": "413b0630869542135ab3ac554e1ca238652d986409d692e001a4ee02dcf56473",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/tangtang/sprites/back-sweep.png",
+      "sha256": "f811953184a47592bb6594630278c1a9148b2c359821731ac3ddd57bfc826af3",
+      "sourceSha256": "e9f1678ca7785bb045a13bc3bdec8ffe30b5002809651462de4e8d6c603ba112",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/tangtang/sprites/back-hold.png",
+      "sha256": "a4bd5d4b47a23fd6d7e4284330313f5756c9a1ec1ac71c456e8511bf40092130",
+      "sourceSha256": "bffbdacb085af40e7a72a2b8bbc600752145d82485297376c34381336a70c9da",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/tangtang/sprites/back-release.png",
+      "sha256": "27ae9e5273b6378be4a03a469e23be104480006c7438e27435bdf9d2f11d0164",
+      "sourceSha256": "51620264a24b7dad36685080ad24df48dc0be63362cfd0d2680dd4ebab487e73",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/tangtang/sprites/back-hurt.png",
+      "sha256": "7e14b2d628072e23f7b816495fbebe43dc6dc2df7bd5a14723061373f9d915bd",
+      "sourceSha256": "d719311b7a3a1b9b5d2a484b0da54eddfb97117a7405cf3240987b39058cba58",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/xiaochun/sprites/back-idle.png",
+      "sha256": "017298d81a6990906d551dd5919f22ce361d01b3ed5c7fcbe59b1db395bc9f31",
+      "sourceSha256": "d77dcb507da75cbcf8126d03777c0bc736ca28498edb86c8648a501ba3f272d6",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/xiaochun/sprites/back-strike1.png",
+      "sha256": "87740613461cad26202002d11c67d1147c7de99dc07ebd9216bffb16130d64b7",
+      "sourceSha256": "6e232d4506f1b48a5fc99fb2c1c1dc94718fd8c916ad5205338ffcb0506706a6",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/xiaochun/sprites/back-strike2.png",
+      "sha256": "60f460f71bdf5068e5ccc5afcd64e07ca5ee8f02562727a39fe66f871fb39524",
+      "sourceSha256": "5689177f3fa470e6020a017485c0dee028c2090b1828e214b09bd0d0e1f47e7e",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/xiaochun/sprites/back-sweep.png",
+      "sha256": "1df2e2c11860dc53458982526cd063e271a16cc9785a9da2f0afbda16fe1bb36",
+      "sourceSha256": "99f2cbd9ad70665d338ddccb8fb03fbc4b84d2c632a7e401c96aeea33d44b77f",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/xiaochun/sprites/back-hold.png",
+      "sha256": "1c35ca09aa32ab1f840f9bfc02c792924cefa5c13042d4689358667647d7707a",
+      "sourceSha256": "f02ffd247568eb5e2246bcb7234189b27e0fb22c65d43787425422fd843077d2",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/xiaochun/sprites/back-release.png",
+      "sha256": "5e01204bff71d264ad19a61bbdb92b46ced7906b52a22b061707257c775bab5a",
+      "sourceSha256": "8d82f4d74f5d0f609fe5a86372f5991831a1d848e07acfe7e1b5a45ed48c33c3",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/xiaochun/sprites/back-hurt.png",
+      "sha256": "db7a9ceee98bdd9c096456f3ffa0283cff785000464a08c0b981484ba00af828",
+      "sourceSha256": "cc7c86da786630361f07c18abf137540d00e7859062ca514de21ac95af30ec1c",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/lanjie/sprites/back-idle.png",
+      "sha256": "229ab3c954889b2cb0d50cbee8ed0b1bffecc6190a5e89439ac6858bbf4150a1",
+      "sourceSha256": "01a1f42527f1a3944ea03f0097fc36851b2e9b13160371cae197ed9f579e4117",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/lanjie/sprites/back-strike1.png",
+      "sha256": "7d2cbe789abe9d5b75ac390149a88b53444a043e43ed05f30ef1110ddbfeb25f",
+      "sourceSha256": "bb652b9a73c0aec61dadd79b5bb6e72dcfb9ed932830209e02897c3caeee4d7b",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/lanjie/sprites/back-strike2.png",
+      "sha256": "49cb7b9a6fb354c2284e3c85b1d1949be3c473f6efb048025e4bd6b234d045c7",
+      "sourceSha256": "4e7dd7a82e79897729c6d59f373e9d4798491d32d9ca5c5edcc3606205a729de",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/lanjie/sprites/back-sweep.png",
+      "sha256": "5dc9eda71ea11d8c4550f82b5cdb287ffc7147fcf16d036105a1c8eddc775c4c",
+      "sourceSha256": "b698f30a64542d4fdd6db70631018e7220332535dbcbc550bc3a4acdea0cc838",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/lanjie/sprites/back-hold.png",
+      "sha256": "240b26561dc078631a2c32f646eb9428c92fe11d8b29fd77bc457220f9845057",
+      "sourceSha256": "b94068ce486f46754aa9f131a40769870704ee98408eb9920c3cef81e6bbc208",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/lanjie/sprites/back-release.png",
+      "sha256": "db99fd12efe007d3926dc8d28143f6ebe888c1df5402791f6f263c3b29c26de1",
+      "sourceSha256": "cbb4e37cf9970588edbba28f282c52dd2aadfda1a5ad2dba7acd917174769a71",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/lanjie/sprites/back-hurt.png",
+      "sha256": "e8a81400305f48bf3527131394f04024c67cdcf00c50dda7ae5dfdc2c65f5e74",
+      "sourceSha256": "c4e85195740f4df2ee96e65f37cc66b7be6cf7e93363fb51f0257b981f583d75",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-a"
+    },
+    {
+      "asset": "characters/cangya/sprites/back-idle.png",
+      "sha256": "aa9a88f5715b42f1e75ac20343c19473b042a48fd650289874fbe431f55abbd8",
+      "sourceSha256": "a91792713984a4bc47eb18a31740fa115c0335506332b832c5bc30a3543285c4",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/cangya/sprites/back-strike1.png",
+      "sha256": "6e09ea796a327250cdf60d2542e39c5f3d37d908f6589860f14b4c7aea9714e9",
+      "sourceSha256": "50e80610dac4bb59537efe44c9b72970ed7d51e43a488bb6b0a84682f3532e2f",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/cangya/sprites/back-strike2.png",
+      "sha256": "93cc294dcfc1c63ef97adcc826a5edb449916d16b61ba9a2335dbf0a1d4fb76a",
+      "sourceSha256": "b64d4924c165643236afbba878d11dbc300a96bf7eb89ca7549f2c2c98b0a3d9",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/cangya/sprites/back-sweep.png",
+      "sha256": "4530ef44f561799aa1359d8866961dce9251df00d98552a696be59b402558441",
+      "sourceSha256": "4cc74e1be74ca7924586e1e8be83efb0071f120f9d7b34006239d23f179c0db6",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/cangya/sprites/back-hold.png",
+      "sha256": "493fb6a186aa474e729045e83c5ad94902e5ae6b6157d8bd828a9bc3c003067b",
+      "sourceSha256": "83fe6ab42afaff2b0a0f5c4bdd800ab0349d6591d3fffc440d267d3a6ed1e748",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/cangya/sprites/back-release.png",
+      "sha256": "a678929642c405c94b0226318cf642cc8f8c55b3e5434670f48304b7bbf37002",
+      "sourceSha256": "85f1f8ab956be7bd2cd6a8d317f14ab42d2322838ab82b24c40139e34010f656",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/cangya/sprites/back-hurt.png",
+      "sha256": "4e46086b4bdcafd4bf8df2607fca7385cdaa2dda17ce02e5d16593167ca960ef",
+      "sourceSha256": "00474995c8e99ecff2c4e56fce09e7a15bd41015fa8da5a7f491250485b43a86",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/jinye/sprites/back-idle.png",
+      "sha256": "6124b8db0df6d378efbf48031564e7851661843cee73c86ce900d3a0a7e0ba8f",
+      "sourceSha256": "9b5941d94f4a7492ab94e795f3ac0dd180c2340dfc4f0de8d39bde42aaaeda5d",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/jinye/sprites/back-strike1.png",
+      "sha256": "dc38338456d2ff08badbcf201a511fa47b0901d7f4e741e722722fa6417f2de8",
+      "sourceSha256": "36c0b0d16724c374337030fe64fd44fbedbe4e25ba0855e38f0e40a4aad84184",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/jinye/sprites/back-strike2.png",
+      "sha256": "589a33754714ab37e5aa42dd12cab67e070681d678cecba4c61f4eeec48145e7",
+      "sourceSha256": "2413c54859a93d6acd172b7d07fe60affae7a49897eaddcb7a716405b76e3b7b",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/jinye/sprites/back-sweep.png",
+      "sha256": "05c2ce07d929b17ef2684cd206a5f05ba272b7b87d6644820b53fc137fbdead5",
+      "sourceSha256": "e16e613d7b7eb99dfa335e8ed041e0f0331415c4412cc25bcc8c00bc827caff8",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/jinye/sprites/back-hold.png",
+      "sha256": "21853f98aa9d32327052194cd352e58c10e14468cc651fd9b548635707b37c1f",
+      "sourceSha256": "276052d97a07374034dfbe34e073bf690e682b663ab06a162512b531c6e061d1",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/jinye/sprites/back-release.png",
+      "sha256": "c71f7a18bdd4f334b2fa1a5feeaaacea172351280ed06c6b367007989245eb98",
+      "sourceSha256": "69d8c3b3991635536957750b95708304d70c9748f39215b4aa2bba7e5e7316ed",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/jinye/sprites/back-hurt.png",
+      "sha256": "8c509902e0b668619a3bddb5326001561a1dbb1271d5871194191f7c5f15b142",
+      "sourceSha256": "137977de6741f5e2b34b80b84bd15ca3c338926658072911dc6c9c26a99cc494",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/leo/sprites/back-idle.png",
+      "sha256": "0a7acc8c5544555ffe030e826b626cf14d4d5b251b744ab99062cd60529e52c7",
+      "sourceSha256": "30467877baa8ff06cced02d78e848a5199858a304673dcf820ee89c3aba2d18e",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/leo/sprites/back-strike1.png",
+      "sha256": "9ccd1cbddbf785d9eac416975f319b736279afc333ee27766fe821ae448a307b",
+      "sourceSha256": "acb9c18850ff44d81ab4f5c969f589fba8cc05ea4df4b271258a0feda85f40fc",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/leo/sprites/back-strike2.png",
+      "sha256": "4a907277b04e203c282c9de3a0c0cad20cb91894825a8e2f8ad63820d97b00af",
+      "sourceSha256": "5f83d9222c56effb6a71f5bd013b5d1f9f4eb48c06875cf7944d814a1028fba0",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/leo/sprites/back-sweep.png",
+      "sha256": "81837a5e7b144f64ba9b69f074044c38f9053c83b27412c65ab973d07006adc6",
+      "sourceSha256": "43def7d897238a708d62fbd9bd44910b4233823a44ea83c4ad072e6cf9e13fbf",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/leo/sprites/back-hold.png",
+      "sha256": "74b3037f264ad6250a375cc5db75bbf4408c3dd2626ef378714feca78cd7bba7",
+      "sourceSha256": "171d8141c659c491e0c2d1cf8d70cdbd3758b435478fdbae6bc6f4441f037326",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/leo/sprites/back-release.png",
+      "sha256": "ba79b9786716745867cc6a32e120167941fd811b0520b5d04cace0c19b72b76d",
+      "sourceSha256": "edbb07377e3c7c6024a226b011247473033e4b2d505792c0b4cafef07036dafd",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/leo/sprites/back-hurt.png",
+      "sha256": "550b2f25e4418cd4490f678d96e43df46dcb4bce23ecd8d42992a1b6ae2b1991",
+      "sourceSha256": "ecbf357801d2e4731d180adff93b13e92f0fc833993747a815a6511a7104940c",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/alie/sprites/back-idle.png",
+      "sha256": "c1f95364edd77b8668efa9c182beb0e6dd6ef9b8d0078c5217961a9be98c841e",
+      "sourceSha256": "51a2bd5aa979d6c7881807748397cd01ac7a80fb7280e921e2779eebe40b3ccb",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/alie/sprites/back-strike1.png",
+      "sha256": "51bd32a3aaf0ffa07646e3caddd823b13ee9f47819fc856c8535475bead5f246",
+      "sourceSha256": "bfb99ecfbd4d0e04d39e02c6d3bdc3be41178dd7c2294735c304c167a2060e36",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/alie/sprites/back-strike2.png",
+      "sha256": "e3012c37072264f1b9520b4b95dd2b3623802eb22d5c4e5a1282c04cf06f45c5",
+      "sourceSha256": "6419e3d78c14c94560d2bc2b167fe09a6547ea3b529d33168f2e323529bdd17b",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/alie/sprites/back-sweep.png",
+      "sha256": "b8dd58cede2507241b34f5748195f14d4b94fbcc7a0fffb2fdec28c3aa6e2df0",
+      "sourceSha256": "e1e410669711b78a5bb2f33ae2f44c7b6d17e2786b2456910bdc76971997a97c",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/alie/sprites/back-hold.png",
+      "sha256": "c665af6018c26f4def225be5a28fb0198daa3fd2baeab6d73b413554d9b06ce9",
+      "sourceSha256": "28a20c35f512b674f6478a700ee744aceb2b5a8b225b503c8b56f771471497b5",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/alie/sprites/back-release.png",
+      "sha256": "7a7b1533a2d7bd7ec2600f37d9a9b0b3633782608810873c93456656a91ec231",
+      "sourceSha256": "c690edb852c197c01932dfaf1a737cbc40349f2c070537f7afcaa130ae2834d9",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/alie/sprites/back-hurt.png",
+      "sha256": "adbde430aee3f592b8f3fc153fe41017a396c481fbe3893600f64570c2d70af2",
+      "sourceSha256": "0da181d545d5257f20938599f7bf7467c68f224380e7166da338104a13cdc215",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/ayi/sprites/back-idle.png",
+      "sha256": "b3e517a9a9cb91acfa8d9753de274799cd042ea9dc90ab8ea65eef3bdbb0851a",
+      "sourceSha256": "3be9212a389fc140023f4ccdb3dfa097be15fa51497a8b9a18e8c7dce6e0bcb3",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/ayi/sprites/back-strike1.png",
+      "sha256": "df4470401834cfa829f2fa976f5ff26ec8b653e7ca6826cfee9993896f9c0a70",
+      "sourceSha256": "c92df213a5f1d6d493feca8cf0ad4b43e20b270870e2df2375e3a360e03ecfcb",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/ayi/sprites/back-strike2.png",
+      "sha256": "2a23bfdaedee191a8a9990c2eb96fd04416139a130803f650ce174220448af9c",
+      "sourceSha256": "1bb191acfaff0021c1010100eda03ebfc4500d9cf77279e40c8cd7f34cc69b64",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/ayi/sprites/back-sweep.png",
+      "sha256": "644fa7c157a2554f5a2e8342de2862a552b6f4437f2f99d23d0a7b70d1e2c1e8",
+      "sourceSha256": "17a57bc7da81369f7237750fa56316fd4f951c9bc7d62d33c596252c275021af",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/ayi/sprites/back-hold.png",
+      "sha256": "9d6c4b4e4dda82eea02cecb15d002d60203a772ad5bc3803f9acc22671e33330",
+      "sourceSha256": "23ae07664f433b62b696d71812bb07980dda4a154cda5a8e85ca5ac98c06456e",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/ayi/sprites/back-release.png",
+      "sha256": "8608707a054c6e701db050983f03e309b2a2a04afe4db6fe0a42487bbbdc4384",
+      "sourceSha256": "8a5358fec706d9bf4e5d785caf0d2fdc0647332575c7642121efb8330ffbaf3d",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    },
+    {
+      "asset": "characters/ayi/sprites/back-hurt.png",
+      "sha256": "3f7797f6f95fe9ddca23634759e1226311ef613282da96c8d2f566bcf16d384f",
+      "sourceSha256": "61965f5659c0a6b8b49fa7109c29f7c431c1f883e6e00a00bff410baf9ddbdd2",
+      "size": [
+        512,
+        512
+      ],
+      "worker": "rear-b"
+    }
+  ]
+}

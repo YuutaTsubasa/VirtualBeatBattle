@@ -1,0 +1,387 @@
+[
+  {
+    "name": "aming__back-hold",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/aming__back-hold.txt",
+    "source": "sources/aming__back-hold.png",
+    "sourceSha256": "8969e93b306839b04773ec809c9b92789d3cc777bb8e082741eed9167ce6512c",
+    "references": [
+      "sources/aming__back-idle.png"
+    ]
+  },
+  {
+    "name": "aming__back-hurt",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/aming__back-hurt.txt",
+    "source": "sources/aming__back-hurt.png",
+    "sourceSha256": "43782a5fd63b3fdb9eb96c905d5bf3f030b02da7195368d0c936a48451f66abe",
+    "references": [
+      "sources/aming__back-idle.png"
+    ]
+  },
+  {
+    "name": "aming__back-idle",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/aming__back-idle.txt",
+    "source": "sources/aming__back-idle.png",
+    "sourceSha256": "d1aec3a5c76eb40cb8cd81f28b460bb037cb621c57f5f2cc88b47cc1df397ad4",
+    "references": [
+      "../../public/characters/aming/normal.webp",
+      "../anime90-trial/delivery/characters/xiaocui/sprites/back-idle.png"
+    ]
+  },
+  {
+    "name": "aming__back-release",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/aming__back-release.txt",
+    "source": "sources/aming__back-release.png",
+    "sourceSha256": "a7df226fd58d2b89d1723e84cf59c59f9fe4326de814dc226b73d345dd6af1cf",
+    "references": [
+      "sources/aming__back-idle.png"
+    ]
+  },
+  {
+    "name": "aming__back-strike1",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/aming__back-strike1.txt",
+    "source": "sources/aming__back-strike1.png",
+    "sourceSha256": "ebc4ac581f47ddc354b6833b24f4d339acd67ea2183179885883f1794ccc1d8e",
+    "references": [
+      "sources/aming__back-idle.png"
+    ]
+  },
+  {
+    "name": "aming__back-strike2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/aming__back-strike2.txt",
+    "source": "sources/aming__back-strike2.png",
+    "sourceSha256": "87bbb385391469ba3120d4b9166e4afb6382a928250878fba37809d4dbe477b6",
+    "references": [
+      "sources/aming__back-idle.png"
+    ]
+  },
+  {
+    "name": "aming__back-sweep",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/aming__back-sweep.txt",
+    "source": "sources/aming__back-sweep.png",
+    "sourceSha256": "951488be37464ea6f355d71801fd1476ccb3c6b43aca96fc80d79276a0ec38fe",
+    "references": [
+      "sources/aming__back-idle.png"
+    ]
+  },
+  {
+    "name": "lanjie__back-hold",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/lanjie__back-hold.txt",
+    "source": "sources/lanjie__back-hold.png",
+    "sourceSha256": "b94068ce486f46754aa9f131a40769870704ee98408eb9920c3cef81e6bbc208",
+    "references": [
+      "sources/lanjie__back-idle.png"
+    ]
+  },
+  {
+    "name": "lanjie__back-hurt",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/lanjie__back-hurt.txt",
+    "source": "sources/lanjie__back-hurt.png",
+    "sourceSha256": "c4e85195740f4df2ee96e65f37cc66b7be6cf7e93363fb51f0257b981f583d75",
+    "references": [
+      "sources/lanjie__back-idle.png"
+    ]
+  },
+  {
+    "name": "lanjie__back-idle",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/lanjie__back-idle.txt",
+    "source": "sources/lanjie__back-idle.png",
+    "sourceSha256": "01a1f42527f1a3944ea03f0097fc36851b2e9b13160371cae197ed9f579e4117",
+    "references": [
+      "../../public/characters/lanjie/normal.webp",
+      "../anime90-trial/delivery/characters/xiaocui/sprites/back-idle.png"
+    ]
+  },
+  {
+    "name": "lanjie__back-release",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/lanjie__back-release.txt",
+    "source": "sources/lanjie__back-release.png",
+    "sourceSha256": "cbb4e37cf9970588edbba28f282c52dd2aadfda1a5ad2dba7acd917174769a71",
+    "references": [
+      "sources/lanjie__back-idle.png"
+    ]
+  },
+  {
+    "name": "lanjie__back-strike1",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/lanjie__back-strike1.txt",
+    "source": "sources/lanjie__back-strike1.png",
+    "sourceSha256": "bb652b9a73c0aec61dadd79b5bb6e72dcfb9ed932830209e02897c3caeee4d7b",
+    "references": [
+      "sources/lanjie__back-idle.png"
+    ]
+  },
+  {
+    "name": "lanjie__back-strike2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/lanjie__back-strike2.txt",
+    "source": "sources/lanjie__back-strike2.png",
+    "sourceSha256": "4e7dd7a82e79897729c6d59f373e9d4798491d32d9ca5c5edcc3606205a729de",
+    "references": [
+      "sources/lanjie__back-idle.png"
+    ]
+  },
+  {
+    "name": "lanjie__back-sweep",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/lanjie__back-sweep.txt",
+    "source": "sources/lanjie__back-sweep.png",
+    "sourceSha256": "b698f30a64542d4fdd6db70631018e7220332535dbcbc550bc3a4acdea0cc838",
+    "references": [
+      "sources/lanjie__back-idle.png"
+    ]
+  },
+  {
+    "name": "tangtang__back-hold",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/tangtang__back-hold.txt",
+    "source": "sources/tangtang__back-hold.png",
+    "sourceSha256": "bffbdacb085af40e7a72a2b8bbc600752145d82485297376c34381336a70c9da",
+    "references": [
+      "sources/tangtang__back-idle.png"
+    ]
+  },
+  {
+    "name": "tangtang__back-hurt",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/tangtang__back-hurt.txt",
+    "source": "sources/tangtang__back-hurt.png",
+    "sourceSha256": "d719311b7a3a1b9b5d2a484b0da54eddfb97117a7405cf3240987b39058cba58",
+    "references": [
+      "sources/tangtang__back-idle.png"
+    ]
+  },
+  {
+    "name": "tangtang__back-idle",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/tangtang__back-idle.txt",
+    "source": "sources/tangtang__back-idle.png",
+    "sourceSha256": "3d218c5f665c1ce67fa531cb82bba98f8c8929af4cef3eb10f8c1ee68f3ce7fa",
+    "references": [
+      "../../public/characters/tangtang/normal.webp",
+      "../anime90-trial/delivery/characters/xiaocui/sprites/back-idle.png"
+    ]
+  },
+  {
+    "name": "tangtang__back-release",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/tangtang__back-release.txt",
+    "source": "sources/tangtang__back-release.png",
+    "sourceSha256": "51620264a24b7dad36685080ad24df48dc0be63362cfd0d2680dd4ebab487e73",
+    "references": [
+      "sources/tangtang__back-idle.png"
+    ]
+  },
+  {
+    "name": "tangtang__back-strike1",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/tangtang__back-strike1.txt",
+    "source": "sources/tangtang__back-strike1.png",
+    "sourceSha256": "2ed5755994c390f811a854214d167d4695089f492eb12690c21337215b77fd67",
+    "references": [
+      "sources/tangtang__back-idle.png"
+    ]
+  },
+  {
+    "name": "tangtang__back-strike2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/tangtang__back-strike2.txt",
+    "source": "sources/tangtang__back-strike2.png",
+    "sourceSha256": "413b0630869542135ab3ac554e1ca238652d986409d692e001a4ee02dcf56473",
+    "references": [
+      "sources/tangtang__back-idle.png"
+    ]
+  },
+  {
+    "name": "tangtang__back-sweep",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/tangtang__back-sweep.txt",
+    "source": "sources/tangtang__back-sweep.png",
+    "sourceSha256": "e9f1678ca7785bb045a13bc3bdec8ffe30b5002809651462de4e8d6c603ba112",
+    "references": [
+      "sources/tangtang__back-idle.png"
+    ]
+  },
+  {
+    "name": "xiaochun__back-hold",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/xiaochun__back-hold.txt",
+    "source": "sources/xiaochun__back-hold.png",
+    "sourceSha256": "f02ffd247568eb5e2246bcb7234189b27e0fb22c65d43787425422fd843077d2",
+    "references": [
+      "sources/xiaochun__back-idle.png"
+    ]
+  },
+  {
+    "name": "xiaochun__back-hurt",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/xiaochun__back-hurt.txt",
+    "source": "sources/xiaochun__back-hurt.png",
+    "sourceSha256": "cc7c86da786630361f07c18abf137540d00e7859062ca514de21ac95af30ec1c",
+    "references": [
+      "sources/xiaochun__back-idle.png"
+    ]
+  },
+  {
+    "name": "xiaochun__back-idle",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/xiaochun__back-idle.txt",
+    "source": "sources/xiaochun__back-idle.png",
+    "sourceSha256": "d77dcb507da75cbcf8126d03777c0bc736ca28498edb86c8648a501ba3f272d6",
+    "references": [
+      "../../public/characters/xiaochun/normal.webp",
+      "../anime90-trial/delivery/characters/xiaocui/sprites/back-idle.png"
+    ]
+  },
+  {
+    "name": "xiaochun__back-release",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/xiaochun__back-release.txt",
+    "source": "sources/xiaochun__back-release.png",
+    "sourceSha256": "8d82f4d74f5d0f609fe5a86372f5991831a1d848e07acfe7e1b5a45ed48c33c3",
+    "references": [
+      "sources/xiaochun__back-idle.png"
+    ]
+  },
+  {
+    "name": "xiaochun__back-strike1",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/xiaochun__back-strike1.txt",
+    "source": "sources/xiaochun__back-strike1.png",
+    "sourceSha256": "6e232d4506f1b48a5fc99fb2c1c1dc94718fd8c916ad5205338ffcb0506706a6",
+    "references": [
+      "sources/xiaochun__back-idle.png"
+    ]
+  },
+  {
+    "name": "xiaochun__back-strike2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/xiaochun__back-strike2.txt",
+    "source": "sources/xiaochun__back-strike2.png",
+    "sourceSha256": "5689177f3fa470e6020a017485c0dee028c2090b1828e214b09bd0d0e1f47e7e",
+    "references": [
+      "sources/xiaochun__back-idle.png"
+    ]
+  },
+  {
+    "name": "xiaochun__back-sweep",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/xiaochun__back-sweep.txt",
+    "source": "sources/xiaochun__back-sweep.png",
+    "sourceSha256": "99f2cbd9ad70665d338ddccb8fb03fbc4b84d2c632a7e401c96aeea33d44b77f",
+    "references": [
+      "sources/xiaochun__back-idle.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-hold",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-hold.txt",
+    "source": "sources/yuehua__back-hold.png",
+    "sourceSha256": "a207931f150e098476c6dc554f459f2e7b676efd4b3f9d808b76d97ef5cac591",
+    "references": [
+      "sources/yuehua__back-idle-v2.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-hurt",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-hurt.txt",
+    "source": "sources/yuehua__back-hurt.png",
+    "sourceSha256": "5287c0301ca3f665b594d69211e1547c8485289a9acb198a31cf2d64c261ba0c",
+    "references": [
+      "sources/yuehua__back-idle-v2.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-idle-v2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-idle-v2.txt",
+    "source": "sources/yuehua__back-idle-v2.png",
+    "sourceSha256": "862a6811938ff74891ec36268e7f423e955e155927ead735113708f24af4fd20",
+    "references": [
+      "../../public/characters/yuehua/normal.webp",
+      "../anime90-trial/delivery/characters/xiaocui/sprites/back-idle.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-idle",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-idle.txt",
+    "source": "sources/yuehua__back-idle.png",
+    "sourceSha256": "55f7591af9f54cfebfca31083fee4753e754f4e735ba5563875de3566716794e",
+    "references": [
+      "../../public/characters/yuehua/normal.webp"
+    ]
+  },
+  {
+    "name": "yuehua__back-release",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-release.txt",
+    "source": "sources/yuehua__back-release.png",
+    "sourceSha256": "befdd46b23600753e2c394fb4ce28a62937b14c8ab7f32997445fd542de7e5f6",
+    "references": [
+      "sources/yuehua__back-idle-v2.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-strike1-v2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-strike1-v2.txt",
+    "source": "sources/yuehua__back-strike1-v2.png",
+    "sourceSha256": "7ed18bf19dcff245503e4af58e3124a08c293a418d6674b9bc17892fc97f2046",
+    "references": [
+      "sources/yuehua__back-idle-v2.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-strike1",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-strike1.txt",
+    "source": "sources/yuehua__back-strike1.png",
+    "sourceSha256": "85d6b433ddb8e2c3f9f7235e93f8c1d127d13f8a12478f377a16f1987943d613",
+    "references": [
+      "sources/yuehua__back-idle.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-strike2-v2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-strike2-v2.txt",
+    "source": "sources/yuehua__back-strike2-v2.png",
+    "sourceSha256": "f8bdfa0893c9891941a4c543b37f475d93547e4203dc716e0eb07dcb232541cf",
+    "references": [
+      "sources/yuehua__back-idle-v2.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-strike2",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-strike2.txt",
+    "source": "sources/yuehua__back-strike2.png",
+    "sourceSha256": "1bf43c4827af366b33d62e7eef47536f81d24d71d5792cb541faafb393e0c5a9",
+    "references": [
+      "sources/yuehua__back-idle.png"
+    ]
+  },
+  {
+    "name": "yuehua__back-sweep",
+    "tool": "built-in image_gen",
+    "promptFile": "prompts/yuehua__back-sweep.txt",
+    "source": "sources/yuehua__back-sweep.png",
+    "sourceSha256": "56bb0cc65a5ed088d39a2ddd076d657693ac5bf5a8e55f4db944df106de0aaff",
+    "references": [
+      "sources/yuehua__back-idle-v2.png"
+    ]
+  }
+]
