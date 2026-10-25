@@ -1,0 +1,23 @@
+{
+  "title": "賽末點",
+  "game": "volleyball",
+  "original": "vb-tension",
+  "bpm": 170,
+  "tempoMap": true,
+  "offsetBeats": -0.045,
+  "midiShiftMs": -15,
+  "offsetMs": 0,
+  "audio": "song.wav",
+  "parts": {
+    "melody": ["midi/Driving Groove (Keyboard).mid"],
+    "bass": "midi/Driving Groove (Bass).mid",
+    "drums": "midi/Driving Groove (Drums).mid"
+  },
+  "keysound": {
+    "stems": "stems",
+    "keys": ["Driving Groove (Guitar).wav", "Driving Groove (Keyboard).wav"]
+  },
+  "world": 3,
+  "boss": { "key": "blocker", "name": "鐵壁攔網王" },
+  "credit": "Suno（Driving Groove）"
+}
