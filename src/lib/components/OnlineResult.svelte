@@ -281,6 +281,8 @@
     font-size: 9cqh;
     font-weight: 900;
     font-style: italic;
+    /* 斜體超出框的部分不會被漸層畫到：右邊多留一點 */
+    padding-right: 0.22em;
     background: linear-gradient(180deg, #ffe58a, #ffc83d 45%, #d98a0a);
     -webkit-background-clip: text;
     background-clip: text;

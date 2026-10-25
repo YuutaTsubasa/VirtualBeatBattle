@@ -11,7 +11,7 @@
 import { W, H, LANES, LANE_COLORS, SLOT_COLORS, COUNTDOWN, atkOfLevel } from './constants.js';
 import { getCharacter } from './characters.js';
 import { WORLDS } from './stages.js';
-import { trackOf } from './tracks.js';
+import { trackOf, backgroundOf } from './tracks.js';
 import { sheetOf } from './sheets.js';
 import { KEY_LABELS, PAD_LABELS } from './input.js';
 import { asset, currentConfig } from '../art-style.svelte.js';
@@ -153,10 +153,58 @@ function drawPerson(g, character, pose, x, y, h, opts = {}) {
 // ---------- 版面 ----------
 
 /** 一條（一組六條）軌道：cx 中心、laneW 每條寬、top 音符出現的高度、judge 判定線 */
-const field = (cx, laneW, { top = 120, judge = 432 } = {}) => ({ cx, laneW, top, judge, left: cx - (laneW * LANES) / 2, width: laneW * LANES });
+/**
+ * 一組六條軌道：cx 中心、laneW 判定線上每條的寬、top 音符出現的高度、judge 判定線。
+ * Z > 1 是斜的（像 CHUNITHM／DEEMO 往遠處收窄，音符從遠處過來）：頂端的寬是判定線的 1/Z；
+ * 沒有 Z 是直的（連線時看別人的畫面）。
+ */
+const field = (cx, laneW, { top = 120, judge = 432, Z = 0 } = {}) => ({
+  cx,
+  laneW,
+  top,
+  judge,
+  Z,
+  // 消失點的高度：讓 r = 1（音符剛出現）剛好落在 top
+  vy: Z > 1 ? (top * Z - judge) / (Z - 1) : 0,
+  left: cx - (laneW * LANES) / 2,
+  width: laneW * LANES,
+});
 const laneX = (f, lane) => f.left + f.laneW * (lane + 0.5);
 
-let layout = { mode: 'solo', main: field(480, 58, { top: 92, judge: 440 }), rival: null, boss: { x: 480, y: 200, h: 200 } };
+/**
+ * 軌道上的一點 → 畫面座標。u：橫的位置（0 左邊、1 右邊），r：0 在判定線、1 在最遠（音符剛出現）、負的是過了判定線。
+ * 回傳 { x, y, s }，s 是那個深度的縮放（判定線上是 1）。
+ */
+function proj(f, u, r) {
+  if (!(f.Z > 1)) return { x: f.left + u * f.width, y: f.judge - r * (f.judge - f.top), s: 1 };
+  const z = Math.max(0.55, 1 + r * (f.Z - 1));
+  const sc = 1 / z;
+  return { x: f.cx + (u - 0.5) * f.width * sc, y: f.vy + (f.judge - f.vy) * sc, s: sc };
+}
+
+/** 畫面上的高度 y → 軌道上的 r（proj 反過來） */
+function rAtY(f, y) {
+  if (!(f.Z > 1)) return (f.judge - y) / (f.judge - f.top);
+  const sc = (y - f.vy) / (f.judge - f.vy);
+  return (1 / Math.max(0.01, sc) - 1) / (f.Z - 1);
+}
+
+/** 沿著軌道畫一塊四邊形（u0～u1、r0～r1） */
+function quad(g, f, u0, u1, r0, r1) {
+  const a = proj(f, u0, r0);
+  const b = proj(f, u1, r0);
+  const c = proj(f, u1, r1);
+  const d = proj(f, u0, r1);
+  g.beginPath();
+  g.moveTo(a.x, a.y);
+  g.lineTo(b.x, b.y);
+  g.lineTo(c.x, c.y);
+  g.lineTo(d.x, d.y);
+  g.closePath();
+}
+
+const SOLO = { mode: 'solo', main: field(480, 66, { top: 64, judge: 440, Z: 2.7 }), rival: null, boss: { x: 480, y: 236, h: 250 } };
+let layout = SOLO;
 
 // 版面（art-work/rhythm-ui-concept-v1）：
 //   單機：軌道在中間，魔王在後面上方，左邊角色與體力、右邊分數與連擊
@@ -165,21 +213,23 @@ let layout = { mode: 'solo', main: field(480, 58, { top: 92, judge: 440 }), riva
 function computeLayout(race, you, spectate) {
   if (spectate) return { mode: 'spectate', main: null, rival: null, boss: { x: 480, y: 210, h: 190 } };
   const n = race?.players?.length ?? 1;
-  if (!race || n <= 1) return layout.mode === 'solo' ? layout : { mode: 'solo', main: field(480, 58, { top: 92, judge: 440 }), rival: null, boss: { x: 480, y: 200, h: 200 } };
+  if (!race || n <= 1) return SOLO;
   if (n === 2) {
     const rival = race.players.find((p) => p.seat !== you);
-    return { mode: 'duo', main: field(310, 44, { top: 112, judge: 446 }), rival: { f: field(790, 44, { top: 112, judge: 446 }), seat: rival?.seat }, boss: { x: 480, y: 260, h: 230 } };
+    return { mode: 'duo', main: field(310, 50, { top: 112, judge: 446, Z: 2.2 }), rival: { f: field(790, 44, { top: 112, judge: 446 }), seat: rival?.seat }, boss: { x: 480, y: 260, h: 230 } };
   }
-  return { mode: 'multi', main: field(250, 50, { top: 112, judge: 446 }), rival: null, boss: { x: 250, y: 250, h: 190 } };
+  return { mode: 'multi', main: field(250, 56, { top: 112, judge: 446, Z: 2.2 }), rival: null, boss: { x: 250, y: 250, h: 190 } };
 }
 
 /** 觸控：畫面座標 (x, y) 落在自己的哪一條軌道（判定線上方一點到畫面底部都算） */
 export function laneAt(x, y) {
   const f = layout.main;
   if (!f || y < f.top + 60) return null;
-  const margin = f.laneW * 0.6;
-  if (x < f.left - margin || x > f.left + f.width + margin) return null;
-  return Math.max(0, Math.min(LANES - 1, Math.floor((x - f.left) / f.laneW)));
+  // 斜的軌道：換算成那個高度的橫向位置
+  const sc = f.Z > 1 ? Math.max(0.3, (y - f.vy) / (f.judge - f.vy)) : 1;
+  const u = (x - f.cx) / (f.width * sc) + 0.5;
+  if (u < -0.12 || u > 1.12) return null;
+  return Math.max(0, Math.min(LANES - 1, Math.floor(u * LANES)));
 }
 
 // ---------- 自己的角色與分身 ----------
@@ -302,19 +352,20 @@ export function handleEvents(events, v) {
 
 // ---------- 背景與魔王 ----------
 
-function drawBackdrop(g, worldId, ms, bpm) {
-  const far = loadImage(asset(`stages/${worldId}-3/far.webp`));
-  const mid = loadImage(asset(`stages/${worldId}-3/mid.webp`));
+function drawBackdrop(g, track, worldId, ms, bpm) {
+  // 台麻館的曲子：麻將館一整張（不捲動）；其他：魔王那一大關的遠景＋中景，慢慢捲
+  const far = loadImage(asset(backgroundOf(track)));
+  const mid = track.bg ? null : loadImage(asset(`stages/${worldId}-3/mid.webp`));
   g.fillStyle = '#10121c';
   g.fillRect(0, 0, W, H);
   for (const [img, drift] of [
     [far, 0.004],
     [mid, 0.012],
   ]) {
-    if (!ready(img)) continue;
+    if (!img || !ready(img)) continue;
     const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
     const w = img.naturalWidth * s;
-    const x = -((frame * drift * 60) % Math.max(1, w - W));
+    const x = track.bg ? (W - w) / 2 : -((frame * drift * 60) % Math.max(1, w - W));
     g.drawImage(img, x, (H - img.naturalHeight * s) / 2, w, img.naturalHeight * s);
   }
   // 深藍夜色：背景壓暗、偏藍，跟著拍子微微亮一下
@@ -410,50 +461,60 @@ let scanFrom = 0;
 
 // ghost：別人的畫面（沒有每顆的判定）時傳「最近漏掉的音符」的 Set，其他過了判定線就當作打到了
 function drawField(g, f, chart, statuses, ms, fall, { me: isMe = true, held: heldLanes = held, keys = null, ghost = null } = {}) {
-  const { left, width, top, judge, laneW } = f;
-  // 底板
+  const { judge, laneW } = f;
+  const rTop = 1.12;
+  const rBottom = rAtY(f, H + 2);
   g.save();
-  const grad = g.createLinearGradient(0, top - 40, 0, judge);
+  // 底板：遠處幾乎透明（看得到後面的魔王），越近越暗
+  const grad = g.createLinearGradient(0, proj(f, 0, rTop).y, 0, judge);
   grad.addColorStop(0, 'rgba(2,6,24,0)');
-  grad.addColorStop(0.15, 'rgba(2,6,24,0.8)');
+  grad.addColorStop(0.35, 'rgba(2,6,24,0.25)');
+  grad.addColorStop(0.7, 'rgba(2,6,24,0.75)');
   grad.addColorStop(1, 'rgba(4,12,40,0.92)');
   g.fillStyle = grad;
-  g.fillRect(left, top - 40, width, H - top + 40);
+  quad(g, f, 0, 1, rBottom, rTop);
+  g.fill();
+  // 分隔線（外框亮一點、中間那條是左右手的分界）
   for (let i = 0; i <= LANES; i++) {
     const edge = i === 0 || i === LANES;
-    g.fillStyle = edge ? 'rgba(70,150,255,0.9)' : i === 3 ? 'rgba(120,190,255,0.5)' : 'rgba(90,150,255,0.22)';
-    g.fillRect(left + i * laneW - (edge ? 1.5 : 0.5), top - 40, edge ? 3 : 1, H - top + 40);
+    const a = proj(f, i / LANES, rBottom);
+    const b = proj(f, i / LANES, rTop);
+    g.strokeStyle = edge ? 'rgba(70,150,255,0.9)' : i === 3 ? 'rgba(120,190,255,0.5)' : 'rgba(90,150,255,0.22)';
+    g.lineWidth = edge ? 3 : 1;
+    if (edge) {
+      g.shadowColor = 'rgba(47,140,255,0.9)';
+      g.shadowBlur = 12;
+    }
+    g.beginPath();
+    g.moveTo(a.x, a.y);
+    g.lineTo(b.x, b.y);
+    g.stroke();
+    g.shadowBlur = 0;
   }
-  // 外框的光
-  g.save();
-  g.shadowColor = 'rgba(47,140,255,0.9)';
-  g.shadowBlur = 12;
-  g.fillStyle = 'rgba(70,150,255,0.6)';
-  g.fillRect(left - 1.5, top - 40, 2, H - top + 40);
-  g.fillRect(left + width - 0.5, top - 40, 2, H - top + 40);
-  g.restore();
   // 按下的光
   for (let lane = 0; lane < LANES; lane++) {
     const on = heldLanes[lane];
     const k = on ? 1 : pressed[lane] / 10;
     if (!isMe && !on) continue;
     if (k <= 0) continue;
-    const x = left + lane * laneW;
-    const lg = g.createLinearGradient(0, judge, 0, judge - 220);
+    const top = proj(f, 0, 0.55).y;
+    const lg = g.createLinearGradient(0, judge, 0, top);
     lg.addColorStop(0, `rgba(90,170,255,${0.55 * k})`);
     lg.addColorStop(1, 'rgba(90,170,255,0)');
     g.fillStyle = lg;
-    g.fillRect(x + 1, judge - 220, laneW - 2, 220);
+    quad(g, f, (lane + 0.04) / LANES, (lane + 0.96) / LANES, 0, 0.55);
+    g.fill();
   }
   // 判定線：發光的青藍
+  const jl = proj(f, 0, 0);
   g.save();
   g.shadowColor = '#2fc6ff';
   g.shadowBlur = 14;
   g.fillStyle = '#9fe4ff';
-  g.fillRect(left - 6, judge - 2, width + 12, 4);
+  g.fillRect(jl.x - 6, judge - 2, f.width + 12, 4);
   g.restore();
   g.fillStyle = 'rgba(47,198,255,0.35)';
-  g.fillRect(left, judge + 2, width, 3);
+  g.fillRect(jl.x, judge + 2, f.width, 3);
   // 音符
   if (chart) drawNotes(g, f, chart, statuses, ms, fall, ghost);
   // 鍵位提示
@@ -465,55 +526,63 @@ function drawField(g, f, chart, statuses, ms, fall, { me: isMe = true, held: hel
 }
 
 function drawNotes(g, f, chart, statuses, ms, fall, ghost) {
-  const { judge, top, laneW } = f;
-  const span = judge - top;
-  const yOf = (t) => judge - ((t - ms) / fall) * span;
+  const { laneW } = f;
   const notes = chart.notes;
-  // 從還沒完全過去的第一顆開始畫（往後找到超出畫面頂端就停）
+  const rBottom = rAtY(f, H + 30);
+  // 從還沒完全過去的第一顆開始畫（往後找到超出最遠處就停）
   while (scanFrom < notes.length && notes[scanFrom][0] + notes[scanFrom][2] < ms - 600) scanFrom++;
   const w = laneW - 8;
+  const wu = w / f.width; // 音符寬（u 的單位）
   for (let i = Math.max(0, scanFrom - 4); i < notes.length; i++) {
     const [nt, lane, len, kind, chord] = notes[i];
-    if (nt - ms > fall * 1.08) break;
+    const r = (nt - ms) / fall;
+    if (r > 1.08) break;
     const st = ghost ? (ghost.has(i) ? 'M' : nt <= ms ? (len && nt + len > ms ? 'h' : 'P') : '0') : (statuses[i] ?? '0');
     if ('PGDx'.includes(st)) continue;
-    const x = laneX(f, lane);
+    const u = (lane + 0.5) / LANES;
     const missed = st === 'M' || st === 'm';
-    let y = yOf(nt);
-    if (y > H + 30 && !len) continue;
+    if (r < rBottom && !len) continue;
     g.globalAlpha = missed ? 0.35 : 1;
-    if (kind === 1) {
-      drawMine(g, x, y, laneW);
+    let head = r;
+    if (len > 0) {
+      const holding = st === 'h';
+      if (holding) head = 0;
+      const tail = Math.min(1.1, (nt + len - ms) / fall);
+      if (tail > rBottom) {
+        const a = proj(f, u, head);
+        const b = proj(f, u, tail);
+        const bodyGrad = g.createLinearGradient(0, b.y, 0, a.y);
+        bodyGrad.addColorStop(0, 'rgba(47,140,255,0.25)');
+        bodyGrad.addColorStop(1, holding ? 'rgba(120,200,255,0.9)' : 'rgba(47,140,255,0.6)');
+        g.fillStyle = bodyGrad;
+        quad(g, f, u - wu * 0.32, u + wu * 0.32, Math.max(head, rBottom), tail);
+        g.fill();
+        if (holding) {
+          g.strokeStyle = `rgba(255,255,255,${0.4 + Math.sin(frame * 0.5) * 0.25})`;
+          g.lineWidth = 2;
+          g.stroke();
+        }
+        if (tail < 1.08) {
+          const e = proj(f, u, tail);
+          g.fillStyle = '#cfe6ff';
+          g.fillRect(e.x - (w * e.s * 0.84) / 2, e.y - 3 * e.s, w * e.s * 0.84, 6 * e.s);
+        }
+      }
+    }
+    if (head > 1.08 || head < rBottom) {
       g.globalAlpha = 1;
       continue;
     }
-    const color = '#5aa8ff';
-    if (len > 0) {
-      const holding = st === 'h';
-      if (holding) y = judge;
-      const yEnd = Math.max(top - 40, yOf(nt + len));
-      const bodyGrad = g.createLinearGradient(0, yEnd, 0, y);
-      bodyGrad.addColorStop(0, 'rgba(47,140,255,0.25)');
-      bodyGrad.addColorStop(1, holding ? 'rgba(120,200,255,0.9)' : 'rgba(47,140,255,0.6)');
-      g.fillStyle = bodyGrad;
-      g.fillRect(x - w * 0.32, yEnd, w * 0.64, y - yEnd);
-      if (holding) {
-        g.fillStyle = `rgba(255,255,255,${0.4 + Math.sin(frame * 0.5) * 0.25})`;
-        g.fillRect(x - w * 0.32, yEnd, 3, y - yEnd);
-        g.fillRect(x + w * 0.32 - 3, yEnd, 3, y - yEnd);
-      }
-      g.fillStyle = '#cfe6ff';
-      g.fillRect(x - w * 0.42, yEnd - 3, w * 0.84, 6);
-    }
-    if (y < top - 40) continue;
-    drawTap(g, x, y, w, color, chord);
+    const pt = proj(f, u, head);
+    if (kind === 1) drawMine(g, pt.x, pt.y, laneW * pt.s);
+    else drawTap(g, pt.x, pt.y, w * pt.s, null, chord, pt.s);
     g.globalAlpha = 1;
   }
   g.globalAlpha = 1;
 }
 
-function drawTap(g, x, y, w, color, chord) {
-  const h = 11;
+function drawTap(g, x, y, w, color, chord, scale = 1) {
+  const h = 11 * scale;
   g.save();
   g.shadowColor = chord ? 'rgba(255,200,61,0.95)' : 'rgba(70,160,255,0.95)';
   g.shadowBlur = 12;
@@ -676,8 +745,9 @@ function portrait(g, character, mood, x, y, size, ring = null) {
   g.rect(x, y, size, size);
   g.clip();
   if (ready(img)) {
-    const s = size / Math.min(img.naturalWidth, img.naturalHeight * 0.6);
-    g.drawImage(img, x + size / 2 - (img.naturalWidth * s) / 2, y - size * 0.06, img.naturalWidth * s, img.naturalHeight * s);
+    // 半身像是正方形的（臉在上半部）：整張縮進框裡，稍微放大一點、往上對齊，臉不會被切掉
+    const s = (size / Math.min(img.naturalWidth, img.naturalHeight)) * 1.08;
+    g.drawImage(img, x + size / 2 - (img.naturalWidth * s) / 2, y - size * 0.02, img.naturalWidth * s, img.naturalHeight * s);
   }
   g.restore();
   if (ring) {
@@ -981,7 +1051,7 @@ function drawCountdown(g, f, ms, bossName) {
 /** 開始前：等背景、魔王、角色的圖載好（最多等 ms 毫秒，網路很慢時不要一直卡住） */
 export function prepare({ song, character }, ms = 4000) {
   const worldId = WORLDS[trackOf(song).world].id;
-  const urls = [asset(`stages/${worldId}-3/far.webp`), asset(`stages/${worldId}-3/mid.webp`)];
+  const urls = [asset(backgroundOf(trackOf(song))), asset(`stages/${worldId}-3/mid.webp`)];
   const boss = sheetOf('bosses', worldId);
   if (boss) urls.push(asset(boss.src));
   const me = character && sheetOf('characters', character);
@@ -1013,7 +1083,7 @@ export function draw(canvas, s) {
   if (shake > 0 && !s.paused) shake = Math.max(0, shake - 0.6);
   g.save();
   g.translate(sx, sy);
-  drawBackdrop(g, world.id, ms, chart?.bpm ?? 0);
+  drawBackdrop(g, tr, world.id, ms, chart?.bpm ?? 0);
 
   const players = race?.players ?? [];
   const mine = players.find((p) => p.seat === you);

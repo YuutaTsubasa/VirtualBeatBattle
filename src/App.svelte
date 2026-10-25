@@ -142,7 +142,7 @@
         const mine = s.players.find((p) => p.seat === net.seat);
         if (v && mine && engine.state === 'online') {
           const feed = feedXp(mine.character, v.xp);
-          recordBest(s.song, s.level, { score: v.score, rank: v.rank, fc: v.fc, killed: v.killed });
+          recordBest(s.song, s.level, { score: v.score, rank: v.rank, fc: v.fc, ap: v.ap, killed: v.killed });
           raceMine = { feed, xp: v.xp, character: mine.character };
           if (v.killed && unlockHidden()) toast(t('隱藏角色「阿翼」加入了！'), 'ok');
         }
@@ -192,7 +192,7 @@
     const c = getCharacter(character);
     const demo = playing.demo;
     const feed = demo ? null : feedXp(character, v.xp);
-    const record = demo ? false : recordBest(playing.song, playing.level, { score: v.score, rank: v.rank, fc: v.fc, killed: v.killed });
+    const record = demo ? false : recordBest(playing.song, playing.level, { score: v.score, rank: v.rank, fc: v.fc, ap: v.ap, killed: v.killed });
     const unlocked = !demo && v.killed && unlockHidden();
     result = {
       title: t(trackOf(playing.song).title),
@@ -203,6 +203,7 @@
       score: v.score,
       rank: v.rank,
       fc: v.fc,
+      ap: v.ap,
       counts: v.counts,
       maxCombo: v.max_combo,
       dmgPct: Math.round((v.dmg / Math.max(1, v.boss_max)) * 100),

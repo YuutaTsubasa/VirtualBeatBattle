@@ -13,6 +13,7 @@ pub enum Level {
     #[default]
     Normal,
     Hard,
+    Expert,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -50,6 +51,7 @@ pub struct Song {
     pub easy: Chart,
     pub normal: Chart,
     pub hard: Chart,
+    pub expert: Chart,
 }
 
 impl Song {
@@ -58,6 +60,7 @@ impl Song {
             Level::Easy => &self.easy,
             Level::Normal => &self.normal,
             Level::Hard => &self.hard,
+            Level::Expert => &self.expert,
         }
     }
 }
@@ -81,6 +84,7 @@ struct RawCharts {
     easy: RawChart,
     normal: RawChart,
     hard: RawChart,
+    expert: RawChart,
 }
 
 #[derive(Deserialize)]
@@ -104,7 +108,7 @@ pub fn songs() -> &'static [Song] {
         let raw: RawFile = serde_json::from_str(include_str!("../charts.json")).expect("charts.json 格式不對，重跑 npm run charts");
         raw.songs
             .into_iter()
-            .map(|s| Song { id: s.id, bpm: s.bpm, length_ms: s.length_ms, easy: chart_of(s.charts.easy), normal: chart_of(s.charts.normal), hard: chart_of(s.charts.hard) })
+            .map(|s| Song { id: s.id, bpm: s.bpm, length_ms: s.length_ms, easy: chart_of(s.charts.easy), normal: chart_of(s.charts.normal), hard: chart_of(s.charts.hard), expert: chart_of(s.charts.expert) })
             .collect()
     })
 }

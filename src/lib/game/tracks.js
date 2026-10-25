@@ -22,7 +22,7 @@ export const GAMES = [
 export const gameOf = (id) => GAMES.find((g) => g.id === id) ?? GAMES[0];
 
 // id、來源遊戲、那款遊戲裡的曲子 key、曲名、魔王（WORLDS 的編號 0 都市 1 森林 2 海 3 冰 4 礦坑 5 城堡）
-export const TRACKS = [
+const LIST = [
   { id: 'mj-title', game: 'mahjong', song: 'title', title: '夜晚的雀館', world: 0 },
   { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1 },
   { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2 },
@@ -64,11 +64,18 @@ export const TRACKS = [
   { id: 'vr-tension', game: 'runners', song: 'tension', title: '魔王關', world: 5 },
 ];
 
+// 背景：台麻館的曲子用麻將館的那一張（各畫風都有，src/lib/style-assets.json），其他用魔王那一大關的遠景
+export const TRACKS = LIST.map((tr) => ({ ...tr, bg: tr.game === 'mahjong' ? 'games/mahjong-parlor.webp' : null }));
+
+/** 這一首的背景圖（畫面與選曲的封面共用） */
+export const backgroundOf = (track) => track.bg ?? `stages/${['city', 'forest', 'sea', 'ice', 'mine', 'castle'][track.world]}-3/far.webp`;
+
 /** 難度：id、名稱 */
 export const LEVELS = [
   { id: 'easy', name: 'EASY' },
   { id: 'normal', name: 'NORMAL' },
   { id: 'hard', name: 'HARD' },
+  { id: 'expert', name: 'EXPERT' },
 ];
 
 export const trackOf = (id) => TRACKS.find((t) => t.id === id) ?? TRACKS[0];

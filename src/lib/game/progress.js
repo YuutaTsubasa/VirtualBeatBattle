@@ -47,13 +47,13 @@ export function feedXp(id, gained) {
 
 const bestKey = (song, level) => `${song}:${level}`;
 
-/** 最佳成績：{ score, rank, fc, killed } 或 null */
+/** 最佳成績：{ score, rank, fc, ap, killed } 或 null（fc = Full Combo、ap = All Perfect，有過一次就算） */
 export function bestOf(song, level) {
   return read(BEST_KEY, {})[bestKey(song, level)] ?? null;
 }
 
-/** 記下成績（分數取最高、打倒魔王與 Full Combo 有過一次就算），回傳是不是新紀錄 */
-export function recordBest(song, level, { score, rank, fc, killed }) {
+/** 記下成績（分數取最高、打倒魔王、Full Combo、All Perfect 有過一次就算），回傳是不是新紀錄 */
+export function recordBest(song, level, { score, rank, fc, ap = false, killed }) {
   const all = read(BEST_KEY, {});
   const k = bestKey(song, level);
   const old = all[k];
@@ -62,6 +62,7 @@ export function recordBest(song, level, { score, rank, fc, killed }) {
     score: Math.max(score, old?.score ?? 0),
     rank: record ? rank : old.rank,
     fc: fc || !!old?.fc,
+    ap: ap || !!old?.ap,
     killed: killed || !!old?.killed,
   };
   write(BEST_KEY, all);

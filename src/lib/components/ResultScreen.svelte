@@ -44,7 +44,7 @@
       <div class="score">
         {#if result.record && !demo}<span class="new">{t('新紀錄')}</span>{/if}
         <b>{pad(result.score)}</b>
-        <span class="mc">MAX COMBO <b>{result.maxCombo}</b>{#if result.fc}<i class="fc">FULL COMBO</i>{/if}</span>
+        <span class="mc">MAX COMBO <b>{result.maxCombo}</b>{#if result.ap}<i class="fc ap">ALL PERFECT</i>{:else if result.fc}<i class="fc">FULL COMBO</i>{/if}</span>
       </div>
     </div>
     <dl class="counts">
@@ -147,6 +147,8 @@
     font-weight: 900;
     font-style: italic;
     letter-spacing: -0.04em;
+    /* 斜體的字會超出右邊的框，漸層（background-clip: text）只畫在框裡：右邊多留一點 */
+    padding: 0 0.22em 0 0.04em;
     background: linear-gradient(180deg, #ffe58a 0%, #ffc83d 45%, #d98a0a 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -205,6 +207,10 @@
     background: var(--accent);
     color: #fff;
     font-size: 1.7cqh;
+  }
+  .fc.ap {
+    background: linear-gradient(90deg, #ffb81c, #ffd84a);
+    color: var(--navy);
   }
   .counts {
     margin: 1cqh 0 0 20cqw;

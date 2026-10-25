@@ -5,7 +5,7 @@
   // 每一首都是一隻魔王；魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），
   // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
-  import { TRACKS, LEVELS, GAMES, gameOf, songOf } from '../game/tracks.js';
+  import { TRACKS, LEVELS, GAMES, gameOf, songOf, backgroundOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { getCharacter } from '../game/characters.js';
   import { levelOf, bestOf } from '../game/progress.js';
@@ -36,7 +36,7 @@
   // 現在的等級全 Perfect 大約打得掉魔王幾成（不算角色能力）
   const estimate = $derived(Math.round(75 * (atkOfLevel(lv.lv) / 100)));
   const minutes = (ms) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
-  const art = (tr) => asset(`stages/${WORLDS[tr.world].id}-3/far.webp`);
+  const art = (tr) => asset(backgroundOf(tr));
 
   function bossStyle(worldId) {
     const sheet = sheetOf('bosses', worldId);
@@ -87,6 +87,7 @@
               <small>{t('來自 {game}', { game: t(gameOf(tr.game).name) })}</small>
             </span>
             <span class="mark">
+              {#if b?.ap}<i class="clear ap">AP</i>{:else if b?.fc}<i class="clear fc">FC</i>{/if}
               {#if b?.killed}<i class="down">{t('擊破')}</i>{/if}
               {#if b}<i class="rank">{b.rank}</i>{/if}
             </span>
@@ -120,7 +121,7 @@
         <p class="best">
           {best ? String(best.score).padStart(7, '0') : '0000000'}
           {#if best}<i class="rank">{best.rank}</i>{/if}
-          {#if best?.fc}<i class="fc">FULL COMBO</i>{/if}
+          {#if best?.ap}<i class="fc ap">ALL PERFECT</i>{:else if best?.fc}<i class="fc">FULL COMBO</i>{/if}
         </p>
         <span class="notes">{t('音符數')} {chartInfo?.levels[level].notes}</span>
       </div>
@@ -251,6 +252,15 @@
     background: var(--navy);
     color: var(--gold);
   }
+  /* Full Combo（藍）、All Perfect（金） */
+  .mark .clear.fc {
+    background: #2fc6ff;
+    color: var(--navy);
+  }
+  .mark .clear.ap {
+    background: linear-gradient(90deg, #ffb81c, #ffd84a);
+    color: var(--navy);
+  }
   .mark .down {
     background: var(--red);
     color: #fff;
@@ -374,16 +384,21 @@
     background: #e6ebf5;
     color: var(--navy-soft);
     font-weight: 900;
-    font-size: 2cqh;
-    letter-spacing: 0.1em;
+    font-size: 1.6cqh;
+    letter-spacing: 0.04em;
+    gap: 0.6cqh;
   }
   .lv b {
-    font-size: 2.6cqh;
+    font-size: 2.4cqh;
     font-style: italic;
   }
   .lv.on {
     background: var(--accent);
     color: #fff;
+  }
+  /* EXPERT：選到時是深紅，跟其他難度分開 */
+  .lv:last-child.on {
+    background: #c81e4a;
   }
   .label {
     font-weight: 900;
@@ -405,6 +420,10 @@
   .best .rank {
     font-size: 3.4cqh;
     color: var(--gold-deep);
+  }
+  .best .fc.ap {
+    background: linear-gradient(90deg, #ffb81c, #ffd84a);
+    color: var(--navy);
   }
   .best .fc {
     font-size: 1.8cqh;

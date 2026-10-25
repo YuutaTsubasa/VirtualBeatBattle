@@ -423,6 +423,11 @@ impl Play {
         self.pressed.iter().enumerate().fold(0, |k, (i, &on)| if on { k | (1 << i) } else { k })
     }
 
+    /// All Perfect：全部都是 Perfect
+    pub fn all_perfect(&self) -> bool {
+        self.counts[1] == 0 && self.counts[2] == 0 && self.counts[3] == 0
+    }
+
     pub fn full_combo(&self) -> bool {
         self.counts[3] == 0
     }
@@ -465,6 +470,7 @@ impl Play {
             "xp": self.xp(),
             "rank": self.rank(),
             "fc": self.full_combo(),
+            "ap": self.all_perfect(),
             "pressed": self.pressed,
             "holding": self.holding,
             "ended": self.ended,
