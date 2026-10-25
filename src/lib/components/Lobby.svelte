@@ -6,7 +6,7 @@
   import { WEB_URL, shareLink } from '../site.js';
   import { CHARACTERS, getCharacter } from '../game/characters.js';
   import { DIFFICULTIES, SLOT_COLORS } from '../game/constants.js';
-  import { TRACKS, LEVELS, gameOf, backgroundOf } from '../game/tracks.js';
+  import { TRACKS, LEVELS, gameOf, backgroundOf, bossOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { asset } from '../art-style.svelte.js';
   import { play } from '../game/audio.js';
@@ -171,7 +171,7 @@
         <img src={asset(backgroundOf(track))} alt="" />
         <div class="song-info">
           <b>{t(track.title)}</b>
-          <small>BOSS {t(WORLDS[track.world].boss.name)}</small>
+          <small>BOSS {bossOf(track, WORLDS).rival ? t(bossOf(track, WORLDS).name) + t('（對手）') : t(bossOf(track, WORLDS).name)}</small>
           <span class="chips"><i class="on">{(room.settings.level ?? '').toUpperCase()}</i><i>6 KEY</i></span>
         </div>
       </div>

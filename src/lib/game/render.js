@@ -11,7 +11,7 @@
 import { W, H, LANES, LANE_COLORS, SLOT_COLORS, COUNTDOWN, atkOfLevel } from './constants.js';
 import { getCharacter } from './characters.js';
 import { WORLDS } from './stages.js';
-import { trackOf, backgroundOf } from './tracks.js';
+import { trackOf, backgroundOf, bossOf } from './tracks.js';
 import { sheetOf } from './sheets.js';
 import { KEY_LABELS, PAD_LABELS } from './input.js';
 import { asset, currentConfig } from '../art-style.svelte.js';
@@ -381,14 +381,18 @@ function drawBackdrop(g, track, worldId, ms, bpm) {
   g.fillRect(0, 0, W, H);
 }
 
-function drawBoss(g, worldId, b, { killed = false, mineSoon = false } = {}) {
-  const sheet = sheetOf('bosses', worldId);
+// 對手角色（角色主題曲的魔王）沒有魔王的格子：用角色圖集裡相近的動作
+const RIVAL_POSE = { idle: 'idle', walk1: 'idle', windup: 'special', slam: 'kick', hurt: 'hurt', down: 'down' };
+
+function drawBoss(g, boss, b, { killed = false, mineSoon = false } = {}) {
+  const sheet = sheetOf(boss.kind, boss.key);
   let pose = 'idle';
   if (killed) pose = 'down';
   else if (bossSlam > 8) pose = 'slam';
   else if (bossHurt > 0) pose = 'hurt';
   else if (mineSoon) pose = 'windup';
   else if (Math.floor(frame / 30) % 2) pose = 'walk1';
+  if (boss.rival) pose = RIVAL_POSE[pose] ?? 'idle';
   const sx = bossHurt > 0 ? (Math.random() - 0.5) * 6 : 0;
   const flash = bossHurt > 3 ? 1 : 0;
   g.save();
@@ -398,7 +402,10 @@ function drawBoss(g, worldId, b, { killed = false, mineSoon = false } = {}) {
   grad.addColorStop(1, 'rgba(80,140,255,0)');
   g.fillStyle = grad;
   g.fillRect(b.x - b.h, b.y - b.h * 1.2, b.h * 2, b.h * 1.5);
-  if (!(sheet && drawFrame(g, sheet, pose, b.x + sx, b.y, b.h, -1, { flash, alpha: killed ? 0.45 : b.alpha ?? 0.8 }))) {
+  // 對手角色：角色圖集的人比魔王小，畫大一點，加一圈紅色的光（看得出是敵人）
+  const h = boss.rival ? b.h * 1.25 : b.h;
+  const opts = { flash, alpha: killed ? 0.45 : b.alpha ?? 0.8, tint: boss.rival ? 'rgba(255,60,90,0.9)' : null };
+  if (!(sheet && drawFrame(g, sheet, pose, b.x + sx, b.y, h, -1, opts))) {
     g.fillStyle = '#5a3a6a';
     g.beginPath();
     g.arc(b.x, b.y - b.h * 0.4, b.h * 0.3, 0, Math.PI * 2);
@@ -1059,7 +1066,8 @@ function drawCountdown(g, f, ms, bossName) {
 export function prepare({ song, character }, ms = 4000) {
   const worldId = WORLDS[trackOf(song).world].id;
   const urls = [asset(backgroundOf(trackOf(song))), asset(`stages/${worldId}-3/mid.webp`)];
-  const boss = sheetOf('bosses', worldId);
+  const b = bossOf(trackOf(song), WORLDS);
+  const boss = sheetOf(b.kind, b.key);
   if (boss) urls.push(asset(boss.src));
   const me = character && sheetOf('characters', character);
   if (me) urls.push(asset(me.src));
@@ -1084,7 +1092,8 @@ export function draw(canvas, s) {
   layout = computeLayout(race, you, spectate);
   const tr = trackOf(info.song);
   const world = WORLDS[tr.world];
-  const bossName = t(world.boss.name);
+  const boss = bossOf(tr, WORLDS);
+  const bossName = boss.rival ? t(boss.name) + t('（對手）') : t(boss.name);
   const sx = shake ? (Math.random() - 0.5) * shake : 0;
   const sy = shake ? (Math.random() - 0.5) * shake : 0;
   if (shake > 0 && !s.paused) shake = Math.max(0, shake - 0.6);
@@ -1104,7 +1113,7 @@ export function draw(canvas, s) {
       if (n[3] === 1 && n[0] > ms) mineSoon = true;
     }
   }
-  drawBoss(g, world.id, layout.boss, { killed, mineSoon });
+  drawBoss(g, boss, layout.boss, { killed, mineSoon });
 
   const myP = { score: v?.score, combo: v?.combo, counts: v?.counts, dmg: v?.dmg, boss_max: v?.boss_max, hp: v?.hp, hp_max: v?.hp_max, down: v?.down, killed: v?.killed };
   if (layout.mode === 'spectate') {

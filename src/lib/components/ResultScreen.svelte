@@ -16,7 +16,7 @@
   const after = $derived(result.feed?.after);
   const xpPct = $derived(after ? (after.lv >= MAX_LEVEL ? 100 : (after.xp / xpToNext(after.lv)) * 100) : 0);
   const boss = $derived.by(() => {
-    const sheet = sheetOf('bosses', result.world);
+    const sheet = sheetOf(result.boss.kind, result.boss.key);
     if (!sheet) return '';
     const rows = Math.ceil(sheet.frames.length / sheet.cols);
     const i = Math.max(0, sheet.frames.indexOf(result.killed ? 'down' : 'idle'));

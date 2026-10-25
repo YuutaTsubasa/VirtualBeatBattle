@@ -6,7 +6,7 @@
   import { createEngine } from './lib/engine.js';
   import { getCharacter, pickLine, unlockHidden } from './lib/game/characters.js';
   import { savedCharacter, saveCharacter, savedPick, savePick, levelOf, feedXp, recordBest } from './lib/game/progress.js';
-  import { trackOf } from './lib/game/tracks.js';
+  import { trackOf, bossOf } from './lib/game/tracks.js';
   import { WORLDS } from './lib/game/stages.js';
   import { COUNTDOWN } from './lib/game/constants.js';
   import { toggleMute } from './lib/game/audio.js';
@@ -196,7 +196,7 @@
     const unlocked = !demo && v.killed && unlockHidden();
     result = {
       title: t(trackOf(playing.song).title),
-      world: WORLDS[trackOf(playing.song).world].id,
+      boss: bossOf(trackOf(playing.song), WORLDS),
       level: playing.level,
       character: c,
       killed: v.killed,

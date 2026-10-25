@@ -145,7 +145,8 @@
         "ui/portrait-frame.webp",
         "ui/portrait-selected.webp",
         "ui/result-banner.webp",
-        "games/mahjong-parlor.webp"
+        "games/mahjong-parlor.webp",
+        "games/volleyball-court.webp"
       ],
       "config": {}
     },
@@ -359,7 +360,8 @@
         "ui/icons/sound-off.webp",
         "ui/icons/sound-on.webp",
         "ui/icons/touch.webp",
-        "games/mahjong-parlor.webp"
+        "games/mahjong-parlor.webp",
+        "games/volleyball-court.webp"
       ],
       "config": {}
     },
@@ -573,7 +575,8 @@
         "ui/icons/sound-off.webp",
         "ui/icons/sound-on.webp",
         "ui/icons/touch.webp",
-        "games/mahjong-parlor.webp"
+        "games/mahjong-parlor.webp",
+        "games/volleyball-court.webp"
       ],
       "config": {}
     },
@@ -634,7 +637,8 @@
         "characters/yuehua/sad.webp",
         "characters/yuehua/surprised.webp",
         "characters/yuehua/win.webp",
-        "games/mahjong-parlor.webp"
+        "games/mahjong-parlor.webp",
+        "games/volleyball-court.webp"
       ],
       "config": {}
     },
@@ -695,7 +699,8 @@
         "characters/yuehua/sad.webp",
         "characters/yuehua/surprised.webp",
         "characters/yuehua/win.webp",
-        "games/mahjong-parlor.webp"
+        "games/mahjong-parlor.webp",
+        "games/volleyball-court.webp"
       ],
       "config": {}
     },
@@ -756,7 +761,8 @@
         "characters/yuehua/sad.webp",
         "characters/yuehua/surprised.webp",
         "characters/yuehua/win.webp",
-        "games/mahjong-parlor.webp"
+        "games/mahjong-parlor.webp",
+        "games/volleyball-court.webp"
       ],
       "config": {}
     }

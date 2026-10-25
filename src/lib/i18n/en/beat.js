@@ -168,4 +168,5 @@ export default {
   '超速心跳': 'Overdrive Heartbeat',
   '終焉頻率': 'Final Frequency',
   '虛擬音鬥樂': 'Virtual Beat Battle',
+  '（對手）': ' (Rival)',
 };

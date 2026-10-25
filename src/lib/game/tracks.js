@@ -34,17 +34,17 @@ const LIST = [
   { id: 'mj-lobby', game: 'mahjong', song: 'lobby', title: '午後的麻將館', world: 1 },
   { id: 'mj-game', game: 'mahjong', song: 'game', title: '沉穩對局', world: 2 },
   { id: 'mj-tension', game: 'mahjong', song: 'tension', title: '海底撈月', world: 4 },
-  // 台麻館的角色主題曲（阿翼是隱藏角色，曲名不寫名字）
-  { id: 'mj-xiaocui', game: 'mahjong', song: 'char-xiaocui', title: '小翠的主題曲', world: 0 },
-  { id: 'mj-yuehua', game: 'mahjong', song: 'char-yuehua', title: '月華的主題曲', world: 3 },
-  { id: 'mj-aming', game: 'mahjong', song: 'char-aming', title: '阿明的主題曲', world: 4 },
-  { id: 'mj-tangtang', game: 'mahjong', song: 'char-tangtang', title: '糖糖的主題曲', world: 1 },
-  { id: 'mj-xiaochun', game: 'mahjong', song: 'char-xiaochun', title: '小春的主題曲', world: 0 },
-  { id: 'mj-lanjie', game: 'mahjong', song: 'char-lanjie', title: '蘭姐的主題曲', world: 2 },
-  { id: 'mj-cangya', game: 'mahjong', song: 'char-cangya', title: '蒼牙的主題曲', world: 1 },
-  { id: 'mj-jinye', game: 'mahjong', song: 'char-jinye', title: '金爺的主題曲', world: 4 },
-  { id: 'mj-leo', game: 'mahjong', song: 'char-leo', title: '雷歐的主題曲', world: 5 },
-  { id: 'mj-alie', game: 'mahjong', song: 'char-alie', title: '阿烈的主題曲', world: 3 },
+  // 台麻館的角色主題曲：魔王就是那位角色本人（對手，用角色的動作圖）。阿翼是隱藏角色，曲名不寫名字、魔王也不用他
+  { id: 'mj-xiaocui', game: 'mahjong', song: 'char-xiaocui', title: '小翠的主題曲', world: 0, rival: { id: 'xiaocui', name: '小翠' } },
+  { id: 'mj-yuehua', game: 'mahjong', song: 'char-yuehua', title: '月華的主題曲', world: 3, rival: { id: 'yuehua', name: '月華' } },
+  { id: 'mj-aming', game: 'mahjong', song: 'char-aming', title: '阿明的主題曲', world: 4, rival: { id: 'aming', name: '阿明' } },
+  { id: 'mj-tangtang', game: 'mahjong', song: 'char-tangtang', title: '糖糖的主題曲', world: 1, rival: { id: 'tangtang', name: '糖糖' } },
+  { id: 'mj-xiaochun', game: 'mahjong', song: 'char-xiaochun', title: '小春的主題曲', world: 0, rival: { id: 'xiaochun', name: '小春' } },
+  { id: 'mj-lanjie', game: 'mahjong', song: 'char-lanjie', title: '蘭姐的主題曲', world: 2, rival: { id: 'lanjie', name: '蘭姐' } },
+  { id: 'mj-cangya', game: 'mahjong', song: 'char-cangya', title: '蒼牙的主題曲', world: 1, rival: { id: 'cangya', name: '蒼牙' } },
+  { id: 'mj-jinye', game: 'mahjong', song: 'char-jinye', title: '金爺的主題曲', world: 4, rival: { id: 'jinye', name: '金爺' } },
+  { id: 'mj-leo', game: 'mahjong', song: 'char-leo', title: '雷歐的主題曲', world: 5, rival: { id: 'leo', name: '雷歐' } },
+  { id: 'mj-alie', game: 'mahjong', song: 'char-alie', title: '阿烈的主題曲', world: 3, rival: { id: 'alie', name: '阿烈' } },
   { id: 'mj-ayi', game: 'mahjong', song: 'char-ayi', title: '隱藏來客的主題曲', world: 5 },
   { id: 'vb-title', game: 'volleyball', song: 'title', title: '晴天的海灘', world: 2 },
   { id: 'vb-menu', game: 'volleyball', song: 'menu', title: '海邊的午後', world: 1 },
@@ -71,8 +71,9 @@ const LIST = [
   { id: 'vr-tension', game: 'runners', song: 'tension', title: '魔王關', world: 5 },
 ];
 
-// 背景：台麻館的曲子用麻將館的那一張（各畫風都有，src/lib/style-assets.json），其他用魔王那一大關的遠景
-export const TRACKS = LIST.map((tr) => ({ ...tr, bg: tr.game === 'mahjong' ? 'games/mahjong-parlor.webp' : null }));
+// 背景：台麻館的曲子用麻將館、排球王的曲子用排球王的海灘（各畫風都有，src/lib/style-assets.json），其他用魔王那一大關的遠景
+const GAME_BG = { mahjong: 'games/mahjong-parlor.webp', volleyball: 'games/volleyball-court.webp' };
+export const TRACKS = LIST.map((tr) => ({ ...tr, bg: GAME_BG[tr.game] ?? null }));
 
 /** 這一首的背景圖（畫面與選曲的封面共用） */
 export const backgroundOf = (track) => track.bg ?? `stages/${['city', 'forest', 'sea', 'ice', 'mine', 'castle'][track.world]}-3/far.webp`;
@@ -100,4 +101,15 @@ export function repeatOf(track) {
     repeats.set(track.id, Math.max(1, Math.min(24, Math.round(TARGET_SECONDS / sec))));
   }
   return repeats.get(track.id);
+}
+
+const WORLD_IDS = ['city', 'forest', 'sea', 'ice', 'mine', 'castle'];
+
+/**
+ * 這一首的魔王：{ kind: 'bosses' | 'characters', key（圖集的 key）, name（翻譯前的名字）, rival（是不是對手角色） }
+ * 角色主題曲的魔王是那位角色本人（用角色的動作圖），其他是闖天下六大關的魔王。
+ */
+export function bossOf(track, worlds) {
+  if (track.rival) return { kind: 'characters', key: track.rival.id, name: track.rival.name, rival: true };
+  return { kind: 'bosses', key: WORLD_IDS[track.world], name: worlds[track.world].boss.name, rival: false };
 }

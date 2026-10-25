@@ -5,7 +5,7 @@
   // 每一首都是一隻魔王；魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），
   // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
-  import { TRACKS, LEVELS, GAMES, gameOf, songOf, backgroundOf } from '../game/tracks.js';
+  import { TRACKS, LEVELS, GAMES, gameOf, songOf, backgroundOf, bossOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { getCharacter } from '../game/characters.js';
   import { levelOf, bestOf } from '../game/progress.js';
@@ -27,7 +27,6 @@
   const c = $derived(getCharacter(character));
   const lv = $derived(levelOf(character));
   const track = $derived(TRACKS.find((tr) => tr.id === songId) ?? TRACKS[0]);
-  const world = $derived(WORLDS[track.world]);
   const chartInfo = $derived(META[track.id]);
   const game = $derived(gameOf(track.game));
   // 依來源遊戲篩選（all = 全部）
@@ -39,8 +38,12 @@
   const minutes = (ms) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
   const art = (tr) => asset(backgroundOf(tr));
 
-  function bossStyle(worldId) {
-    const sheet = sheetOf('bosses', worldId);
+  // 魔王：闖天下的魔王，或角色主題曲的對手角色
+  const boss = $derived(bossOf(track, WORLDS));
+  const bossName = $derived(boss.rival ? t(boss.name) + t('（對手）') : t(boss.name));
+
+  function bossStyle(b) {
+    const sheet = sheetOf(b.kind, b.key);
     if (!sheet) return '';
     const rows = Math.ceil(sheet.frames.length / sheet.cols);
     return `background-image: url(${asset(sheet.src)}); background-size: ${sheet.cols * 100}% ${rows * 100}%; background-position: 0 0`;
@@ -101,7 +104,7 @@
     <div class="detail">
       <div class="cover">
         <img src={art(track)} alt="" />
-        <span class="boss-art" style={bossStyle(world.id)}></span>
+        <span class="boss-art" class:rival={boss.rival} style={bossStyle(boss)}></span>
       </div>
       <div class="info">
         <div class="from">
@@ -111,7 +114,7 @@
           {/key}
         </div>
         <h3 class="pop-text">{t(track.title)}</h3>
-        <p class="boss">BOSS {t(world.boss.name)}</p>
+        <p class="boss">BOSS {bossName}</p>
         <p class="meta">BPM <b>{songOf(track).bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
         <div class="levels" role="radiogroup">
           {#each LEVELS as l (l.id)}
@@ -139,9 +142,9 @@
         <span><b>{c.name}</b><small>Lv.{lv.lv}</small><i class="gauge"><i style:width="{lv.lv >= MAX_LEVEL ? 100 : (lv.xp / xpToNext(lv.lv)) * 100}%"></i></i></span>
       </div>
       <div class="who" title={t('全 Perfect 大約打掉魔王 {n}%', { n: estimate })}>
-        <span class="boss-face" style={bossStyle(world.id)}></span>
+        <span class="boss-face" style={bossStyle(boss)}></span>
         <span>
-          <b>{t(world.boss.name)}</b><small>{t('戰力推估')} {estimate}%</small>
+          <b>{bossName}</b><small>{t('戰力推估')} {estimate}%</small>
           <i class="gauge red" class:ok={estimate >= 100}><i style:width="{Math.min(100, estimate)}%"></i></i>
         </span>
       </div>
@@ -303,6 +306,10 @@
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+  /* 對手角色：紅色的光 */
+  .boss-art.rival {
+    filter: drop-shadow(0 0 1cqh rgba(255, 60, 90, 0.85));
   }
   .boss-art {
     position: absolute;
