@@ -185,8 +185,9 @@ export default {
   '雀鬼': 'Mahjong Demon',
   '鐵壁攔網王': 'Iron Wall Blocker',
   '原曲': 'Original',
-  '新版': 'New ver.',
-  '切換新版／PC-98 原曲': 'Switch between the new version and the PC-98 original',
+  '切換原曲': 'Original ver.',
+  '切換新版': 'New ver.',
+  '切換新版／原曲': 'Switch between the new version and the original',
   '這個譜面': 'This chart',
   '最好的 10 個譜面的平均': 'Average of your 10 best charts',
 };

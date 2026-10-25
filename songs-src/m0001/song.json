@@ -20,9 +20,9 @@
       "2 Guitar.wav"
     ]
   },
-  "rival": {
-    "id": "lanjie",
-    "name": "蘭姐"
-  },
-  "original": "mj-title"
+  "original": "mj-title",
+  "boss": {
+    "key": "jankui",
+    "name": "雀鬼"
+  }
 }

@@ -28,7 +28,7 @@
   const firstPick = untrack(() => pick?.song);
   const pickedAsOriginal = TRACKS.find((tr) => tr.original && tr.original === firstPick);
   let songId = $state(pickedAsOriginal?.id ?? (TRACKS.some((tr) => tr.id === firstPick) ? firstPick : TRACKS[0].id));
-  // 「原曲」按鈕：Suno 的新版選到時，可以切到 PC-98 的原曲（看、聽、玩）；選別首或換篩選就切回來
+  // 「切換原曲」按鈕：Suno 的新版選到時，可以切到 PC-98 的原曲（看、聽、玩）；選別首或換篩選就切回來
   let showOriginal = $state(!!pickedAsOriginal);
   let level = $state(untrack(() => pick?.level) ?? 'normal');
   const c = $derived(getCharacter(character));
@@ -185,12 +185,12 @@
         <div class="title-row">
           <h3 class="pop-text">{t(track.title)}</h3>
           {#if original}
-            <button type="button" class="orig" class:on={showOriginal} aria-pressed={showOriginal} onclick={toggleOriginal} title={t('切換新版／PC-98 原曲')}>
-              {showOriginal ? t('新版') : t('原曲')}
+            <button type="button" class="orig" class:on={showOriginal} aria-pressed={showOriginal} onclick={toggleOriginal} title={t('切換新版／原曲')}>
+              {showOriginal ? t('切換新版') : t('切換原曲')}
             </button>
           {/if}
         </div>
-        {#if showOriginal}<p class="orig-tag">PC-98 {t('原曲')}</p>{/if}
+        {#if showOriginal}<p class="orig-tag">{t('原曲')}</p>{/if}
         <p class="boss">BOSS {bossName}</p>
         <p class="meta">BPM <b>{songOf(track).bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
         <div class="levels" role="radiogroup">
