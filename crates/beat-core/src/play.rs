@@ -160,6 +160,8 @@ pub struct Play {
     xp: f64,
     pub events: Vec<Event>,
     pub ended: bool,
+    /// 最近漏掉的音符（連線時給別人的小畫面：這幾顆會繼續往下掉、變灰）
+    pub recent_miss: Vec<usize>,
     rng: Rng,
 }
 
@@ -202,6 +204,7 @@ impl Play {
             xp: 0.0,
             events: Vec::new(),
             ended: false,
+            recent_miss: Vec::new(),
             rng: Rng::new(notes.len() as u64 * 7919 + char_level as u64),
         };
         p.boss_max = boss_hp(song_id, level);
@@ -247,6 +250,12 @@ impl Play {
         self.acc += j.weight();
         if j == Judge::Miss {
             self.combo = 0;
+            if self.recent_miss.last() != Some(&i) {
+                self.recent_miss.push(i);
+                if self.recent_miss.len() > 16 {
+                    self.recent_miss.remove(0);
+                }
+            }
             self.events.push(Event::Judge { i, lane, j, off, dmg: 0, tail: part == Part::Tail, chord: self.chord[i] });
             if self.ability.parry > 0.0 && self.rng.chance(self.ability.parry) {
                 self.events.push(Event::Parry);
@@ -407,6 +416,11 @@ impl Play {
             s if s >= 700_000 => "C",
             _ => "D",
         }
+    }
+
+    /// 正在按的軌道（位元）
+    pub fn keys(&self) -> u8 {
+        self.pressed.iter().enumerate().fold(0, |k, (i, &on)| if on { k | (1 << i) } else { k })
     }
 
     pub fn full_combo(&self) -> bool {

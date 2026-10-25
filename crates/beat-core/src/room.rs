@@ -54,6 +54,9 @@ pub struct Progress {
     /// 最近一次判定（P/G/D/M）與軌道（小畫面的動作用）
     pub j: String,
     pub lane: Option<usize>,
+    /// 正在按的軌道（位元）與最近漏掉的音符（別人的小畫面用）
+    pub keys: u8,
+    pub miss: Vec<usize>,
     /// 角色等級（自己電腦上養的）
     pub lv: u32,
     pub rank: String,
@@ -431,6 +434,8 @@ pub fn progress_of(play: &Play) -> Progress {
         killed: play.killed,
         j: String::new(),
         lane: None,
+        keys: play.keys(),
+        miss: play.recent_miss.clone(),
         lv: play.char_level,
         rank: play.rank().to_string(),
         fin: play.ended,

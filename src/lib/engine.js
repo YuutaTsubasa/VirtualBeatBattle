@@ -187,6 +187,8 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
 
   let raf = 0;
   function loop() {
+    // 先排下一格：畫面哪裡出錯也不會讓整個遊戲停住
+    raf = requestAnimationFrame(loop);
     frame();
     if (state !== 'idle') {
       render.draw(canvas, {
@@ -203,7 +205,6 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
         keys: ui.input === 'key' || ui.input === 'pointer' ? 'key' : ui.input === 'pad' ? 'pad' : null,
       });
     }
-    raf = requestAnimationFrame(loop);
   }
   raf = requestAnimationFrame(loop);
 
@@ -226,7 +227,12 @@ export function createEngine(canvas, { onEnd = () => {}, onEvent = () => {} }) {
     lastCount = 99;
     input.releaseAll();
     render.reset();
-    if (newState !== 'spectate') {
+    if (newState === 'spectate') {
+      // 觀戰：沒有自己的判定，只拿譜面畫大家的迷你畫面
+      const tmp = new LocalPlay(info.song, info.level, 'xiaocui', 1);
+      chart = JSON.parse(tmp.chart());
+      tmp.free();
+    } else {
       lp = new LocalPlay(info.song, info.level, info.character, info.lv);
       if (info.demo) lp.setAi('hard');
       chart = JSON.parse(lp.chart());
