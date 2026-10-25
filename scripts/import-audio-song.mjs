@@ -78,6 +78,7 @@ const data = {
   world: conf.world ?? 0,
   bg: conf.bg ?? null,
   boss: conf.boss ?? null,
+  rival: conf.rival ?? null,
   bpm: conf.bpm,
   offsetMs,
   lengthMs,

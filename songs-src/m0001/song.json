@@ -19,5 +19,9 @@
     "keys": [
       "2 Guitar.wav"
     ]
+  },
+  "rival": {
+    "id": "lanjie",
+    "name": "蘭姐"
   }
 }
