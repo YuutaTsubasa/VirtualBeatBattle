@@ -158,7 +158,8 @@
     if (view === 'online-lobby') return 'ui-menu';
     if (view === 'online-playing') return raceResults ? 'ui-menu' : null;
     if (screen === 'title') return 'ui-title';
-    if (screen === 'play' || screen === 'pause') return null;
+    // 選曲畫面播選到那一首的試聽（SongSelect.svelte）
+    if (screen === 'play' || screen === 'pause' || screen === 'songs') return null;
     return 'ui-menu';
   });
   $effect(() => setBgm(scene));

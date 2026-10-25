@@ -5,6 +5,7 @@
   // 每一首都是一隻魔王；魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），
   // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
+  import { previewTrack, stopPreview } from '../audio/preview.js';
   import { SHOWN_TRACKS as TRACKS, LEVELS, SHOWN_GAMES as GAMES, gameOf, songOf, coverOf, bossOf } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
   import { getCharacter } from '../game/characters.js';
@@ -88,7 +89,12 @@
   }
 
   let list;
-  onMount(() => list.querySelector('.song.sel')?.focus({ preventScroll: true }));
+  onMount(() => {
+    list.querySelector('.song.sel')?.focus({ preventScroll: true });
+    return stopPreview;
+  });
+  // 試聽選到的那一首
+  $effect(() => previewTrack(track));
 
   function setFilter(id) {
     play('move');
