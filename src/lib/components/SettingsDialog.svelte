@@ -62,6 +62,9 @@
         {/each}
       </div>
 
+      <!-- 聲音與遊玩左右並排（疊起來會超出 16:9 的畫面） -->
+      <div class="cols">
+      <section>
       <h3>{t('聲音')}</h3>
       <div class="audio">
         <label class="row">
@@ -90,7 +93,9 @@
           <small>{t('鍵盤 M 也可以切換')}</small>
         </div>
       </div>
+      </section>
 
+      <section>
       <h3>{t('遊玩')}</h3>
       <div class="audio">
         <label class="row">
@@ -105,9 +110,11 @@
         </label>
         <small class="hint">{t('常常太晚（SLOW）就往 + 調、太早（FAST）就往 − 調；藍牙耳機通常要 +100 以上。')}</small>
       </div>
+      </section>
+      </div>
 
-      <p class="note">{t('設定會自動儲存在這台電腦上。')}</p>
       <div class="actions">
+        <p class="note">{t('設定會自動儲存在這台電腦上。')}</p>
         <button type="button" class="vbtn primary" onclick={done}>{t('完成')}</button>
       </div>
     </div>
@@ -120,7 +127,7 @@
     background: none;
     padding: 3cqh 1.4cqh 1.4cqh 2cqh;
     overflow: visible;
-    width: 78cqw;
+    width: 84cqw;
     max-width: 96vw;
     font-size: 2.4cqh;
     color: var(--navy);
@@ -138,7 +145,22 @@
     margin-top: -2.6cqh;
   }
   .panel-body {
-    padding: 1.6cqh 3cqh 2.4cqh;
+    padding: 1.4cqh 3cqh 1.8cqh;
+    gap: 0.9cqh;
+    /* 保險：還是放不下（字多的語言）就在裡面捲動，不要超出畫面 */
+    max-height: 84cqh;
+    overflow-y: auto;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3cqw;
+  }
+  .cols section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9cqh;
+    min-width: 0;
   }
   .hint {
     font-weight: 700;
@@ -194,7 +216,7 @@
   .pic {
     position: relative;
     width: 100%;
-    aspect-ratio: 1;
+    aspect-ratio: 1.25;
     background:
       radial-gradient(rgba(40, 127, 120, 0.3) 22%, transparent 26%) 0 0 / 1cqh 1cqh,
       #e6efe9;
@@ -204,6 +226,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 20%;
     display: block;
   }
   .pic.pixel img {
@@ -232,7 +255,7 @@
   }
   .row {
     display: grid;
-    grid-template-columns: 10cqh minmax(0, 1fr) 8cqh;
+    grid-template-columns: 11cqh minmax(0, 1fr) 8cqh;
     align-items: center;
     gap: 2cqh;
     font-weight: 900;
@@ -263,10 +286,12 @@
   }
   .note {
     margin: 0;
+    flex: 1;
     font-size: 1.9cqh;
   }
   .actions {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 2cqw;
   }
 </style>
