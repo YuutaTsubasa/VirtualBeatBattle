@@ -15,7 +15,7 @@
   ];
 </script>
 
-<ScreenFrame title={t('操作說明')} subtitle={t('鍵盤・手把・觸控都能玩')}>
+<ScreenFrame title={t('操作說明')} en="HOW TO PLAY" subtitle={t('鍵盤・手把・觸控都能玩')}>
   <div class="panel keys-panel">
     <div class="panel-head">{t('操作方式')}</div>
     <div class="panel-body">

@@ -1,13 +1,14 @@
 <script>
   import { artStyle } from './lib/art-style.svelte.js';
-  import { t, displayName } from './lib/i18n.svelte.js';
+  import { t } from './lib/i18n.svelte.js';
   import { loading, preloadStyle, preloadStyleWithin } from './lib/preload.svelte.js';
   import { onMount } from 'svelte';
   import { createEngine } from './lib/engine.js';
   import { getCharacter, pickLine, unlockHidden } from './lib/game/characters.js';
   import { savedCharacter, saveCharacter, savedPick, savePick, levelOf, feedXp, recordBest } from './lib/game/progress.js';
   import { trackOf } from './lib/game/tracks.js';
-  import { COUNTDOWN, SLOT_COLORS } from './lib/game/constants.js';
+  import { WORLDS } from './lib/game/stages.js';
+  import { COUNTDOWN } from './lib/game/constants.js';
   import { toggleMute } from './lib/game/audio.js';
   import { net, hostCmd, leave, onFrame, toast } from './lib/net.svelte.js';
   import Menu from './lib/components/Menu.svelte';
@@ -19,6 +20,7 @@
   import SelectScreen from './lib/components/SelectScreen.svelte';
   import SongSelect from './lib/components/SongSelect.svelte';
   import ResultScreen from './lib/components/ResultScreen.svelte';
+  import OnlineResult from './lib/components/OnlineResult.svelte';
   import RoomEntry from './lib/components/RoomEntry.svelte';
   import Lobby from './lib/components/Lobby.svelte';
   import Controls from './lib/components/Controls.svelte';
@@ -194,6 +196,7 @@
     const unlocked = !demo && v.killed && unlockHidden();
     result = {
       title: t(trackOf(playing.song).title),
+      world: WORLDS[trackOf(playing.song).world].id,
       level: playing.level,
       character: c,
       killed: v.killed,
@@ -250,8 +253,6 @@
     if (e.code === 'KeyM' && !inGame) toggleMute();
   }
 
-  const raceTitle = $derived(raceSong ? `${t(trackOf(raceSong).title)} · ${raceLevel.toUpperCase()}` : '');
-  const pad = (n) => String(n ?? 0).padStart(7, '0');
 </script>
 
 <svelte:window {onkeydown} />
@@ -264,40 +265,19 @@
     <Lobby />
   {:else if view === 'online-playing'}
     {#if raceResults}
-      <Dialog title={t('比賽結果')} subtitle={raceTitle} wide>
-        <ol class="ranking">
-          {#each raceResults as r (r.seat)}
-            {@const c = getCharacter(r.character)}
-            {@const pct = Math.round(((r.p.dmg ?? 0) / Math.max(1, r.p.boss_max ?? 1)) * 100)}
-            <li class:me={r.seat === net.seat} style="--c: {SLOT_COLORS[r.seat % SLOT_COLORS.length]}">
-              <span class="rank">{r.rank}</span>
-              <img src={r.rank === 1 ? c.portraits.win : r.out ? c.portraits.sad : c.portraits.normal} alt="" />
-              <b>{r.seat + 1}P {displayName(r.name)} <small>Lv.{r.p.lv}</small></b>
-              <span class="detail">
-                {#if r.out}{t('棄權')}{:else}<i class="grade">{r.p.rank}</i> {r.p.max_combo} combo ・ {r.p.killed ? t('擊破') : `${pct}%`}{/if}
-              </span>
-              <span class="score">{pad(r.p.score)}</span>
-            </li>
-          {/each}
-        </ol>
-        {#if raceMine}
-          <p class="mine-xp">
-            {t('經驗值')} +{raceMine.xp}
-            {#if raceMine.feed.levels > 0}・{getCharacter(raceMine.character).name} Lv.{raceMine.feed.before.lv} → Lv.{raceMine.feed.after.lv}{/if}
-          </p>
-        {/if}
-        {#if net.isHost}
-          <Menu
-            horizontal
-            items={[
-              { label: t('再一首'), action: () => hostCmd('start'), primary: true },
+      <OnlineResult
+        results={raceResults}
+        you={net.seat}
+        mine={raceMine}
+        title={raceSong ? t(trackOf(raceSong).title) : ''}
+        level={raceLevel}
+        actions={net.isHost
+          ? [
               { label: t('回大廳'), action: () => hostCmd('reset') },
-            ]}
-          />
-        {:else}
-          <div class="hint-bar">{t('等待房主決定下一步…')}</div>
-        {/if}
-      </Dialog>
+              { label: t('再一首'), action: () => hostCmd('start'), primary: true },
+            ]
+          : []}
+      />
     {:else if onlineMenu}
       <Dialog title={t('選單')} subtitle={t('連線遊戲不會暫停喔！')}>
         <Menu
@@ -316,7 +296,7 @@
   {:else if screen === 'title'}
     <TitleScreen
       items={[
-        { label: t('單機遊玩'), action: () => (screen = 'select') },
+        { label: t('單人演奏'), action: () => (screen = 'select') },
         { label: t('開設房間'), action: () => (screen = 'host') },
         { label: t('加入房間'), action: () => (screen = 'join') },
         { label: t('操作說明'), action: () => (screen = 'help') },
@@ -346,7 +326,7 @@
         items={[
           { label: t('繼續'), action: resume },
           { label: t('從頭開始'), action: () => start(playing) },
-          { label: t('選擇魔王'), action: () => { engine.stop(); screen = 'songs'; } },
+          { label: t('返回選曲'), action: () => { engine.stop(); screen = 'songs'; } },
           { label: t('設定'), action: openSettings },
           { label: t('回標題'), action: toTitle },
         ]}
@@ -357,10 +337,10 @@
       {result}
       demo={playing?.demo}
       actions={[
-        { label: t('再挑戰'), action: () => start({ ...playing, demo: false }), primary: true },
-        { label: t('選擇魔王'), action: () => { engine.stop(); screen = 'songs'; } },
-        { label: t('換角色'), action: () => { engine.stop(); screen = 'select'; } },
         { label: t('回標題'), action: toTitle },
+        { label: t('換角色'), action: () => { engine.stop(); screen = 'select'; } },
+        { label: t('再挑戰'), action: () => start({ ...playing, demo: false }) },
+        { label: t('返回選曲'), action: () => { engine.stop(); screen = 'songs'; }, primary: true },
       ]}
     />
   {/if}
@@ -450,71 +430,5 @@
     width: 50cqw;
     display: flex;
     justify-content: center;
-  }
-  .ranking {
-    list-style: none;
-    margin: 0 0 2cqh;
-    padding: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.6cqh 1cqw;
-    min-width: 72cqw;
-    max-height: 56cqh;
-    overflow: auto;
-  }
-  .ranking li {
-    display: grid;
-    grid-template-columns: 4cqh 5.4cqh 1fr auto;
-    grid-template-rows: auto auto;
-    align-items: center;
-    column-gap: 0.8cqw;
-    padding: 0.4cqh 1cqw;
-    border-left: 0.8cqh solid var(--c);
-    background: rgba(255, 255, 255, 0.5);
-    font-weight: 900;
-    font-size: 2.2cqh;
-  }
-  .ranking li.me {
-    background: rgba(233, 184, 94, 0.45);
-  }
-  .ranking .rank {
-    grid-row: span 2;
-    font-size: 3.4cqh;
-    text-align: center;
-  }
-  .ranking img {
-    grid-row: span 2;
-    width: 5.4cqh;
-    height: 5.4cqh;
-    object-fit: cover;
-    object-position: center 18%;
-    border-radius: 50%;
-    background: #ffe9a8;
-  }
-  .ranking b small {
-    color: var(--accent);
-    font-size: 1.7cqh;
-  }
-  .ranking .detail {
-    grid-column: 3;
-    font-size: 1.8cqh;
-    color: var(--navy-soft);
-  }
-  .ranking .grade {
-    font-style: normal;
-    color: var(--accent);
-  }
-  .ranking .score {
-    grid-column: 4;
-    grid-row: 1 / span 2;
-    color: var(--sea);
-    letter-spacing: 0.06em;
-  }
-  .mine-xp {
-    margin: 0 0 1.4cqh;
-    font-weight: 900;
-    font-size: 2.4cqh;
-    color: var(--accent);
-    text-align: center;
   }
 </style>

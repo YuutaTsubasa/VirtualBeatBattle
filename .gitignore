@@ -32,3 +32,6 @@ art-work/taiwan-print-*/
 art-work/gameboy-*/
 art-work/modern-paint-*/
 art-work/art-inbox-progress.json
+
+# 介面概念稿（ChatGPT 畫的）：只留提示詞，大張的 PNG 留在本機
+art-work/rhythm-ui-concept-v1/*.png

@@ -1,5 +1,6 @@
 <script>
-  // 房間大廳：左邊 3×4 座位卡（最多十二人），右邊邀請朋友、比賽設定（曲子＝魔王、難度、電腦強度）、聊天；房主按「開始！」
+  // 樂手集合（art-work/rhythm-ui-concept-v1 的 02 左上）：左邊 4×3 座位卡（編號、頭像、名字、狀態），
+  // 右邊房號與人數、這一首（封面、曲名、魔王、難度）、大廳聊天；房主按「開始演奏」。
   import { tick } from 'svelte';
   import { net, inTauri, hostCmd, leave, send, serverUrls, setCharacter, toast, load } from '../net.svelte.js';
   import { WEB_URL, shareLink } from '../site.js';
@@ -7,6 +8,7 @@
   import { DIFFICULTIES, SLOT_COLORS } from '../game/constants.js';
   import { TRACKS, LEVELS } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
+  import { asset } from '../art-style.svelte.js';
   import { play } from '../game/audio.js';
   import { t, displayName, serverText } from '../i18n.svelte.js';
   import ScreenFrame from './ScreenFrame.svelte';
@@ -17,6 +19,8 @@
   const room = $derived(net.room);
   const songOptions = TRACKS.map((tr) => ({ value: tr.id, label: `${t(tr.title)} / ${t(WORLDS[tr.world].boss.name)}` }));
   const levelOptions = LEVELS.map((l) => ({ value: l.id, label: l.name }));
+  const track = $derived(TRACKS.find((tr) => tr.id === room.settings.song) ?? TRACKS[0]);
+  const filled = $derived(room.seats.filter(Boolean).length);
   const difficultyOptions = Object.entries(DIFFICULTIES).map(([k, label]) => ({ value: k, label: t(label) }));
   const isHost = $derived(net.isHost);
   const urls = $derived(serverUrls());
@@ -81,21 +85,22 @@
   }
 </script>
 
-<ScreenFrame title={t('樂手集合')} subtitle={t('房間大廳・最多十二人')}>
+<ScreenFrame title={t('樂手集合')} en="SESSION LOBBY">
   <div class="seats">
     {#each room.seats as seat, i (i)}
       <div class="panel seat" class:gold-frame={i === net.seat} class:empty={!seat} style="--c: {SLOT_COLORS[i]}">
-        <span class="no">{i + 1}P</span>
+        <span class="no">{String(i + 1).padStart(2, '0')}</span>
         {#if seat}
           {@const c = getCharacter(seat.character)}
           <div class="pic"><img src={i === net.seat ? c.portraits.happy : c.portraits.normal} alt="" /></div>
           <div class="info">
             <b class="who" title={displayName(seat.name)}>{seat.kind === 'bot' ? c.name : displayName(seat.name)}</b>
-            <small>{seat.kind === 'bot' ? statusOf(seat) : c.name}</small>
-            {#if roleOf(i)}<span class="role">{roleOf(i)}</span>{/if}
-            {#if seat.kind !== 'bot'}
-              <span class="status"><i class="dot" class:on={seat.connected}></i>{statusOf(seat)}</span>
+            {#if seat.kind === 'bot'}
+              <span class="status bot">{t('電腦')}</span>
+            {:else}
+              <span class="status" class:on={seat.connected}>{seat.connected ? t('已連線') : t('斷線中')}</span>
             {/if}
+            {#if roleOf(i)}<span class="role">{roleOf(i)}</span>{/if}
             <div class="seat-actions">
               {#if i === net.seat}
                 <button type="button" class="vbtn small gold" onclick={openCharacters}>{t('更換角色')}</button>
@@ -131,6 +136,7 @@
           <div class="code-row">
             <span class="code-label">{t('房號')}</span>
             <code class="room-code">{net.code}</code>
+            <span class="count"><b>{String(filled).padStart(2, '0')}</b> / 12</span>
           </div>
           <div class="copy-buttons">
             <button type="button" class="vbtn small gold" onclick={() => copy(net.code)}>{t('複製房號')}</button>
@@ -160,8 +166,15 @@
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panel-head left">{t('比賽設定')}</div>
+    <section class="panel song">
+      <div class="song-top">
+        <img src={asset(`stages/${WORLDS[track.world].id}-3/far.webp`)} alt="" />
+        <div class="song-info">
+          <b>{t(track.title)}</b>
+          <small>BOSS {t(WORLDS[track.world].boss.name)}</small>
+          <span class="chips"><i class="on">{(room.settings.level ?? '').toUpperCase()}</i><i>6 KEY</i></span>
+        </div>
+      </div>
       <div class="panel-body rules">
         <span>{t('曲子')}</span>
         <Stepper options={songOptions} value={room.settings.song} disabled={!isHost} onchange={(v) => updateSettings({ song: v })} />
@@ -194,9 +207,9 @@
 
   {#snippet foot()}
     <BackButton label={t('離開房間')} onclick={leave} />
-    <div class="hint-bar"><i class="bang">!</i>{isHost ? t('同一首曲子比技術分；打魔王的經驗值各自帶回去') : t('等待房主開始…')}</div>
+    <div class="hint-bar"><i class="bang">!</i>{isHost ? t('以技術分排名') : t('等待房主開始…')}</div>
     {#if isHost}
-      <button type="button" class="vbtn primary" onclick={() => hostCmd('start')}>{t('開始！')}</button>
+      <button type="button" class="vbtn primary" onclick={() => hostCmd('start')}>{t('開始演奏')}</button>
     {:else}
       <span class="spinner"></span>
     {/if}
@@ -225,120 +238,125 @@
   .seats {
     flex: 1.7;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(4, minmax(0, 1fr));
-    gap: 1.4cqh 1.2cqw;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 1.2cqh 0.8cqw;
     min-width: 0;
     min-height: 0;
-    padding-top: 0.8cqh;
   }
-  /* 隊員卡：左邊大頭像、右邊名字與狀態，左上角是座位編號（該座位的代表色） */
+  /* 座位卡：上面是頭像（該座位的代表色底），下面名字與狀態，左上角是編號 */
   .seat {
-    flex-direction: row;
-    gap: 1cqw;
-    padding: 0.6cqh;
+    flex-direction: column;
+    padding: 0;
     min-width: 0;
     min-height: 0;
+    overflow: hidden;
+  }
+  .seat.gold-frame {
+    border-color: var(--accent);
   }
   .no {
     position: absolute;
-    left: -0.4cqh;
-    top: -0.4cqh;
+    left: 0.8cqh;
+    top: 0.4cqh;
     z-index: 2;
-    background: var(--c);
-    color: #fff;
-    font-size: 2.6cqh;
+    color: var(--navy);
+    font-size: 2.8cqh;
     font-weight: 900;
     font-style: italic;
-    padding: 0 3cqh 0 1.2cqh;
-    line-height: 1.15;
-    clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
-    text-shadow: 0.25cqh 0.25cqh 0 var(--navy);
+    line-height: 1.1;
+    text-shadow: 0 0 0.6cqh #fff, 0 0 0.6cqh #fff;
+  }
+  .gold-frame .no {
+    color: #fff;
+    text-shadow: none;
+    background: var(--accent);
+    padding: 0 1.4cqh 0 0.8cqh;
+    left: 0;
+    top: 0;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 0.8cqh) 100%, 0 100%);
   }
   .pic {
     position: relative;
-    flex: 0 0 34%;
-    min-width: 0;
-    background:
-      radial-gradient(color-mix(in srgb, var(--c) 45%, transparent) 22%, transparent 26%) 0 0 / 1.2cqh 1.2cqh,
-      color-mix(in srgb, var(--c) 18%, var(--cream));
+    flex: 1;
+    min-height: 0;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 20%, #fff), #eef3ff);
     overflow: hidden;
   }
   .pic img {
     position: absolute;
     left: 50%;
-    bottom: 0;
-    height: 112%;
+    top: 0;
+    width: 100%;
+    height: 130%;
+    object-fit: cover;
+    object-position: center 12%;
     translate: -50% 0;
   }
   .pic.plus {
     background: none;
-    border: 0.3cqh dashed var(--muted);
   }
   .pic.plus::before,
   .pic.plus::after {
     content: '';
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 55%;
     translate: -50% -50%;
-    width: 4cqh;
-    height: 0.8cqh;
-    background: var(--navy);
+    width: 3cqh;
+    height: 0.3cqh;
+    background: var(--muted);
   }
   .pic.plus::after {
-    width: 0.8cqh;
-    height: 4cqh;
+    width: 0.3cqh;
+    height: 3cqh;
   }
   .info {
-    flex: 1 1 50%;
+    flex: none;
     min-width: 0;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3cqh;
-    padding-top: 0.2cqh;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2cqh 0.8cqh;
+    padding: 0.5cqh 1cqh 0.6cqh;
+    border-top: var(--line) solid var(--sky-line);
+    background: #fff;
   }
   .who {
     max-width: 100%;
-    font-size: 2.6cqh;
+    font-size: 2.2cqh;
     font-weight: 900;
     line-height: 1.1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .info small {
-    font-size: 1.8cqh;
+  .empty .who {
+    color: var(--muted);
     font-weight: 800;
-    color: var(--navy-soft);
   }
   .role {
-    background: var(--navy);
-    color: var(--on-dark);
+    background: var(--accent);
+    color: #fff;
     font-weight: 900;
-    font-size: 1.6cqh;
-    letter-spacing: 0.1em;
-    padding: 0 1cqh;
+    font-size: 1.4cqh;
+    padding: 0 0.8cqh;
   }
   .status {
-    font-size: 1.7cqh;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    gap: 0.8cqh;
+    font-size: 1.5cqh;
+    font-weight: 900;
+    color: var(--muted);
   }
-  .dot {
-    width: 1.8cqh;
-    height: 1.8cqh;
-    border-radius: 50%;
-    background: var(--muted);
+  .status.on {
+    color: var(--ok);
   }
-  .dot.on {
-    background: var(--teal);
+  .status.bot {
+    background: #e6ebf5;
+    color: var(--navy-soft);
+    padding: 0 0.8cqh;
   }
   .seat-actions {
-    margin-top: auto;
+    flex-basis: 100%;
     align-self: stretch;
     display: flex;
     flex-direction: row;
@@ -367,7 +385,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2.4cqh;
+    gap: 1.8cqh;
     min-height: 0;
     min-width: 0;
     padding-top: 0.8cqh;
@@ -479,13 +497,19 @@
   .rules {
     display: grid !important;
     grid-template-columns: max-content 1fr;
-    gap: 0.7cqh 1.4cqw !important;
+    gap: 0.4cqh 1.2cqw !important;
     align-items: center;
     font-weight: 900;
-    font-size: 2.2cqh;
+    font-size: 1.9cqh;
+    padding-top: 0 !important;
   }
   .chat {
     flex: 1;
+    min-height: 15cqh;
+  }
+  .rules :global(.stepper) {
+    min-height: 4.2cqh;
+    font-size: 2cqh;
   }
   .chat ol {
     flex: 1;
@@ -552,5 +576,60 @@
   .dialog-actions {
     display: flex;
     justify-content: flex-end;
+  }
+  .count {
+    margin-left: auto;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 2.2cqh;
+    color: var(--navy-soft);
+  }
+  .count b {
+    font-size: 3.4cqh;
+    color: var(--navy);
+  }
+  .song {
+    overflow: hidden;
+  }
+  .song-top {
+    display: flex;
+    gap: 1cqw;
+    padding: 1cqh;
+  }
+  .song-top img {
+    width: 13cqh;
+    height: 8cqh;
+    object-fit: cover;
+  }
+  .song-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3cqh;
+    min-width: 0;
+  }
+  .song-info b {
+    font-size: 3cqh;
+    font-style: italic;
+  }
+  .song-info small {
+    font-weight: 800;
+    font-size: 1.6cqh;
+    color: var(--red);
+  }
+  .chips {
+    display: flex;
+    gap: 0.4cqw;
+  }
+  .chips i {
+    font-style: normal;
+    font-weight: 900;
+    font-size: 1.6cqh;
+    padding: 0.2cqh 1.4cqh;
+    background: #e6ebf5;
+    color: var(--navy-soft);
+  }
+  .chips i.on {
+    background: var(--accent);
+    color: #fff;
   }
 </style>

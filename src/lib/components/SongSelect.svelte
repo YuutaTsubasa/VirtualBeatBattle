@@ -1,6 +1,8 @@
 <script>
-  // 選曲（= 選魔王）：左邊六首曲子，右邊選到的魔王、難度、最佳成績，以及「現在的等級全 Perfect 大約打得掉幾成」。
-  // 魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），所以要練等級或打得更準才打得倒。
+  // 選擇曲目（art-work/rhythm-ui-concept-v1 的右上）：左邊編號的曲目列表（選到的那一列變藍），
+  // 右邊大圖、曲名、魔王、BPM／長度／6 KEY、難度、最佳成績；底部一條：角色（等級）、魔王（戰力推估）、電腦示範、開始演奏。
+  // 每一首都是一隻魔王；魔王的血量是初始等級全 Perfect 打掉七成五（crates/beat-core/src/play.rs），
+  // 「戰力推估」就是現在的等級全 Perfect 大約打得掉幾成。
   import { onMount, untrack } from 'svelte';
   import { TRACKS, LEVELS } from '../game/tracks.js';
   import { WORLDS } from '../game/stages.js';
@@ -14,7 +16,6 @@
   import { t } from '../i18n.svelte.js';
   import ScreenFrame from './ScreenFrame.svelte';
   import BackButton from './BackButton.svelte';
-  import SpritePose from './SpritePose.svelte';
   import CHARTS from '../../../crates/beat-core/charts.json' with { type: 'json' };
 
   // onstart({ song, level, demo })、onback()
@@ -31,6 +32,7 @@
   // 現在的等級全 Perfect 大約打得掉魔王幾成（不算角色能力）
   const estimate = $derived(Math.round(75 * (atkOfLevel(lv.lv) / 100)));
   const minutes = (ms) => `${Math.floor(ms / 60000)}:${String(Math.round((ms % 60000) / 1000)).padStart(2, '0')}`;
+  const art = (tr) => asset(`stages/${WORLDS[tr.world].id}-3/far.webp`);
 
   function bossStyle(worldId) {
     const sheet = sheetOf('bosses', worldId);
@@ -53,14 +55,15 @@
   }
 </script>
 
-<ScreenFrame title={t('選擇魔王')} subtitle={t('每一首歌都是一隻魔王：打中音符就是反擊！')} world={track.world}>
+<ScreenFrame title={t('選擇曲目')} en="SONG SELECT">
   <div class="pick">
     <div class="songs" bind:this={list}>
-      {#each TRACKS as tr (tr.id)}
+      {#each TRACKS as tr, i (tr.id)}
         {@const w = WORLDS[tr.world]}
         {@const b = bestOf(tr.id, level)}
-        <button type="button" class="song panel" class:sel={tr.id === songId} onclick={() => choose(tr.id)} onfocus={() => choose(tr.id)} ondblclick={() => start()}>
-          <span class="thumb" style={bossStyle(w.id)}></span>
+        <button type="button" class="song" class:sel={tr.id === songId} onclick={() => choose(tr.id)} onfocus={() => choose(tr.id)} ondblclick={() => start()}>
+          <span class="no">{String(i + 1).padStart(2, '0')}</span>
+          <img class="thumb" src={art(tr)} alt="" />
           <span class="names">
             <b>{t(tr.title)}</b>
             <small>BOSS {t(w.boss.name)}</small>
@@ -69,280 +72,334 @@
             {#if b?.killed}<i class="down">{t('擊破')}</i>{/if}
             {#if b}<i class="rank">{b.rank}</i>{/if}
           </span>
+          <span class="bpm"><i class="eq"></i>{SONGS[tr.song].bpm}</span>
         </button>
       {/each}
     </div>
 
-    <div class="detail panel">
-      <div class="boss-art" style={bossStyle(world.id)}></div>
-      <div class="head">
+    <div class="detail">
+      <div class="cover">
+        <img src={art(track)} alt="" />
+        <span class="boss-art" style={bossStyle(world.id)}></span>
+      </div>
+      <div class="info">
         <h3 class="pop-text">{t(track.title)}</h3>
-        <span class="meta">BPM {SONGS[track.song].bpm} ・ {minutes(chartInfo?.length_ms ?? 0)}</span>
-      </div>
-      <p class="boss">BOSS <b>{t(world.boss.name)}</b></p>
-
-      <div class="levels" role="radiogroup">
-        {#each LEVELS as l (l.id)}
-          <button type="button" role="radio" aria-checked={level === l.id} class="lv {l.id}" class:on={level === l.id} onclick={() => { play('move'); level = l.id; }}>
-            <span>{l.name}</span><b>{chartInfo?.charts[l.id].rating}</b>
-          </button>
-        {/each}
-      </div>
-
-      <div class="rows">
-        <div><span>{t('最佳成績')}</span><b>{best ? `${String(best.score).padStart(7, '0')}  ${best.rank}` : '—'}{#if best?.fc}<i class="fc">FC</i>{/if}</b></div>
-        <div><span>{t('音符數')}</span><b>{chartInfo?.charts[level].notes.filter((n) => n[3] === 0).length}</b></div>
-      </div>
-
-      <div class="me">
-        <div class="me-pic"><SpritePose character={c} pose="idle" size="16cqh" /></div>
-        <div class="me-info">
-          <b>{c.name} <span>Lv.{lv.lv}</span></b>
-          <div class="xp"><i style:width="{lv.lv >= MAX_LEVEL ? 100 : (lv.xp / xpToNext(lv.lv)) * 100}%"></i></div>
-          <small>ATK {atkOfLevel(lv.lv)} ・ {c.specialName}</small>
-          <p class="estimate" class:ok={estimate >= 100}>
-            {t('全 Perfect 大約打掉魔王 {n}%', { n: estimate })}{estimate >= 100 ? t('，打得倒！') : t('，再練幾級吧')}
-          </p>
+        <p class="boss">BOSS {t(world.boss.name)}</p>
+        <p class="meta">BPM <b>{SONGS[track.song].bpm}</b><i></i><b>{minutes(chartInfo?.length_ms ?? 0)}</b><i></i><b>6 KEY</b></p>
+        <div class="levels" role="radiogroup">
+          {#each LEVELS as l (l.id)}
+            <button type="button" role="radio" aria-checked={level === l.id} class="lv" class:on={level === l.id} onclick={() => { play('move'); level = l.id; }}>
+              {l.name}<b>{chartInfo?.charts[l.id].rating}</b>
+            </button>
+          {/each}
         </div>
+        <span class="label">BEST SCORE</span>
+        <p class="best">
+          {best ? String(best.score).padStart(7, '0') : '0000000'}
+          {#if best}<i class="rank">{best.rank}</i>{/if}
+          {#if best?.fc}<i class="fc">FULL COMBO</i>{/if}
+        </p>
+        <span class="notes">{t('音符數')} {chartInfo?.charts[level].notes.filter((n) => n[3] === 0).length}</span>
       </div>
     </div>
   </div>
 
   {#snippet foot()}
     <BackButton onclick={onback} />
-    <div class="go">
-      <button type="button" class="vbtn small" onclick={() => start(true)}>{t('電腦示範')}</button>
-      <button type="button" class="vbtn primary" onclick={() => start()}>{t('開始！')}</button>
+    <div class="bar">
+      <div class="who">
+        <img src={c.portraits.normal} alt="" />
+        <span><b>{c.name}</b><small>Lv.{lv.lv}</small><i class="gauge"><i style:width="{lv.lv >= MAX_LEVEL ? 100 : (lv.xp / xpToNext(lv.lv)) * 100}%"></i></i></span>
+      </div>
+      <div class="who" title={t('全 Perfect 大約打掉魔王 {n}%', { n: estimate })}>
+        <span class="boss-face" style={bossStyle(world.id)}></span>
+        <span>
+          <b>{t(world.boss.name)}</b><small>{t('戰力推估')} {estimate}%</small>
+          <i class="gauge red" class:ok={estimate >= 100}><i style:width="{Math.min(100, estimate)}%"></i></i>
+        </span>
+      </div>
+      <button type="button" class="vbtn small demo" onclick={() => start(true)}>▶ {t('電腦示範')}</button>
+      <button type="button" class="vbtn primary" onclick={() => start()}>{t('開始演奏')}</button>
     </div>
   {/snippet}
 </ScreenFrame>
 
 <style>
-  .go {
-    display: flex;
-    align-items: center;
-    gap: 1.4cqw;
-    margin-left: auto;
-  }
   .pick {
     flex: 1;
     display: grid;
     grid-template-columns: 40cqw 1fr;
-    gap: 2cqw;
+    gap: 2.4cqw;
     min-height: 0;
   }
   .songs {
     display: flex;
     flex-direction: column;
-    gap: 1cqh;
     min-height: 0;
     overflow: hidden auto;
-    padding: 0.4cqh 1.6cqw 0.4cqh 0.4cqh;
+    background: rgba(255, 255, 255, 0.85);
+    border: var(--line) solid var(--sky-line);
   }
   .song {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 4cqw 11cqh 1fr auto auto;
     align-items: center;
-    gap: 1.2cqw;
-    padding: 0.6cqh 1.2cqw;
+    gap: 1cqw;
+    padding: 0.8cqh 1.2cqw;
+    border: none;
+    border-bottom: var(--line) solid var(--sky-line);
+    background: transparent;
     text-align: left;
-    cursor: pointer;
-    min-height: 9cqh;
+    color: var(--navy);
+    flex: 1;
+    min-height: 8.6cqh;
+  }
+  .song:hover {
+    background: #eef3ff;
   }
   .song.sel {
-    border-color: var(--accent);
-    background: color-mix(in srgb, var(--gold) 22%, var(--paper-white, #fff));
-    translate: 1cqw 0;
+    background: var(--accent);
+    color: #fff;
+  }
+  .no {
+    font-weight: 900;
+    font-style: italic;
+    font-size: 2.4cqh;
+    text-align: center;
   }
   .thumb {
-    width: 8cqh;
-    height: 8cqh;
-    flex: none;
-    background-repeat: no-repeat;
-    transform: scaleX(-1);
-    border-radius: 1cqh;
-    background-color: rgba(0, 0, 0, 0.08);
+    width: 11cqh;
+    height: 6.6cqh;
+    object-fit: cover;
+    display: block;
   }
   .names {
-    flex: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
   }
   .names b {
-    font-size: 3cqh;
-    color: var(--navy);
+    font-size: 2.6cqh;
   }
   .names small {
-    font-weight: 800;
-    font-size: 1.8cqh;
-    color: var(--navy-soft);
+    font-weight: 700;
+    font-size: 1.6cqh;
+    opacity: 0.75;
   }
   .mark {
     display: flex;
-    gap: 0.6cqw;
-    align-items: center;
+    gap: 0.4cqw;
   }
   .mark i {
-    font-style: normal;
+    font-style: italic;
     font-weight: 900;
-    font-size: 1.9cqh;
-    padding: 0.1cqh 1cqh;
-    border-radius: 999px;
-  }
-  .mark .down {
-    background: var(--accent);
-    color: #fff;
-  }
-  .mark .rank {
+    font-size: 1.6cqh;
+    padding: 0 0.8cqh;
     background: var(--navy);
     color: var(--gold);
   }
+  .mark .down {
+    background: var(--red);
+    color: #fff;
+  }
+  .bpm {
+    display: flex;
+    align-items: center;
+    gap: 0.6cqh;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 2cqh;
+    opacity: 0.85;
+  }
+  .eq {
+    width: 2.6cqh;
+    height: 2cqh;
+    background: repeating-linear-gradient(90deg, currentColor 0 0.35cqh, transparent 0.35cqh 0.65cqh);
+    clip-path: polygon(0 60%, 15% 30%, 30% 70%, 45% 10%, 60% 50%, 75% 20%, 90% 60%, 100% 40%, 100% 100%, 0 100%);
+  }
 
   .detail {
+    display: grid;
+    grid-template-columns: 40cqh 1fr;
+    gap: 2.4cqw;
+    align-items: start;
+    min-height: 0;
+  }
+  .cover {
     position: relative;
-    padding: 2cqh 2.4cqw;
-    gap: 1cqh;
-    overflow: hidden;
+    height: 42cqh;
+    background: #fff;
+    padding: 0.8cqh;
+    box-shadow: var(--soft-shadow);
+  }
+  .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
   .boss-art {
     position: absolute;
-    right: -2cqw;
-    top: -2cqh;
-    width: 34cqh;
-    height: 34cqh;
+    right: -3cqh;
+    bottom: -2cqh;
+    width: 28cqh;
+    height: 28cqh;
     background-repeat: no-repeat;
     transform: scaleX(-1);
-    opacity: 0.9;
-    pointer-events: none;
+    filter: drop-shadow(0 0.6cqh 1cqh rgba(0, 0, 0, 0.35));
   }
-  .head {
+  .info {
     display: flex;
     flex-direction: column;
-    position: relative;
+    gap: 0.6cqh;
+    padding-top: 6cqh;
   }
   h3 {
     margin: 0;
     font-size: 6.4cqh;
     color: var(--navy);
   }
+  .boss,
   .meta {
+    margin: 0;
     font-weight: 800;
-    color: var(--navy-soft);
-    font-size: 2cqh;
+    font-size: 2.1cqh;
   }
   .boss {
-    margin: 0;
-    position: relative;
-    font-weight: 900;
-    font-size: 2.2cqh;
-    color: var(--accent);
+    color: var(--red);
   }
-  .boss b {
-    font-size: 3cqh;
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 1.2cqh;
+    color: var(--navy);
+  }
+  .meta i {
+    width: 0.2cqh;
+    height: 2.2cqh;
+    background: var(--sky-line);
   }
   .levels {
-    position: relative;
     display: flex;
-    gap: 1cqw;
-    margin-top: 6cqh;
+    gap: 0.4cqw;
+    margin: 1.4cqh 0;
   }
   .lv {
     flex: 1;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 0.6cqh 0;
-    border: 0.35cqh solid var(--navy);
-    border-radius: 1.4cqh;
-    background: var(--paper-white, #fff);
+    justify-content: center;
+    gap: 1cqh;
+    padding: 1cqh 0;
+    border: none;
+    background: #e6ebf5;
+    color: var(--navy-soft);
     font-weight: 900;
-    cursor: pointer;
-    color: var(--navy);
-  }
-  .lv span {
-    font-size: 1.9cqh;
+    font-size: 2cqh;
     letter-spacing: 0.1em;
   }
   .lv b {
-    font-size: 4cqh;
-    line-height: 1;
-  }
-  .lv.easy.on {
-    background: #7fdc8f;
-  }
-  .lv.normal.on {
-    background: #7fc8ff;
-  }
-  .lv.hard.on {
-    background: #ff8f8f;
+    font-size: 2.6cqh;
+    font-style: italic;
   }
   .lv.on {
-    box-shadow: 0 0.5cqh 0 var(--navy);
-    translate: 0 -0.4cqh;
+    background: var(--accent);
+    color: #fff;
   }
-  .rows {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4cqh;
-    font-weight: 800;
-    font-size: 2.2cqh;
-  }
-  .rows div {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 0.2cqh dashed color-mix(in srgb, var(--navy) 30%, transparent);
-  }
-  .fc {
-    margin-left: 0.6cqw;
-    font-style: normal;
-    color: var(--accent);
-  }
-  .me {
-    margin-top: auto;
-    display: flex;
-    gap: 1.2cqw;
-    align-items: center;
-  }
-  .me-pic {
-    margin: -2cqh 0 -1cqh;
-  }
-  .me-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4cqh;
-  }
-  .me-info b {
-    font-size: 3cqh;
-    color: var(--navy);
-  }
-  .me-info b span {
-    color: var(--accent);
-    font-size: 2.4cqh;
-  }
-  .me-info small {
-    font-weight: 800;
+  .label {
+    font-weight: 900;
     font-size: 1.9cqh;
+    letter-spacing: 0.15em;
     color: var(--navy-soft);
   }
-  .xp {
-    height: 1.2cqh;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--navy) 18%, transparent);
-    overflow: hidden;
+  .best {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 1.4cqw;
+    font-size: 6cqh;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: var(--navy);
   }
-  .xp i {
+  .best .rank {
+    font-size: 3.4cqh;
+    color: var(--gold-deep);
+  }
+  .best .fc {
+    font-size: 1.8cqh;
+    padding: 0.2cqh 1cqh;
+    background: var(--accent);
+    color: #fff;
+  }
+  .notes {
+    font-weight: 800;
+    font-size: 1.9cqh;
+    color: var(--muted);
+  }
+
+  /* 底部一條 */
+  .bar {
+    grid-column: 2 / -1;
+    display: flex;
+    align-items: center;
+    gap: 1.6cqw;
+    justify-content: flex-end;
+  }
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 1cqw;
+    padding-right: 1.4cqw;
+    border-right: var(--line) solid var(--sky-line);
+  }
+  .who img,
+  .boss-face {
+    width: 7cqh;
+    height: 7cqh;
+    object-fit: cover;
+    object-position: center 15%;
+    background-color: #e6ebf5;
+  }
+  .boss-face {
+    background-repeat: no-repeat;
+    transform: scaleX(-1);
+  }
+  .who > span {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 1cqh;
+    align-items: baseline;
+  }
+  .who b {
+    font-size: 2.4cqh;
+  }
+  .who small {
+    font-weight: 800;
+    font-size: 1.8cqh;
+    color: var(--navy-soft);
+  }
+  .gauge {
+    grid-column: 1 / -1;
+    width: 13cqw;
+    height: 0.9cqh;
+    margin-top: 0.4cqh;
+    background: #e6ebf5;
+    clip-path: polygon(0.4cqh 0, 100% 0, calc(100% - 0.4cqh) 100%, 0 100%);
+  }
+  .gauge i {
     display: block;
     height: 100%;
-    background: var(--gold);
+    background: var(--accent);
   }
-  .estimate {
-    margin: 0;
-    font-weight: 900;
-    font-size: 2.1cqh;
-    color: var(--teal);
+  .gauge.red i {
+    background: var(--red);
   }
-  .estimate.ok {
-    color: var(--accent);
+  .gauge.red.ok i {
+    background: var(--ok);
+  }
+  .demo {
+    min-height: 7cqh;
   }
 </style>

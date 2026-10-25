@@ -129,7 +129,7 @@
   );
 </script>
 
-<ScreenFrame title={isHost ? t('開設房間') : t('加入房間')} subtitle={t('設定玩家資料與角色')}>
+<ScreenFrame title={isHost ? t('開設房間') : t('加入房間')} en={isHost ? 'CREATE ROOM' : 'JOIN ROOM'} subtitle={t('設定玩家資料與角色')}>
   <form
     class="panel profile"
     onsubmit={(e) => {

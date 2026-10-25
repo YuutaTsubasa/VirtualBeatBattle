@@ -1,11 +1,13 @@
 <script>
-  // 單機打完的結算：疊在遊戲畫面上。左邊角色（打倒魔王擺勝利姿勢、輸了是被打的樣子），右邊結算牌：
-  // 評價（SSS～D）、技術分、判定次數、最大連擊、魔王戰的結果（打掉幾成），以及經驗值與升級。
+  // 演奏結果（art-work/rhythm-ui-concept-v1 的右下）：左邊「演奏結果」標籤、金色大評價（SSS～D）、新紀錄、
+  // 技術分、最大連擊、Full Combo、判定次數；右邊「魔王戰果」：擊破成功／魔王逃走、造成傷害、角色升級與經驗值。
   import { onMount } from 'svelte';
   import { t } from '../i18n.svelte.js';
   import { play } from '../game/audio.js';
   import { atkOfLevel, xpToNext, MAX_LEVEL } from '../game/constants.js';
-  import SpritePose from './SpritePose.svelte';
+  import { sheetOf } from '../game/sheets.js';
+  import { asset } from '../art-style.svelte.js';
+  import SettingsButton from './SettingsButton.svelte';
 
   // result：App 的 onEnd 組好的結果；actions：[{ label, action, primary }]
   let { result, actions, demo = false } = $props();
@@ -13,65 +15,74 @@
   const pad = (n) => String(n).padStart(7, '0');
   const after = $derived(result.feed?.after);
   const xpPct = $derived(after ? (after.lv >= MAX_LEVEL ? 100 : (after.xp / xpToNext(after.lv)) * 100) : 0);
+  const boss = $derived.by(() => {
+    const sheet = sheetOf('bosses', result.world);
+    if (!sheet) return '';
+    const rows = Math.ceil(sheet.frames.length / sheet.cols);
+    const i = Math.max(0, sheet.frames.indexOf(result.killed ? 'down' : 'idle'));
+    const col = i % sheet.cols;
+    const row = Math.floor(i / sheet.cols);
+    return `background-image: url(${asset(sheet.src)}); background-size: ${sheet.cols * 100}% ${rows * 100}%; background-position: ${(col / (sheet.cols - 1)) * 100}% ${rows > 1 ? (row / (rows - 1)) * 100 : 0}%`;
+  });
 
   let box;
-  onMount(() => box.querySelector('button')?.focus({ preventScroll: true }));
+  onMount(() => box.querySelector('button.primary')?.focus({ preventScroll: true }));
   function choose(a) {
     play('select');
     a.action();
   }
 </script>
 
-<section class="screen overlay result-screen">
-  <div class="pose" class:down={!result.killed}>
-    <SpritePose character={result.character} pose={result.killed ? 'win' : 'hurt'} size="62cqh" />
-  </div>
-
-  <div class="sheet panel" bind:this={box}>
-    <h2 class="pop-text" class:fail={!result.killed}>{result.killed ? t('擊破！') : t('魔王逃走了…')}</h2>
-    <div class="stage">{result.title} ・ {result.level.toUpperCase()}</div>
-
+<section class="screen result-screen">
+  <div class="paper-bg"></div>
+  <div class="corner"><SettingsButton /></div>
+  <div class="left">
+    <div class="tag"><b>{t('演奏結果')}</b><small class="en-sub">RESULT</small></div>
+    <p class="song">{result.title} <i>/ {result.level.toUpperCase()}</i></p>
     <div class="grade">
       <b class="rank r-{result.rank}">{result.rank}</b>
       <div class="score">
-        <span>SCORE</span>
+        {#if result.record && !demo}<span class="new">{t('新紀錄')}</span>{/if}
         <b>{pad(result.score)}</b>
-        {#if result.fc}<i class="fc">FULL COMBO</i>{/if}
+        <span class="mc">MAX COMBO <b>{result.maxCombo}</b>{#if result.fc}<i class="fc">FULL COMBO</i>{/if}</span>
       </div>
     </div>
+    <dl class="counts">
+      <dt class="p">PERFECT</dt><dd>{result.counts[0]}</dd>
+      <dt class="g">GREAT</dt><dd>{result.counts[1]}</dd>
+      <dt class="d">GOOD</dt><dd>{result.counts[2]}</dd>
+      <dt class="m">MISS</dt><dd>{result.counts[3]}</dd>
+    </dl>
+  </div>
 
-    <div class="counts">
-      <span class="p">PERFECT <b>{result.counts[0]}</b></span>
-      <span class="g">GREAT <b>{result.counts[1]}</b></span>
-      <span class="d">GOOD <b>{result.counts[2]}</b></span>
-      <span class="m">MISS <b>{result.counts[3]}</b></span>
-      <span>MAX COMBO <b>{result.maxCombo}</b></span>
-    </div>
-
-    <div class="boss">
-      <span>{t('對魔王的傷害')}</span>
-      <div class="hp"><i style:width="{Math.min(100, result.dmgPct)}%"></i></div>
-      <b>{result.dmgPct}%</b>
+  <div class="right" bind:this={box}>
+    <span class="boss-art" class:down={result.killed} style={boss}></span>
+    <div class="battle">
+      <b class="head">{t('魔王戰果')}</b><small class="en-sub">BATTLE RESULT</small>
+      <p class="verdict" class:fail={!result.killed}>{result.killed ? t('擊破成功') : t('魔王逃走了…')}</p>
+      <span class="label">{t('造成傷害')}</span>
+      <div class="dmg"><div class="gauge"><i style:width="{Math.min(100, result.dmgPct)}%"></i></div><b>{result.dmgPct}%</b></div>
     </div>
 
     {#if result.feed && !demo}
-      <div class="xp-row">
-        <span>{t('經驗值')} <b>+{result.xp}</b></span>
-        <span class="lv">Lv.{result.feed.before.lv}{#if result.feed.levels > 0} → <b>Lv.{after.lv}</b>{/if}</span>
+      <div class="me">
+        <img src={result.character.portraits[result.killed ? 'win' : 'normal']} alt="" />
+        <div class="me-info">
+          <p><b>{result.character.name}</b> Lv.{result.feed.before.lv}{#if result.feed.levels > 0} <span class="arrow">→</span> <b class="up">Lv.{after.lv}</b>{/if}</p>
+          <div class="exp"><span>EXP</span><div class="gauge gold"><i style:width="{xpPct}%"></i></div><b>+{result.xp}</b></div>
+          {#if result.feed.levels > 0}<small>{t('升級了！攻擊力 {a} → {b}', { a: atkOfLevel(result.feed.before.lv), b: atkOfLevel(after.lv) })}</small>{/if}
+        </div>
       </div>
-      <div class="xp"><i style:width="{xpPct}%"></i></div>
-      {#if result.feed.levels > 0}<p class="record">{t('升級了！攻擊力 {a} → {b}', { a: atkOfLevel(result.feed.before.lv), b: atkOfLevel(after.lv) })}</p>{/if}
     {/if}
-    {#if result.record && !demo}<p class="record">{t('新紀錄！')}</p>{/if}
-    {#if result.unlocked}<p class="record">{t('隱藏角色「阿翼」加入了！')}</p>{/if}
+    {#if result.unlocked}<p class="unlock">{t('隱藏角色「阿翼」加入了！')}</p>{/if}
     <p class="line">「{result.line}」</p>
 
-    {#each actions.filter((a) => a.primary) as a (a.label)}
-      <button type="button" class="vbtn primary main" onclick={() => choose(a)}>{a.label}</button>
-    {/each}
-    <div class="more">
+    <div class="actions">
       {#each actions.filter((a) => !a.primary) as a (a.label)}
         <button type="button" class="vbtn small" onclick={() => choose(a)}>{a.label}</button>
+      {/each}
+      {#each actions.filter((a) => a.primary) as a (a.label)}
+        <button type="button" class="vbtn primary" onclick={() => choose(a)}>{a.label}</button>
       {/each}
     </div>
   </div>
@@ -80,175 +91,283 @@
 <style>
   .result-screen {
     flex-direction: row;
-    justify-content: center;
-    gap: 2cqw;
-    background: linear-gradient(90deg, rgba(10, 12, 30, 0.2), rgba(10, 12, 30, 0.65));
+    align-items: stretch;
+    justify-content: stretch;
+    gap: 0;
+    background: #fff;
   }
-  .pose {
-    align-self: flex-end;
-    margin-bottom: -2cqh;
-    animation: run-in 0.4s ease-out;
+  .corner {
+    position: absolute;
+    top: 2cqh;
+    right: 3cqw;
+    z-index: 2;
   }
-  .pose.down {
-    filter: saturate(0.6);
+  .left {
+    position: relative;
+    width: 50cqw;
+    padding: 4cqh 3cqw 4cqh 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4cqh;
   }
-  @keyframes run-in {
-    from {
-      transform: translateX(-8cqw);
-      opacity: 0;
-    }
+  .tag {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    padding: 1.4cqh 6cqw 1.4cqh 4cqw;
+    background: var(--accent);
+    color: #fff;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 4cqh) 100%, 0 100%);
   }
-  .sheet {
-    width: 48cqw;
-    padding: 0 3cqw 2cqh;
-    align-items: center;
-    gap: 0.9cqh;
-    border-radius: 3.4cqh;
-    margin-top: 7cqh;
-  }
-  h2 {
-    margin: -5.4cqh 0 0;
-    font-size: 9cqh;
-    color: var(--accent);
-  }
-  h2.fail {
-    color: var(--teal);
-    font-size: 7.4cqh;
-    margin-top: -4cqh;
-  }
-  .stage {
-    padding: 0.2cqh 3cqh;
-    border: 0.3cqh solid var(--teal);
-    border-radius: 999px;
+  .tag b {
+    font-size: 6.4cqh;
+    font-style: italic;
     font-weight: 900;
-    font-size: 2.2cqh;
-    color: var(--teal);
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+  }
+  .song {
+    margin: 0 0 0 4cqw;
+    font-weight: 900;
+    font-size: 2.6cqh;
+    color: var(--navy);
+  }
+  .song i {
+    color: var(--accent);
   }
   .grade {
     display: flex;
     align-items: center;
     gap: 2cqw;
+    margin-left: 4cqw;
   }
   .rank {
-    font-size: 11cqh;
-    line-height: 1;
+    font-size: 22cqh;
+    line-height: 0.9;
     font-weight: 900;
     font-style: italic;
-    color: var(--gold);
-    -webkit-text-stroke: 0.5cqh var(--navy);
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #ffe58a 0%, #ffc83d 45%, #d98a0a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0.6cqh 0 rgba(150, 90, 0, 0.35));
     animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.6, 1);
   }
   .rank.r-C,
   .rank.r-D {
-    color: #9bb5c2;
+    background: linear-gradient(180deg, #d6deea, #8d9ab3);
+    -webkit-background-clip: text;
+    background-clip: text;
   }
   @keyframes pop {
     from {
-      transform: scale(2.2);
+      transform: scale(2);
       opacity: 0;
     }
   }
   .score {
     display: flex;
     flex-direction: column;
+    gap: 0.4cqh;
+  }
+  .new {
+    align-self: flex-start;
+    padding: 0.2cqh 2.4cqh;
+    background: var(--accent);
+    color: #fff;
     font-weight: 900;
+    font-style: italic;
+    font-size: 2.2cqh;
+    clip-path: polygon(1cqh 0, 100% 0, calc(100% - 1cqh) 100%, 0 100%);
   }
-  .score span {
-    font-size: 1.8cqh;
-    color: var(--navy-soft);
-    letter-spacing: 0.2em;
-  }
-  .score b {
-    font-size: 6cqh;
+  .score > b {
+    font-size: 9cqh;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.04em;
     line-height: 1;
     color: var(--navy);
-    letter-spacing: 0.06em;
   }
-  .fc {
-    font-style: normal;
-    color: var(--accent);
-    font-size: 2cqh;
-  }
-  .counts {
+  .mc {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.4cqh 1.4cqw;
-    font-weight: 900;
-    font-size: 1.9cqh;
-  }
-  .counts b {
-    font-size: 2.4cqh;
-    color: var(--navy);
-  }
-  .counts .p {
-    color: #c79a00;
-  }
-  .counts .g {
-    color: #1f8fbf;
-  }
-  .counts .d {
-    color: #3a9a3a;
-  }
-  .counts .m {
-    color: #d94b5b;
-  }
-  .boss {
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 1cqw;
     font-weight: 900;
-    font-size: 2.1cqh;
+    font-size: 2.2cqh;
   }
-  .hp,
-  .xp {
-    height: 1.6cqh;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--navy) 16%, transparent);
-    overflow: hidden;
+  .mc b {
+    font-size: 3.2cqh;
+    font-style: italic;
   }
-  .hp i,
-  .xp i {
-    display: block;
-    height: 100%;
+  .fc {
+    padding: 0.2cqh 1.2cqh;
     background: var(--accent);
-    transition: width 0.8s ease-out;
+    color: #fff;
+    font-size: 1.7cqh;
   }
-  .xp {
-    width: 100%;
+  .counts {
+    margin: 1cqh 0 0 20cqw;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    row-gap: 0.6cqh;
+    width: 24cqw;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 2.6cqh;
   }
-  .xp i {
-    background: var(--gold);
+  .counts dt,
+  .counts dd {
+    margin: 0;
+    padding-bottom: 0.4cqh;
+    border-bottom: var(--line) solid var(--sky-line);
   }
-  .xp-row {
-    width: 100%;
+  .counts dd {
+    text-align: right;
+    color: var(--navy);
+  }
+  .counts .p {
+    color: #19a7e0;
+  }
+  .counts .g {
+    color: #1450f5;
+  }
+  .counts .d {
+    color: #1fb36b;
+  }
+  .counts .m {
+    color: var(--red);
+  }
+
+  .right {
+    position: relative;
+    flex: 1;
+    margin: 6cqh 3cqw 4cqh 0;
+    padding: 5cqh 3cqw 3cqh;
+    background: rgba(255, 255, 255, 0.92);
+    border-left: 0.6cqh solid var(--accent);
+    box-shadow: var(--soft-shadow);
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 1.6cqh;
+  }
+  .boss-art {
+    position: absolute;
+    right: -1cqw;
+    top: -6cqh;
+    width: 34cqh;
+    height: 34cqh;
+    background-repeat: no-repeat;
+    transform: scaleX(-1);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .battle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4cqh;
+  }
+  .head {
+    font-size: 4.4cqh;
+    font-style: italic;
+    font-weight: 900;
+    color: var(--navy);
+  }
+  .verdict {
+    margin: 1cqh 0;
+    font-size: 6cqh;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--accent);
+  }
+  .verdict.fail {
+    color: var(--navy-soft);
+    font-size: 5cqh;
+  }
+  .label {
     font-weight: 900;
     font-size: 2.2cqh;
   }
-  .xp-row b {
-    color: var(--accent);
+  .dmg,
+  .exp {
+    display: flex;
+    align-items: center;
+    gap: 1.2cqw;
+    font-weight: 900;
+    font-size: 2.4cqh;
   }
-  .record {
+  .gauge {
+    flex: 1;
+    height: 1.6cqh;
+    background: #e6ebf5;
+    clip-path: polygon(0.8cqh 0, 100% 0, calc(100% - 0.8cqh) 100%, 0 100%);
+  }
+  .gauge i {
+    display: block;
+    height: 100%;
+    background: repeating-linear-gradient(115deg, var(--accent) 0 3cqh, #2d64ff 3cqh 3.6cqh);
+    transition: width 0.8s ease-out;
+  }
+  .gauge.gold i {
+    background: linear-gradient(90deg, #2fc6ff, var(--accent));
+  }
+  .me {
+    display: flex;
+    gap: 1.6cqw;
+    align-items: center;
+    margin-top: 1cqh;
+  }
+  .me img {
+    width: 13cqh;
+    height: 13cqh;
+    object-fit: cover;
+    object-position: center 15%;
+    background: #e6ebf5;
+  }
+  .me-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6cqh;
+  }
+  .me-info p {
     margin: 0;
     font-weight: 900;
+    font-size: 2.6cqh;
+  }
+  .me-info .up {
+    font-size: 3.4cqh;
     color: var(--accent);
+  }
+  .arrow {
+    color: var(--muted);
+  }
+  .exp b {
+    color: var(--accent);
+  }
+  .me-info small {
+    font-weight: 800;
+    font-size: 1.9cqh;
+    color: var(--accent);
+  }
+  .unlock {
+    margin: 0;
+    font-weight: 900;
+    color: var(--red);
     font-size: 2.4cqh;
   }
   .line {
     margin: 0;
     font-weight: 800;
-    font-size: 2.2cqh;
+    font-size: 2.1cqh;
     color: var(--navy-soft);
   }
-  .main {
-    min-width: 24cqw;
-  }
-  .more {
+  .actions {
+    margin-top: auto;
     display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
     gap: 1cqw;
   }
 </style>

@@ -1,45 +1,47 @@
-/* 虛擬音鬥樂：「晴空跑道」介面（art-work/runner-ui-concept-v1/DESIGN.md）。
-   晴空藍＋日光橘＋雲白，圓角路牌、膠囊數字、圓形路線節點；每頁只有一個橘色主要行動（深墨字）。
+/* 虛擬音鬥樂：「Blue Frequency」介面（art-work/rhythm-ui-concept-v1）。
+   白底＋淡藍斜紋、皇家藍主色、青藍點綴、金色只給連擊／評價；直角、斜切的按鈕與標籤，粗斜體標題配英文小字。
+   遊戲畫面是深藍夜色＋霓虹藍軌道（Canvas，見 src/lib/game/render.js）。
    尺寸一律用 cqh／cqw（16:9 舞台的高／寬百分比），任何視窗大小比例都一樣。
-   顏色變數沿用舊名（--navy＝深墨藍文字、--cream＝面板白、--accent＝日光橘、--teal＝深湖藍、--gold＝星黃），
+   顏色變數沿用舊名（--navy＝深色文字、--cream＝面板白、--accent＝主要行動的藍、--teal＝次要的藍、--gold＝金），
    其他畫風（skins.css）只要覆寫這幾個。 */
 
 :root {
-  --navy: #163a4b;
-  --navy-deep: #0f2c3a;
-  --navy-soft: #3f6577;
+  --navy: #101a33;
+  --navy-deep: #0a1230;
+  --navy-soft: #4a5878;
   --cream: #ffffff;
-  --cream-deep: #ecf8fc;
-  --sky: #23b5e8;
-  --sky-light: #ecf8fc;
-  --sky-line: #bfe6f5;
-  --gold: #f5c949;
-  --gold-deep: #d9a521;
-  --gold-line: #23b5e8;
-  --stripe: rgba(17, 111, 149, 0.16);
-  --accent: #ff8a3d;
-  --accent-deep: #d9672a;
-  --accent2: #116f95;
-  --teal: #116f95;
-  --teal-soft: #ecf8fc;
-  --sea: #116f95;
-  --ok: #2fae6a;
+  --cream-deep: #eef3fb;
+  --sky: #2fc6ff;
+  --sky-light: #f2f5fb;
+  --sky-line: #d5deef;
+  --gold: #ffc83d;
+  --gold-deep: #e09a12;
+  --gold-line: #1450f5;
+  --stripe: rgba(20, 80, 245, 0.08);
+  --accent: #1450f5;
+  --accent-deep: #0b34b8;
+  --accent2: #2fc6ff;
+  --teal: #1450f5;
+  --teal-soft: #eef3fb;
+  --sea: #1450f5;
+  --ok: #1fb36b;
   --on-dark: #ffffff;
   --paper-white: #ffffff;
-  --hud-portrait: #23b5e8;
+  --hud-portrait: #1450f5;
   --font: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', 'Heiti TC', sans-serif;
-  /* 輪廓粗細與柔和短陰影（1920×1080 設計稿的 2–3 px／4–6 px） */
-  --line: 0.28cqh;
-  --drop: 0.5cqh;
-  --radius: 2cqh;
-  --soft-shadow: 0 0.5cqh 1.2cqh rgba(22, 58, 75, 0.16);
+  /* 斜切的角（按鈕、標籤） */
+  --cut: 1.6cqh;
+  --line: 0.2cqh;
+  --drop: 0.4cqh;
+  --radius: 0.4cqh;
+  --soft-shadow: 0 0.6cqh 1.6cqh rgba(16, 40, 110, 0.12);
   --ink: var(--navy);
   --paper: var(--sky-light);
   /* 手把鍵盤（從 TaiwanMahjong 搬來的 ControlsKeyboard）用的顏色 */
   --text: var(--navy);
   --panel-solid: var(--cream);
-  --muted: #6b8593;
-  --red: #e2483d;
+  --muted: #7a87a3;
+  --red: #e8344e;
   font-family: var(--font);
 }
 
@@ -79,17 +81,15 @@ html, body {
   object-fit: cover;
 }
 
-/* 頁面底：晴空漸層＋幾朵雲（文字放在白色面板上，不直接壓在天空上） */
+/* 頁面底：白底＋大片淡藍斜紋＋一條細藍線（文字放在白色面板上） */
 .paper-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 9cqw 3.2cqh at 12% 18%, #fff 60%, transparent 62%),
-    radial-gradient(ellipse 6cqw 2.6cqh at 16% 15%, #fff 60%, transparent 62%),
-    radial-gradient(ellipse 11cqw 3.6cqh at 82% 26%, rgba(255, 255, 255, 0.9) 60%, transparent 62%),
-    radial-gradient(ellipse 7cqw 2.8cqh at 77% 23%, rgba(255, 255, 255, 0.9) 60%, transparent 62%),
-    radial-gradient(ellipse 8cqw 2.8cqh at 46% 88%, rgba(255, 255, 255, 0.85) 60%, transparent 62%),
-    linear-gradient(180deg, #9fdcf6 0%, #cdeefb 45%, var(--sky-light) 100%);
+    linear-gradient(115deg, transparent 0 58%, rgba(20, 80, 245, 0.07) 58% 71%, transparent 71% 76%, rgba(47, 198, 255, 0.08) 76% 80%, transparent 80%),
+    linear-gradient(115deg, transparent 0 86%, rgba(20, 80, 245, 0.9) 86% 86.3%, transparent 86.3%),
+    repeating-linear-gradient(115deg, transparent 0 3.4cqh, rgba(20, 80, 245, 0.025) 3.4cqh 3.6cqh),
+    linear-gradient(180deg, #ffffff 0%, var(--sky-light) 100%);
 }
 
 .screen {
@@ -102,17 +102,23 @@ html, body {
   gap: 2.4cqh;
   font-size: 2.6cqh;
 }
-/* 疊在遊戲畫面上的視窗（暫停、結果）：淡藍遮罩 */
-.screen.overlay { background: rgba(35, 120, 165, 0.42); backdrop-filter: blur(0.3cqh); }
+/* 疊在遊戲畫面上的視窗（暫停、結果）：深藍遮罩 */
+.screen.overlay { background: rgba(10, 18, 48, 0.55); backdrop-filter: blur(0.3cqh); }
 
-/* 圓厚的兩色標題字（Logo、畫面標題、結算的「過關！」）：白色粗外框＋深墨細外框＋往下的影子 */
+/* 粗斜體標題字（畫面標題、評價） */
 .pop-text {
   font-weight: 900;
+  font-style: italic;
   line-height: 1.05;
-  -webkit-text-stroke: 0.9cqh #fff;
-  paint-order: stroke fill;
-  text-shadow: 0 0.7cqh 0 var(--navy);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+}
+
+/* 英文小字（標題底下、按鈕底下）：寬字距、斜體 */
+.en-sub {
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.35em;
+  font-size: 1.8cqh;
 }
 
 /* ---------- 共用：版面 ---------- */
@@ -134,10 +140,10 @@ html, body {
   gap: 2cqw;
 }
 
-/* 分隔線：路線（晴空藍虛線） */
+/* 分隔線：細藍線 */
 .gold-rule {
-  height: 0.5cqh;
-  background: repeating-linear-gradient(90deg, var(--sky) 0 2cqh, transparent 2cqh 3.2cqh);
+  height: 0.25cqh;
+  background: linear-gradient(90deg, var(--accent), transparent);
 }
 
 /* ---------- 共用：按鈕 ---------- */
@@ -149,42 +155,43 @@ button, select {
 }
 button:disabled { opacity: 0.5; cursor: default; }
 
-/* 圓角路牌：雲白底＋深湖藍外框＋往下的短影子。滑過去往上浮一點、按下去壓回來 */
+/* 斜切的按鈕：白底細框、深字；滑過去變淡藍、按下去壓一點 */
 .vbtn {
   --face: var(--cream);
-  --fg: var(--teal);
-  --edge: var(--teal);
+  --fg: var(--navy);
+  --edge: var(--sky-line);
   position: relative;
   border: var(--line) solid var(--edge);
-  border-radius: 999px;
+  border-radius: 0;
+  clip-path: polygon(var(--cut) 0, 100% 0, calc(100% - var(--cut)) 100%, 0 100%);
   background: var(--face);
   color: var(--fg);
-  padding: 1cqh 4cqh;
+  padding: 1cqh 4.4cqh;
   min-height: 7cqh;
-  font-size: 3cqh;
+  font-size: 2.8cqh;
   font-weight: 900;
   letter-spacing: 0.12em;
   text-indent: 0.12em;
   white-space: nowrap;
-  box-shadow: 0 var(--drop) 0 color-mix(in srgb, var(--edge) 45%, transparent);
-  transition: transform 0.08s, box-shadow 0.08s, background 0.08s;
+  box-shadow: inset 0 -0.4cqh 0 color-mix(in srgb, var(--accent) 12%, transparent);
+  transition: transform 0.08s, background 0.08s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 1.2cqh;
 }
-.vbtn:hover:not(:disabled) { transform: translateY(-0.3cqh); --face: #f4fbfe; }
-.vbtn:active:not(:disabled) { transform: translateY(var(--drop)); box-shadow: 0 0 0 transparent; }
-/* 次要的強調（複製、更換角色、加入電腦…）：深湖藍底白字 */
+.vbtn:hover:not(:disabled) { --face: #eaf0ff; }
+.vbtn:active:not(:disabled) { transform: translateY(0.3cqh); }
+/* 次要的強調（複製、更換角色、加入電腦…）：藍底白字 */
 .vbtn.gold,
 .vbtn.active {
   --face: var(--teal);
   --fg: #fff;
-  --edge: var(--navy);
+  --edge: var(--teal);
 }
 .vbtn.gold:hover:not(:disabled),
-.vbtn.active:hover:not(:disabled) { --face: #1683ad; }
-.vbtn.small { min-height: 5.2cqh; padding: 0.5cqh 2.4cqh; font-size: 2.3cqh; letter-spacing: 0.06em; text-indent: 0.06em; }
+.vbtn.active:hover:not(:disabled) { --face: #2d64ff; }
+.vbtn.small { min-height: 5cqh; padding: 0.5cqh 2.8cqh; font-size: 2.2cqh; letter-spacing: 0.06em; text-indent: 0.06em; --cut: 1.1cqh; }
 /* 選單：目前選到的那顆後面有 › */
 .vbtn.arrow:is(:hover, :focus-visible, .active)::after,
 [data-input='pad'] .vbtn.arrow:focus::after {
@@ -193,28 +200,31 @@ button:disabled { opacity: 0.5; cursor: default; }
   line-height: 1;
 }
 
-/* 每頁唯一的主要行動（開始跑、選擇關卡、下一關…）：日光橘＋深墨字＋箭頭 */
+/* 每頁唯一的主要行動（開始演奏、再挑戰…）：皇家藍＋白字＋前面的 ▶ */
 .vbtn.primary {
   --face: var(--accent);
-  --fg: var(--navy);
-  --edge: var(--navy);
+  --fg: #fff;
+  --edge: var(--accent);
+  --cut: 2.4cqh;
   min-height: 8.4cqh;
-  padding: 1cqh 6cqh 1cqh 7cqh;
-  font-size: 4.2cqh;
-  letter-spacing: 0.14em;
-  border-width: 0.4cqh;
-  box-shadow: 0 0.7cqh 0 var(--accent-deep), 0 1.2cqh 1.6cqh rgba(217, 103, 42, 0.25);
+  padding: 1cqh 7cqh 1cqh 6cqh;
+  font-size: 3.8cqh;
+  letter-spacing: 0.16em;
+  box-shadow: inset 0 -0.6cqh 0 var(--accent-deep);
 }
-.vbtn.primary::after {
-  content: '›';
-  font-size: 1.4em;
-  line-height: 0.8;
-  margin-left: 0.6cqh;
+.vbtn.primary::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 2.2cqh solid currentColor;
+  border-top: 1.4cqh solid transparent;
+  border-bottom: 1.4cqh solid transparent;
+  margin-right: 1cqh;
 }
-.vbtn.primary:hover:not(:disabled) { --face: #ff9a55; }
+.vbtn.primary:hover:not(:disabled) { --face: #2d64ff; }
 
-/* 返回：小路牌，前面有 ‹ */
-.vbtn.back { padding: 0.8cqh 3.6cqh 0.8cqh 3cqh; font-size: 2.8cqh; min-height: 6.4cqh; }
+/* 返回：小按鈕 */
+.vbtn.back { padding: 0.8cqh 3.6cqh 0.8cqh 3cqh; font-size: 2.6cqh; min-height: 6cqh; }
 
 /* ---------- 共用：面板 ---------- */
 
@@ -228,23 +238,23 @@ button:disabled { opacity: 0.5; cursor: default; }
   flex-direction: column;
   min-height: 0;
 }
-/* 自己的那一格：日光橘框 */
+/* 自己的那一格：藍框 */
 .panel.gold-frame { border-color: var(--accent); box-shadow: var(--soft-shadow), inset 0 0 0 0.25cqh var(--accent); }
-/* 面板標題：左上角的深湖藍膠囊，壓在框線上 */
+/* 面板標題：左上角斜切的藍色標籤 */
 .panel-head {
   position: relative;
   align-self: flex-start;
-  margin: -1.8cqh 0 0 1.6cqh;
-  padding: 0.5cqh 2.6cqh;
+  margin: -1.6cqh 0 0 1.2cqh;
+  padding: 0.4cqh 3cqh 0.4cqh 2.2cqh;
   background: var(--teal);
   color: #fff;
-  border-radius: 999px;
+  clip-path: polygon(1cqh 0, 100% 0, calc(100% - 1cqh) 100%, 0 100%);
   font-weight: 900;
-  font-size: 2.6cqh;
+  font-style: italic;
+  font-size: 2.4cqh;
   letter-spacing: 0.15em;
   line-height: 1.2;
   white-space: nowrap;
-  box-shadow: 0 0.35cqh 0 var(--navy);
   z-index: 1;
 }
 .panel-head.left { text-align: left; }
@@ -258,9 +268,9 @@ button:disabled { opacity: 0.5; cursor: default; }
   gap: 1.4cqh;
   max-width: 100%;
   font-weight: 800;
-  font-size: 2.2cqh;
-  letter-spacing: 0.08em;
-  color: var(--navy);
+  font-size: 2.1cqh;
+  letter-spacing: 0.12em;
+  color: var(--navy-soft);
   text-wrap: balance;
   white-space: nowrap;
 }
@@ -270,9 +280,10 @@ button:disabled { opacity: 0.5; cursor: default; }
   flex: 1 1 4cqw;
   min-width: 2cqw;
   max-width: 8cqw;
-  height: 0.3cqh;
-  background: repeating-linear-gradient(90deg, var(--sky) 0 1.2cqh, transparent 1.2cqh 2cqh);
+  height: 0.2cqh;
+  background: linear-gradient(90deg, transparent, var(--accent));
 }
+.hint-bar::after { transform: scaleX(-1); }
 
 /* 按鍵帽（Esc、Enter、↑↓）：深墨藍圓角小牌 */
 kbd {
@@ -281,7 +292,7 @@ kbd {
   padding: 0.1cqh 0.9cqh;
   background: var(--navy);
   color: #fff;
-  border-radius: 0.8cqh;
+  border-radius: 0.3cqh;
   font: inherit;
   font-size: 0.9em;
   font-weight: 800;
@@ -299,7 +310,7 @@ input, select.vsel {
   color: var(--navy);
   background: var(--paper-white);
   border: var(--line) solid var(--sky-line);
-  border-radius: 1.2cqh;
+  border-radius: 0.3cqh;
   padding: 0.7cqh 1.4cqh;
 }
 select.vsel { padding-right: 3cqh; }
@@ -309,7 +320,7 @@ input::placeholder { color: #9bb5c2; }
 .note {
   background: var(--sky-light);
   border: 0.25cqh solid var(--sky-line);
-  border-radius: 1.4cqh;
+  border-radius: 0.3cqh;
   color: var(--teal);
   font-weight: 800;
   font-size: 2.1cqh;
@@ -324,7 +335,7 @@ input::placeholder { color: #9bb5c2; }
   position: relative;
   padding: 0;
   border: 0.3cqh solid var(--sky-line);
-  border-radius: 1.4cqh;
+  border-radius: 0.4cqh;
   background: var(--paper-white);
   aspect-ratio: 1 / 1.12;
   display: flex;
@@ -332,7 +343,7 @@ input::placeholder { color: #9bb5c2; }
   overflow: hidden;
   transition: transform 0.08s;
 }
-.card img { width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: center 12%; display: block; background: linear-gradient(#bfe9fb, #ecf8fc); }
+.card img { width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: center 12%; display: block; background: linear-gradient(160deg, #dfe8ff, #f6f9ff); }
 .card > span:not(.tags):not(.lock) {
   background: var(--paper-white);
   color: var(--navy);
@@ -345,9 +356,9 @@ input::placeholder { color: #9bb5c2; }
 .card:hover:not(:disabled) { transform: translateY(-0.4cqh); }
 /* 目前看的／選定的：日光橘框，名牌變橘 */
 .card.selected,
-.card.looking { border-color: var(--accent); box-shadow: 0 0 0 0.35cqh var(--accent), 0 0.6cqh 0 var(--accent-deep); z-index: 1; transform: translateY(-0.4cqh); }
+.card.looking { border-color: var(--accent); box-shadow: 0 0 0 0.35cqh var(--accent); z-index: 1; transform: translateY(-0.4cqh); }
 .card.selected > span:not(.tags):not(.lock),
-.card.looking > span:not(.tags):not(.lock) { background: var(--accent); color: var(--navy); }
+.card.looking > span:not(.tags):not(.lock) { background: var(--accent); color: #fff; }
 .card.locked img { filter: brightness(0) opacity(0.4); }
 .card .tags {
   position: absolute;
@@ -393,7 +404,7 @@ input::placeholder { color: #9bb5c2; }
   padding: 1cqh 2.4cqh 1cqh 2cqh;
   border: var(--line) solid var(--sky-line);
   border-left: 1.2cqh solid var(--red);
-  border-radius: 1.4cqh;
+  border-radius: 0.4cqh;
   box-shadow: var(--soft-shadow);
   font-size: 2.4cqh;
 }
@@ -410,7 +421,7 @@ input::placeholder { color: #9bb5c2; }
   background: var(--teal);
   color: #fff;
   padding: 1.2cqh 3cqh;
-  border-radius: 999px;
+  border-radius: 0.4cqh;
   box-shadow: var(--soft-shadow);
   font-weight: 800;
   font-size: 2.6cqh;

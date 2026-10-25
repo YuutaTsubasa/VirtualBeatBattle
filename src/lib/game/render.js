@@ -156,17 +156,21 @@ function drawPerson(g, character, pose, x, y, h, opts = {}) {
 const field = (cx, laneW, { top = 120, judge = 432 } = {}) => ({ cx, laneW, top, judge, left: cx - (laneW * LANES) / 2, width: laneW * LANES });
 const laneX = (f, lane) => f.left + f.laneW * (lane + 0.5);
 
-let layout = { mode: 'solo', main: field(480, 58), rival: null, boss: { x: 480, y: 150, h: 150 } };
+let layout = { mode: 'solo', main: field(480, 58, { top: 92, judge: 440 }), rival: null, boss: { x: 480, y: 200, h: 200 } };
 
+// 版面（art-work/rhythm-ui-concept-v1）：
+//   單機：軌道在中間，魔王在後面上方，左邊角色與體力、右邊分數與連擊
+//   2 人（DUEL）：左右各半，每半邊是名牌（體力、魔王剩餘）＋左邊分數與連擊＋軌道
+//   3 人以上：左邊自己的名牌與軌道，右邊大家的一列一列（小軌道、分數、連擊、準確率、魔王剩餘）
 function computeLayout(race, you, spectate) {
-  if (spectate) return { mode: 'spectate', main: null, rival: null, boss: { x: 480, y: 172, h: 160 } };
+  if (spectate) return { mode: 'spectate', main: null, rival: null, boss: { x: 480, y: 210, h: 190 } };
   const n = race?.players?.length ?? 1;
-  if (!race || n <= 1) return { mode: 'solo', main: field(480, 58), rival: null, boss: { x: 480, y: 150, h: 150 } };
+  if (!race || n <= 1) return layout.mode === 'solo' ? layout : { mode: 'solo', main: field(480, 58, { top: 92, judge: 440 }), rival: null, boss: { x: 480, y: 200, h: 200 } };
   if (n === 2) {
     const rival = race.players.find((p) => p.seat !== you);
-    return { mode: 'duo', main: field(250, 46, { top: 140 }), rival: { f: field(710, 46, { top: 140 }), seat: rival?.seat }, boss: { x: 480, y: 150, h: 140 } };
+    return { mode: 'duo', main: field(310, 44, { top: 112, judge: 446 }), rival: { f: field(790, 44, { top: 112, judge: 446 }), seat: rival?.seat }, boss: { x: 480, y: 260, h: 230 } };
   }
-  return { mode: 'multi', main: field(330, 52), rival: null, boss: { x: 330, y: 150, h: 150 } };
+  return { mode: 'multi', main: field(250, 50, { top: 112, judge: 446 }), rival: null, boss: { x: 250, y: 250, h: 190 } };
 }
 
 /** 觸控：畫面座標 (x, y) 落在自己的哪一條軌道（判定線上方一點到畫面底部都算） */
@@ -313,9 +317,15 @@ function drawBackdrop(g, worldId, ms, bpm) {
     const x = -((frame * drift * 60) % Math.max(1, w - W));
     g.drawImage(img, x, (H - img.naturalHeight * s) / 2, w, img.naturalHeight * s);
   }
-  // 跟著拍子微微亮一下
+  // 深藍夜色：背景壓暗、偏藍，跟著拍子微微亮一下
   const beat = bpm ? ((Math.max(0, ms) / (60000 / bpm)) % 1) : 0.5;
-  g.fillStyle = `rgba(10,10,28,${0.6 - (1 - beat) ** 4 * 0.12})`;
+  g.fillStyle = `rgba(3,8,32,${0.84 - (1 - beat) ** 4 * 0.08})`;
+  g.fillRect(0, 0, W, H);
+  const glow = g.createLinearGradient(0, 0, 0, H);
+  glow.addColorStop(0, 'rgba(20,80,245,0.18)');
+  glow.addColorStop(0.6, 'rgba(20,80,245,0)');
+  glow.addColorStop(1, 'rgba(47,198,255,0.12)');
+  g.fillStyle = glow;
   g.fillRect(0, 0, W, H);
 }
 
@@ -332,11 +342,11 @@ function drawBoss(g, worldId, b, { killed = false, mineSoon = false } = {}) {
   g.save();
   // 光暈
   const grad = g.createRadialGradient(b.x, b.y - b.h * 0.4, 10, b.x, b.y - b.h * 0.4, b.h * 0.7);
-  grad.addColorStop(0, killed ? 'rgba(255,216,74,0.35)' : 'rgba(255,90,110,0.28)');
-  grad.addColorStop(1, 'rgba(255,90,110,0)');
+  grad.addColorStop(0, killed ? 'rgba(255,216,74,0.35)' : 'rgba(80,140,255,0.3)');
+  grad.addColorStop(1, 'rgba(80,140,255,0)');
   g.fillStyle = grad;
   g.fillRect(b.x - b.h, b.y - b.h * 1.2, b.h * 2, b.h * 1.5);
-  if (!(sheet && drawFrame(g, sheet, pose, b.x + sx, b.y, b.h, -1, { flash, alpha: killed ? 0.6 : 1 }))) {
+  if (!(sheet && drawFrame(g, sheet, pose, b.x + sx, b.y, b.h, -1, { flash, alpha: killed ? 0.45 : b.alpha ?? 0.8 }))) {
     g.fillStyle = '#5a3a6a';
     g.beginPath();
     g.arc(b.x, b.y - b.h * 0.4, b.h * 0.3, 0, Math.PI * 2);
@@ -345,29 +355,53 @@ function drawBoss(g, worldId, b, { killed = false, mineSoon = false } = {}) {
   g.restore();
 }
 
-/** 魔王血條：x、y 左上，w 寬；color 是誰打的（連線時用座位色） */
-function drawBossBar(g, x, y, w, dmg, max, { name = '', color = '#ff5a6e', small = false } = {}) {
-  const h = small ? 8 : 14;
+/** 斜切的長條（體力、魔王血條、準確率） */
+function slant(g, x, y, w, h, k, color, back = 'rgba(255,255,255,0.12)') {
+  const c = h * 0.8;
+  const path = (len) => {
+    g.beginPath();
+    g.moveTo(x + c, y);
+    g.lineTo(x + len, y);
+    g.lineTo(x + len - c, y + h);
+    g.lineTo(x, y + h);
+    g.closePath();
+  };
+  g.fillStyle = back;
+  path(w);
+  g.fill();
+  const len = Math.max(0, Math.min(1, k)) * w;
+  if (len > c) {
+    g.fillStyle = color;
+    path(len);
+    g.fill();
+  }
+}
+
+/** 魔王血條：上面左邊名字、右邊 HP，下面斜切的紅條；打倒之後是 BREAK／OVERKILL */
+function drawBossBar(g, x, y, w, dmg, max, { name = '', small = false } = {}) {
+  const h = small ? 6 : 10;
   const left = Math.max(0, 1 - dmg / Math.max(1, max));
   const over = dmg > max ? (dmg - max) / max : 0;
-  if (name) outlinedText(g, name, x, y - (small ? 8 : 12), small ? 12 : 15, pal.cream, 'left');
-  g.fillStyle = 'rgba(0,0,0,0.6)';
-  roundRect(g, x - 2, y - 2, w + 4, h + 4, 4);
-  g.fill();
-  g.fillStyle = '#3a1520';
-  g.fillRect(x, y, w, h);
-  const grad = g.createLinearGradient(x, y, x, y + h);
-  grad.addColorStop(0, '#ff8f9b');
-  grad.addColorStop(1, color);
-  g.fillStyle = grad;
-  g.fillRect(x, y, w * left, h);
-  if (left === 0) {
-    g.fillStyle = `rgba(255,216,74,${0.6 + Math.sin(frame * 0.2) * 0.3})`;
-    g.fillRect(x, y, w * Math.min(1, over), h);
-    outlinedText(g, over > 0 ? `OVERKILL +${Math.round(over * 100)}%` : 'BREAK!', x + w, y - (small ? 8 : 12), small ? 11 : 14, '#ffd84a', 'right');
-  } else if (!small) {
-    outlinedText(g, `${Math.round(left * 100)}%`, x + w, y - 12, 13, pal.cream, 'right');
+  if (name) {
+    text(g, name, x + 4, y - 9, small ? 12 : 16, '#fff', 'left', 900);
+    if (left > 0) text(g, 'HP', x + w, y - 9, 12, 'rgba(255,255,255,0.8)', 'right', 900);
   }
+  slant(g, x, y, w, h, left, '#ff3b55');
+  if (left === 0) {
+    slant(g, x, y, w * Math.min(1, over), h, 1, `rgba(255,216,74,${0.6 + Math.sin(frame * 0.2) * 0.3})`, 'rgba(0,0,0,0)');
+    text(g, over > 0 ? `OVERKILL +${Math.round(over * 100)}%` : 'BREAK!', x + w, y - 9, small ? 11 : 14, '#ffd84a', 'right', 900);
+  }
+}
+
+/** 斜體的 HUD 字（概念圖的字都沒有外框，只有一點陰影） */
+function text(g, str, x, y, size, color = '#fff', align = 'left', weight = 900, italic = true) {
+  g.font = `${italic ? 'italic ' : ''}${weight} ${size}px ${FONT}`;
+  g.textAlign = align;
+  g.textBaseline = 'middle';
+  g.fillStyle = 'rgba(0,10,40,0.6)';
+  g.fillText(str, x + 1, y + 1.5);
+  g.fillStyle = color;
+  g.fillText(str, x, y);
 }
 
 // ---------- 軌道與音符 ----------
@@ -380,15 +414,24 @@ function drawField(g, f, chart, statuses, ms, fall, { me: isMe = true, held: hel
   // 底板
   g.save();
   const grad = g.createLinearGradient(0, top - 40, 0, judge);
-  grad.addColorStop(0, 'rgba(8,10,24,0)');
-  grad.addColorStop(0.2, 'rgba(8,10,24,0.72)');
-  grad.addColorStop(1, 'rgba(8,10,24,0.86)');
+  grad.addColorStop(0, 'rgba(2,6,24,0)');
+  grad.addColorStop(0.15, 'rgba(2,6,24,0.8)');
+  grad.addColorStop(1, 'rgba(4,12,40,0.92)');
   g.fillStyle = grad;
   g.fillRect(left, top - 40, width, H - top + 40);
   for (let i = 0; i <= LANES; i++) {
-    g.fillStyle = i === 3 ? 'rgba(255,216,74,0.55)' : 'rgba(255,255,255,0.12)';
-    g.fillRect(left + i * laneW - (i === 3 ? 1 : 0.5), top - 40, i === 3 ? 2 : 1, H - top + 40);
+    const edge = i === 0 || i === LANES;
+    g.fillStyle = edge ? 'rgba(70,150,255,0.9)' : i === 3 ? 'rgba(120,190,255,0.5)' : 'rgba(90,150,255,0.22)';
+    g.fillRect(left + i * laneW - (edge ? 1.5 : 0.5), top - 40, edge ? 3 : 1, H - top + 40);
   }
+  // 外框的光
+  g.save();
+  g.shadowColor = 'rgba(47,140,255,0.9)';
+  g.shadowBlur = 12;
+  g.fillStyle = 'rgba(70,150,255,0.6)';
+  g.fillRect(left - 1.5, top - 40, 2, H - top + 40);
+  g.fillRect(left + width - 0.5, top - 40, 2, H - top + 40);
+  g.restore();
   // 按下的光
   for (let lane = 0; lane < LANES; lane++) {
     const on = heldLanes[lane];
@@ -397,22 +440,26 @@ function drawField(g, f, chart, statuses, ms, fall, { me: isMe = true, held: hel
     if (k <= 0) continue;
     const x = left + lane * laneW;
     const lg = g.createLinearGradient(0, judge, 0, judge - 220);
-    lg.addColorStop(0, `rgba(255,255,255,${0.35 * k})`);
-    lg.addColorStop(1, 'rgba(255,255,255,0)');
+    lg.addColorStop(0, `rgba(90,170,255,${0.55 * k})`);
+    lg.addColorStop(1, 'rgba(90,170,255,0)');
     g.fillStyle = lg;
     g.fillRect(x + 1, judge - 220, laneW - 2, 220);
   }
-  // 判定線
-  g.fillStyle = 'rgba(255,255,255,0.9)';
-  g.fillRect(left - 4, judge - 2, width + 8, 4);
-  g.fillStyle = 'rgba(255,216,74,0.5)';
-  g.fillRect(left - 4, judge - 6, width + 8, 2);
+  // 判定線：發光的青藍
+  g.save();
+  g.shadowColor = '#2fc6ff';
+  g.shadowBlur = 14;
+  g.fillStyle = '#9fe4ff';
+  g.fillRect(left - 6, judge - 2, width + 12, 4);
+  g.restore();
+  g.fillStyle = 'rgba(47,198,255,0.35)';
+  g.fillRect(left, judge + 2, width, 3);
   // 音符
   if (chart) drawNotes(g, f, chart, statuses, ms, fall, ghost);
   // 鍵位提示
   if (keys && isMe) {
     const labels = keys === 'pad' ? PAD_LABELS : KEY_LABELS;
-    for (let lane = 0; lane < LANES; lane++) outlinedText(g, labels[lane], laneX(f, lane), judge + 16, 13, heldLanes[lane] ? '#ffd84a' : 'rgba(245,239,223,0.7)');
+    for (let lane = 0; lane < LANES; lane++) text(g, labels[lane], laneX(f, lane), judge + 20, Math.min(18, laneW * 0.36), heldLanes[lane] ? '#2fc6ff' : '#ffffff', 'center', 900, false);
   }
   g.restore();
 }
@@ -440,14 +487,14 @@ function drawNotes(g, f, chart, statuses, ms, fall, ghost) {
       g.globalAlpha = 1;
       continue;
     }
-    const color = LANE_COLORS[lane];
+    const color = '#5aa8ff';
     if (len > 0) {
       const holding = st === 'h';
       if (holding) y = judge;
       const yEnd = Math.max(top - 40, yOf(nt + len));
       const bodyGrad = g.createLinearGradient(0, yEnd, 0, y);
-      bodyGrad.addColorStop(0, `${color}55`);
-      bodyGrad.addColorStop(1, holding ? `${color}dd` : `${color}99`);
+      bodyGrad.addColorStop(0, 'rgba(47,140,255,0.25)');
+      bodyGrad.addColorStop(1, holding ? 'rgba(120,200,255,0.9)' : 'rgba(47,140,255,0.6)');
       g.fillStyle = bodyGrad;
       g.fillRect(x - w * 0.32, yEnd, w * 0.64, y - yEnd);
       if (holding) {
@@ -455,9 +502,8 @@ function drawNotes(g, f, chart, statuses, ms, fall, ghost) {
         g.fillRect(x - w * 0.32, yEnd, 3, y - yEnd);
         g.fillRect(x + w * 0.32 - 3, yEnd, 3, y - yEnd);
       }
-      g.fillStyle = color;
-      roundRect(g, x - w * 0.42, yEnd - 4, w * 0.84, 8, 3);
-      g.fill();
+      g.fillStyle = '#cfe6ff';
+      g.fillRect(x - w * 0.42, yEnd - 3, w * 0.84, 6);
     }
     if (y < top - 40) continue;
     drawTap(g, x, y, w, color, chord);
@@ -467,23 +513,25 @@ function drawNotes(g, f, chart, statuses, ms, fall, ghost) {
 }
 
 function drawTap(g, x, y, w, color, chord) {
-  const h = 14;
-  if (chord) {
-    // 同時押（分身會出現）：金色外框
-    g.fillStyle = 'rgba(255,216,74,0.9)';
-    roundRect(g, x - w / 2 - 3, y - h / 2 - 3, w + 6, h + 6, 6);
-    g.fill();
-  }
+  const h = 11;
+  g.save();
+  g.shadowColor = chord ? 'rgba(255,200,61,0.95)' : 'rgba(70,160,255,0.95)';
+  g.shadowBlur = 12;
   const grad = g.createLinearGradient(0, y - h / 2, 0, y + h / 2);
-  grad.addColorStop(0, '#ffffff');
-  grad.addColorStop(0.45, color);
-  grad.addColorStop(1, color);
+  if (chord) {
+    // 同時押（分身會出現）：金色
+    grad.addColorStop(0, '#fff6c8');
+    grad.addColorStop(0.5, '#ffd24a');
+    grad.addColorStop(1, '#e09a12');
+  } else {
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.6, '#e8f2ff');
+    grad.addColorStop(1, '#9cc8ff');
+  }
   g.fillStyle = grad;
-  roundRect(g, x - w / 2, y - h / 2, w, h, 5);
-  g.fill();
-  g.strokeStyle = 'rgba(0,0,0,0.55)';
-  g.lineWidth = 1.5;
-  g.stroke();
+  g.fillRect(x - w / 2, y - h / 2, w, h);
+  g.restore();
+  void color;
 }
 
 function drawMine(g, x, y, laneW) {
@@ -610,15 +658,6 @@ function trackOther(p, f) {
 
 // ---------- HUD ----------
 
-function drawPanel(g, x, y, w, h) {
-  g.fillStyle = 'rgba(8,10,24,0.72)';
-  roundRect(g, x, y, w, h, 10);
-  g.fill();
-  g.strokeStyle = 'rgba(255,216,74,0.45)';
-  g.lineWidth = 1.5;
-  g.stroke();
-}
-
 function bar(g, x, y, w, h, k, color, back = 'rgba(255,255,255,0.15)') {
   g.fillStyle = back;
   g.fillRect(x, y, w, h);
@@ -626,113 +665,30 @@ function bar(g, x, y, w, h, k, color, back = 'rgba(255,255,255,0.15)') {
   g.fillRect(x, y, w * Math.max(0, Math.min(1, k)), h);
 }
 
+/** 方形頭像（概念圖是方的，有一條細邊） */
 function portrait(g, character, mood, x, y, size, ring = null) {
   const c = getCharacter(character);
   const img = loadImage(c.portraits[mood] ?? c.portraits.normal);
   g.save();
+  g.fillStyle = '#dfe8ff';
+  g.fillRect(x, y, size, size);
   g.beginPath();
-  g.arc(x, y, size / 2, 0, Math.PI * 2);
-  g.fillStyle = '#ffe9a8';
-  g.fill();
+  g.rect(x, y, size, size);
   g.clip();
   if (ready(img)) {
-    const s = size / Math.min(img.naturalWidth, img.naturalHeight * 0.62);
-    g.drawImage(img, x - (img.naturalWidth * s) / 2, y - size * 0.42, img.naturalWidth * s, img.naturalHeight * s);
+    const s = size / Math.min(img.naturalWidth, img.naturalHeight * 0.6);
+    g.drawImage(img, x + size / 2 - (img.naturalWidth * s) / 2, y - size * 0.06, img.naturalWidth * s, img.naturalHeight * s);
   }
   g.restore();
   if (ring) {
     g.strokeStyle = ring;
-    g.lineWidth = 3;
-    g.beginPath();
-    g.arc(x, y, size / 2, 0, Math.PI * 2);
-    g.stroke();
+    g.lineWidth = 1.5;
+    g.strokeRect(x, y, size, size);
   }
 }
 
 const pad7 = (n) => String(n ?? 0).padStart(7, '0');
-
-/** 自己的角色資訊（左邊）：頭像、名字、等級、攻擊、體力、能力 */
-function drawMyInfo(g, x, y, w, info, v, compact = false) {
-  const c = getCharacter(info.character);
-  drawPanel(g, x, y, w, compact ? 120 : 170);
-  const mood = v?.down ? 'sad' : v?.killed ? 'win' : me.hurt > 0 ? 'surprised' : 'normal';
-  portrait(g, info.character, mood, x + 38, y + 40, 56, c.specialColor);
-  outlinedText(g, c.name, x + 74, y + 26, 18, pal.cream, 'left');
-  outlinedText(g, `Lv.${info.lv}  ATK ${atkOfLevel(info.lv)}`, x + 74, y + 50, 13, '#ffd84a', 'left');
-  const hp = v ? v.hp / v.hp_max : 1;
-  outlinedText(g, 'HP', x + 14, y + 86, 13, pal.cream, 'left');
-  bar(g, x + 40, y + 80, w - 54, 12, hp, hp > 0.3 ? '#7dff9a' : '#ff5a6e');
-  outlinedText(g, `${v?.hp ?? 100}`, x + w - 14, y + 100, 11, pal.cream, 'right');
-  if (!compact) {
-    outlinedText(g, c.specialName, x + 14, y + 122, 14, c.specialColor, 'left');
-    g.font = `700 11px ${FONT}`;
-    g.fillStyle = 'rgba(245,239,223,0.85)';
-    g.textAlign = 'left';
-    wrap(g, c.specialDesc, x + 14, y + 142, w - 28, 14, 2);
-  }
-}
-
-function wrap(g, text, x, y, w, lh, maxLines) {
-  let line = '';
-  let n = 0;
-  for (const ch of text) {
-    if (g.measureText(line + ch).width > w && line) {
-      g.fillText(line, x, y + n * lh);
-      line = ch;
-      if (++n >= maxLines) return;
-    } else line += ch;
-  }
-  if (line) g.fillText(line, x, y + n * lh);
-}
-
-/** 分數面板（右邊）：技術分、判定次數、最大連擊 */
-function drawScore(g, x, y, w, v, info) {
-  drawPanel(g, x, y, w, 200);
-  const tr = trackOf(info.song);
-  outlinedText(g, t(tr.title), x + 14, y + 22, 16, pal.cream, 'left');
-  outlinedText(g, `${(info.level ?? '').toUpperCase()}`, x + w - 14, y + 22, 13, '#ffd84a', 'right');
-  outlinedText(g, 'SCORE', x + 14, y + 52, 12, 'rgba(245,239,223,0.7)', 'left');
-  outlinedText(g, pad7(v?.score), x + w - 14, y + 56, 26, '#fff', 'right');
-  const rows = [
-    ['PERFECT', v?.counts?.[0], JUDGE_COLOR.P],
-    ['GREAT', v?.counts?.[1], JUDGE_COLOR.G],
-    ['GOOD', v?.counts?.[2], JUDGE_COLOR.D],
-    ['MISS', v?.counts?.[3], JUDGE_COLOR.M],
-  ];
-  rows.forEach(([label, n, color], i) => {
-    outlinedText(g, label, x + 14, y + 88 + i * 22, 13, color, 'left');
-    outlinedText(g, String(n ?? 0), x + w - 14, y + 88 + i * 22, 14, pal.cream, 'right');
-  });
-  outlinedText(g, 'MAX COMBO', x + 14, y + 182, 12, 'rgba(245,239,223,0.7)', 'left');
-  outlinedText(g, String(v?.max_combo ?? 0), x + w - 14, y + 182, 15, pal.cream, 'right');
-}
-
-/** 軌道中間的連擊數與判定字 */
-function drawCombo(g, f, combo, judge) {
-  if (combo >= 3) {
-    const k = comboPop > 0 ? 1 + comboPop / 60 : 1;
-    g.save();
-    g.globalAlpha = 0.85;
-    outlinedText(g, String(combo), f.cx, f.top + 170, Math.round(44 * k), '#ffffff');
-    outlinedText(g, 'COMBO', f.cx, f.top + 204, 14, '#ffd84a');
-    g.restore();
-  }
-  if (judge && judge.life > 0) {
-    const k = Math.min(1, judge.life / 10);
-    g.save();
-    g.globalAlpha = k;
-    const pop = judge.life > 28 ? 1 + (judge.life - 28) / 20 : 1;
-    outlinedText(g, JUDGE_TEXT[judge.j], f.cx, f.judge - 70, Math.round(30 * pop), JUDGE_COLOR[judge.j]);
-    if (judge.j !== 'P' && judge.j !== 'M' && Math.abs(judge.off) > 42) outlinedText(g, judge.off < 0 ? 'FAST' : 'SLOW', f.cx, f.judge - 46, 13, judge.off < 0 ? '#7fd8ff' : '#ff9a6b');
-    g.restore();
-  }
-}
-
-/** 別人正在按的軌道：回報的按鍵位元＋剛打中的那一條閃一下 */
-function keysOf(p, o) {
-  const keys = p.p?.keys ?? 0;
-  return Array.from({ length: LANES }, (_, i) => !!(keys & (1 << i)) || (o.flash > 4 && p.p?.lane === i));
-}
+const moodOf = (q, hurt) => (q?.down ? 'sad' : q?.killed ? 'win' : hurt > 0 ? 'surprised' : 'normal');
 
 /** 打得準不準（RATE）：Perfect 100%、Great 70%、Good 30% 的平均 */
 function rateOf(q) {
@@ -741,88 +697,154 @@ function rateOf(q) {
   return n ? ((c[0] + c[1] * 0.7 + c[2] * 0.3) / n) * 100 : 100;
 }
 
-/**
- * 別人的迷你畫面（像 DJMAX 線上的觀戰框）：上面名牌（頭像、名字、等級），RATE 與 BREAK（Miss 數），
- * 中間是縮小的六條軌道（同一份譜面、對方按的鍵會亮、漏掉的音符繼續往下掉），下面分數與對魔王的傷害。
- */
-function drawMini(g, p, x, y, w, h, chart, ms, fall, place) {
-  const o = trackOther(p, null);
-  const q = p.p ?? {};
-  const color = SLOT_COLORS[p.seat % SLOT_COLORS.length];
-  const small = w < 130;
-  const headH = small ? 20 : 26;
-  const rowH = small ? 12 : 15;
-  const footH = small ? 18 : 22;
+/** 單機左邊：方形頭像、名字、等級、PLAYER HP */
+function drawSoloInfo(g, info, v) {
+  const c = getCharacter(info.character);
+  portrait(g, info.character, moodOf(v, me.hurt), 24, 196, 64, 'rgba(255,255,255,0.6)');
+  text(g, c.name, 98, 214, 20, '#fff', 'left', 900, false);
+  text(g, `Lv.${info.lv}`, 98, 240, 16, '#cfe0ff');
+  g.fillStyle = 'rgba(255,255,255,0.35)';
+  g.fillRect(24, 272, 230, 1);
+  const hp = v ? v.hp / v.hp_max : 1;
+  text(g, 'PLAYER HP', 24, 290, 13, '#fff');
+  slant(g, 24, 302, 180, 9, hp, hp > 0.3 ? '#2fc6ff' : '#ff3b55');
+  text(g, `${Math.round(hp * 100)}%`, 214, 306, 13, '#fff');
+  text(g, `ATK ${atkOfLevel(info.lv)}  ${c.specialName}`, 24, 330, 11, 'rgba(207,224,255,0.8)', 'left', 700, false);
+  // 左下的直排英文
   g.save();
-  g.fillStyle = 'rgba(8,10,24,0.82)';
-  roundRect(g, x, y, w, h, 6);
-  g.fill();
-  g.strokeStyle = o.flash > 0 ? '#ffffff' : color;
-  g.lineWidth = 2;
-  g.stroke();
-  // 名牌
-  g.fillStyle = color;
-  g.fillRect(x + 2, y + 2, w - 4, headH);
-  portrait(g, p.character, q.down ? 'sad' : q.killed ? 'win' : o.hurt > 0 ? 'surprised' : 'normal', x + 3 + headH / 2, y + 2 + headH / 2, headH - 2, '#fff');
-  outlinedText(g, displayName(p.name).slice(0, small ? 6 : 10), x + headH + 6, y + 2 + headH / 2, small ? 10 : 12, '#fff', 'left');
-  outlinedText(g, `${place}`, x + w - 6, y + 2 + headH / 2, small ? 11 : 14, '#ffd84a', 'right');
-  // RATE、BREAK
-  const ry = y + headH + 4;
-  outlinedText(g, 'RATE', x + 6, ry + rowH / 2, small ? 8 : 10, '#ffd84a', 'left');
-  outlinedText(g, `${rateOf(q).toFixed(2)}%`, x + w - 6, ry + rowH / 2, small ? 10 : 13, '#ffe066', 'right');
-  outlinedText(g, 'BREAK', x + 6, ry + rowH * 1.5 + 1, small ? 8 : 10, '#ff8f9b', 'left');
-  outlinedText(g, String(q.counts?.[3] ?? 0), x + w - 6, ry + rowH * 1.5 + 1, small ? 10 : 13, '#ff6b7a', 'right');
-  // 縮小的軌道：用一般大小的座標畫，再整個縮小放進框裡
-  const ix = x + 4;
-  const iy = ry + rowH * 2 + 4;
-  const iw = w - 8;
-  const ih = y + h - footH - iy - 2;
-  if (chart && ih > 20) {
-    const k = iw / (58 * LANES);
-    const fh = ih / k;
-    const f = field((58 * LANES) / 2, 58, { top: 30, judge: fh - 26 });
-    g.save();
-    g.beginPath();
-    g.rect(ix, iy, iw, ih);
-    g.clip();
-    g.translate(ix, iy);
-    g.scale(k, k);
-    drawField(g, f, chart, '', ms, fall, { me: false, held: keysOf(p, o), ghost: new Set(q.miss ?? []) });
-    if (q.combo >= 3) outlinedText(g, String(q.combo), f.cx, f.top + (f.judge - f.top) * 0.4, 46, 'rgba(255,255,255,0.8)');
-    if (o.jLife > 0) outlinedText(g, JUDGE_TEXT[o.j] ?? '', f.cx, f.judge - 60, 34, JUDGE_COLOR[o.j] ?? '#fff');
-    g.restore();
-  }
-  // 分數、對魔王的傷害
-  const fy = y + h - footH;
-  outlinedText(g, 'SCORE', x + 6, fy + footH / 2 - 2, small ? 8 : 10, 'rgba(245,239,223,0.7)', 'left');
-  outlinedText(g, pad7(q.score), x + w - 6, fy + footH / 2 - 2, small ? 11 : 15, '#fff', 'right');
-  bar(g, x + 4, y + h - 5, w - 8, 3, (q.dmg ?? 0) / Math.max(1, q.boss_max ?? 1), q.killed ? '#ffd84a' : '#ff8f9b');
-  if (q.out) {
-    g.fillStyle = 'rgba(0,0,0,0.6)';
-    g.fillRect(x, y, w, h);
-    outlinedText(g, t('棄權'), x + w / 2, y + h / 2, 16, '#ff6b7a');
-  }
+  g.globalAlpha = 0.35;
+  ['VIRTUAL', 'BEAT', 'BATTLE'].forEach((w, i) => text(g, w, 24, 400 + i * 14, 11, '#9cc8ff', 'left', 800));
   g.restore();
 }
 
-/** 別人的迷你畫面排成格子：2～4 人 2 欄、5～9 人 3 欄、10 人以上 4 欄 */
-function drawMinis(g, players, x, y, w, h, chart, ms, fall) {
+/** 分數與連擊（單機在右邊；2 人時在各自軌道的左邊） */
+function drawScoreCombo(g, x, y, score, combo, { size = 1, judge = null } = {}) {
+  text(g, 'SCORE', x, y, 13 * size, 'rgba(255,255,255,0.75)');
+  text(g, pad7(score), x, y + 28 * size, 32 * size, '#fff', 'left', 900, false);
+  text(g, 'COMBO', x, y + 66 * size, 13 * size, 'rgba(255,255,255,0.75)');
+  const k = comboPop > 0 && judge ? 1 + comboPop / 80 : 1;
+  const grad = g.createLinearGradient(0, y + 80 * size, 0, y + 120 * size);
+  grad.addColorStop(0, '#fff2b0');
+  grad.addColorStop(1, '#ffb81c');
+  text(g, String(combo ?? 0), x, y + 102 * size, Math.round(46 * size * k), grad, 'left', 900, false);
+  if (judge && judge.life > 0) {
+    const pop = judge.life > 28 ? 1 + (judge.life - 28) / 20 : 1;
+    g.save();
+    g.globalAlpha = Math.min(1, judge.life / 10);
+    text(g, JUDGE_TEXT[judge.j], x, y + 150 * size, Math.round(30 * size * pop), JUDGE_COLOR[judge.j]);
+    if (judge.j !== 'P' && judge.j !== 'M' && Math.abs(judge.off) > 42) text(g, judge.off < 0 ? 'FAST' : 'SLOW', x + 4, y + 176 * size, 13, judge.off < 0 ? '#7fd8ff' : '#ff9a6b');
+    g.restore();
+  }
+}
+
+/** 名牌（2 人、3 人以上）：方形頭像、編號與名字、體力、魔王剩餘（右邊可以放 RANK） */
+function drawPlate(g, x, y, w, p, q, { you = false, rank = null, total = 0, hurt = 0 } = {}) {
+  const color = SLOT_COLORS[p.seat % SLOT_COLORS.length];
+  g.fillStyle = 'rgba(4,12,40,0.78)';
+  g.fillRect(x, y, w, 46);
+  g.fillStyle = you ? '#1450f5' : color;
+  g.fillRect(x, y, 4, 46);
+  portrait(g, p.character, moodOf(q, hurt), x + 8, y + 4, 38, 'rgba(255,255,255,0.5)');
+  const label = `${String(p.seat + 1).padStart(2, '0')}  ${displayName(p.name)}${you ? ` / ${t('你')}` : ''}`;
+  text(g, label, x + 54, y + 14, 15, '#fff');
+  if (rank) {
+    text(g, 'RANK', x + w - 100, y + 15, 10, 'rgba(255,255,255,0.7)');
+    text(g, String(rank).padStart(2, '0'), x + w - 44, y + 14, 20, '#ffd24a', 'right');
+    text(g, `/${total}`, x + w - 8, y + 16, 12, '#fff', 'right');
+  }
+  const bw = (w - 64) / 2;
+  const hp = (q.hp ?? 100) / Math.max(1, q.hp_max ?? 100);
+  const boss = Math.max(0, 1 - (q.dmg ?? 0) / Math.max(1, q.boss_max ?? 1));
+  text(g, t('體力'), x + 54, y + 34, 10, 'rgba(255,255,255,0.8)', 'left', 800, false);
+  slant(g, x + 80, y + 30, bw - 60, 7, hp, '#2fc6ff');
+  text(g, `${Math.round(hp * 100)}%`, x + 54 + bw - 4, y + 34, 10, '#9fe4ff', 'right', 800);
+  text(g, t('魔王剩餘'), x + 60 + bw, y + 34, 10, 'rgba(255,255,255,0.8)', 'left', 800, false);
+  slant(g, x + 108 + bw, y + 30, bw - 84, 7, boss, '#ff3b55');
+  text(g, q.killed ? 'BREAK' : `${Math.round(boss * 100)}%`, x + w - 6, y + 34, 10, q.killed ? '#ffd84a' : '#ffb0bc', 'right', 800);
+}
+
+/** 別人正在按的軌道：回報的按鍵位元＋剛打中的那一條閃一下 */
+function keysOf(p, o) {
+  const keys = p.p?.keys ?? 0;
+  return Array.from({ length: LANES }, (_, i) => !!(keys & (1 << i)) || (o.flash > 4 && p.p?.lane === i));
+}
+
+/** 縮小的軌道：用一般大小的座標畫，再整個縮小放進 (x, y, w, h) 的框裡（對方的按鍵會亮、漏掉的音符繼續往下掉） */
+function drawTinyField(g, p, o, x, y, w, h, chart, ms, fall) {
+  if (!chart || h < 12) return;
+  const k = w / (58 * LANES);
+  const f = field((58 * LANES) / 2, 58, { top: 20, judge: h / k - 14 });
+  g.save();
+  g.beginPath();
+  g.rect(x, y, w, h);
+  g.clip();
+  g.translate(x, y);
+  g.scale(k, k);
+  drawField(g, f, chart, '', ms, fall, { me: false, held: keysOf(p, o), ghost: new Set(p.p?.miss ?? []) });
+  g.restore();
+}
+
+/**
+ * 3 人以上時別人的一列（概念圖 02 的右下）：編號、頭像、名字｜小軌道｜分數、連擊｜準確率條、魔王剩餘條。
+ * 斷線、棄權的那一列變灰。
+ */
+function drawRow(g, p, x, y, w, h, chart, ms, fall) {
+  const o = trackOther(p, null);
+  const q = p.p ?? {};
+  const color = SLOT_COLORS[p.seat % SLOT_COLORS.length];
+  g.save();
+  g.fillStyle = o.flash > 0 ? 'rgba(30,70,170,0.85)' : 'rgba(4,12,40,0.8)';
+  g.fillRect(x, y, w, h);
+  g.strokeStyle = 'rgba(90,150,255,0.45)';
+  g.lineWidth = 1;
+  g.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+  g.fillStyle = color;
+  g.fillRect(x, y, 3, h);
+  const ps = Math.min(h - 18, 36);
+  text(g, String(p.seat + 1).padStart(2, '0'), x + 8, y + 11, 13, '#fff');
+  portrait(g, p.character, moodOf(q, o.hurt), x + 30, y + 4, ps, null);
+  text(g, displayName(p.name).slice(0, 5), x + 8, y + h - 8, 11, '#fff', 'left', 800, false);
+  if (q.out) {
+    g.fillStyle = 'rgba(40,46,70,0.9)';
+    g.fillRect(x + 34 + ps, y + 2, w - 36 - ps, h - 4);
+    text(g, t('斷線・本曲棄權'), x + 34 + ps + (w - 36 - ps) / 2, y + h / 2, 13, '#aab4cc', 'center', 800);
+    g.restore();
+    return;
+  }
+  const tx = x + 36 + ps;
+  const tw = Math.min(64, w * 0.28);
+  drawTinyField(g, p, o, tx, y + 3, tw, h - 6, chart, ms, fall);
+  const sx = tx + tw + 8;
+  text(g, pad7(q.score), w + x - 8, y + 18, 16, '#fff', 'right', 900, false);
+  text(g, String(q.combo ?? 0), w + x - 8, y + h - 18, 14, '#ffd24a', 'right', 900, false);
+  const bw = Math.max(20, w + x - 8 - sx - 50);
+  const rate = rateOf(q);
+  slant(g, sx, y + h - 20, bw, 5, rate / 100, '#2fc6ff');
+  text(g, `${Math.round(rate)}%`, sx + bw + 4, y + h - 18, 9, '#9fe4ff', 'left', 800);
+  slant(g, sx, y + h - 10, bw, 5, 1 - (q.dmg ?? 0) / Math.max(1, q.boss_max ?? 1), '#ff3b55');
+  if (o.jLife > 0) text(g, JUDGE_TEXT[o.j] ?? '', sx, y + 12, 10, JUDGE_COLOR[o.j] ?? '#fff');
+  g.restore();
+}
+
+/** 大家的一列一列：6 人以內一欄，7 人以上兩欄（依分數排名，第一名在最上面） */
+function drawRows(g, players, x, y, w, h, chart, ms, fall) {
   const n = players.length;
   if (!n) return;
-  const cols = n <= 1 ? 1 : n <= 4 ? 2 : n <= 9 ? 3 : 4;
+  const cols = n > 6 ? 2 : 1;
   const rows = Math.ceil(n / cols);
-  const gap = 6;
-  const cw = Math.min(200, (w - gap * (cols - 1)) / cols);
-  const ch = (h - gap * (rows - 1)) / rows;
-  const ox = x + (w - (cw * cols + gap * (cols - 1))) / 2;
+  const gap = 5;
+  const cw = (w - gap * (cols - 1)) / cols;
+  const ch = Math.min(70, (h - gap * (rows - 1)) / rows);
   const order = [...players].sort((a, b) => (b.p?.score ?? 0) - (a.p?.score ?? 0));
-  players.forEach((p, i) => {
-    drawMini(g, p, ox + (i % cols) * (cw + gap), y + Math.floor(i / cols) * (ch + gap), cw, ch, chart, ms, fall, order.indexOf(p) + 1);
+  order.forEach((p, i) => {
+    const col = Math.floor(i / rows);
+    const row = i % rows;
+    drawRow(g, p, x + col * (cw + gap), y + row * (ch + gap), cw, ch, chart, ms, fall);
   });
 }
 
 /** 並排的對手：用同一份譜面畫音符（回報裡漏掉的音符會繼續往下掉、變灰），按鍵照回報亮，角色照連擊演 */
-function drawRival(g, f, p, chart, ms, fall, worldId) {
+function drawRival(g, f, p, chart, ms, fall) {
   const o = trackOther(p, f);
   const q = p.p ?? {};
   drawField(g, f, chart, '', ms, fall, { me: false, held: keysOf(p, o), ghost: new Set(q.miss ?? []) });
@@ -831,18 +853,36 @@ function drawRival(g, f, p, chart, ms, fall, worldId) {
   o.x += (laneX(f, o.lane) - o.x) * 0.3;
   const pose = q.down ? 'down' : o.hurt > 0 ? 'hurt' : o.attack > 0 ? o.pose : 'idle';
   drawPerson(g, p.character, pose, o.x, feet, h, { facing: o.x < f.cx ? 1 : -1 });
-  if (q.combo >= 3) outlinedText(g, String(q.combo), f.cx, f.top + 170, 40, 'rgba(255,255,255,0.85)');
-  if (o.jLife > 0) outlinedText(g, JUDGE_TEXT[o.j] ?? '', f.cx, f.judge - 70, 24, JUDGE_COLOR[o.j] ?? '#fff');
-  void worldId;
+  return o;
 }
 
-function drawTopBar(g, f, name, score, color, dmg, max, hp, hpMax) {
-  const x = f.left;
-  const w = f.width;
-  drawBossBar(g, x, 24, w, dmg, max, { color });
-  outlinedText(g, name, x, 52, 14, color, 'left');
-  outlinedText(g, pad7(score), x + w, 52, 18, '#fff', 'right');
-  bar(g, x, 62, w, 4, hp / Math.max(1, hpMax), '#7dff9a');
+/** 上方的曲名列：曲名 / 難度 / 6 KEY，右邊淡淡的大字（DUEL） */
+function drawHeader(g, title, level, mark = '') {
+  text(g, title, 24, 26, 20, '#fff');
+  text(g, `/  ${(level ?? '').toUpperCase()}  /  6 KEY`, 24 + g.measureText(title).width + 14, 28, 14, '#cfe0ff');
+  if (mark) {
+    g.save();
+    g.font = `italic 900 64px ${FONT}`;
+    g.textAlign = 'right';
+    g.textBaseline = 'middle';
+    g.strokeStyle = 'rgba(120,170,255,0.3)';
+    g.lineWidth = 1.5;
+    g.strokeText(mark, W - 70, 36);
+    g.restore();
+  }
+}
+
+/** 底部角落的等化器（跟著拍子跳） */
+function drawEq(g, x, y, ms, bpm, flip = false) {
+  const beat = bpm ? (Math.max(0, ms) / (60000 / bpm)) % 1 : 0.5;
+  g.save();
+  g.fillStyle = 'rgba(47,140,255,0.55)';
+  for (let i = 0; i < 9; i++) {
+    const h = 12 + Math.abs(Math.sin(i * 1.7 + frame * 0.05)) * 40 * (1 - beat * 0.6);
+    const bx = flip ? x - i * 7 : x + i * 7;
+    g.fillRect(bx, y - h, 4, h);
+  }
+  g.restore();
 }
 
 // ---------- 特效的推進與繪製 ----------
@@ -900,7 +940,11 @@ function drawEffects(g) {
     const inK = Math.min(1, (b.max - b.life) / 12);
     g.save();
     g.globalAlpha = Math.min(1, b.life / 20);
-    g.fillStyle = 'rgba(0,0,0,0.5)';
+    const bg = g.createLinearGradient(0, 0, W, 0);
+    bg.addColorStop(0, 'rgba(20,80,245,0)');
+    bg.addColorStop(0.5, 'rgba(10,40,140,0.75)');
+    bg.addColorStop(1, 'rgba(20,80,245,0)');
+    g.fillStyle = bg;
     g.fillRect(0, H / 2 - 52, W, 104);
     outlinedText(g, b.text, W / 2 + (1 - inK) * 200, H / 2 - 12, 46, b.color);
     if (b.sub) outlinedText(g, b.sub, W / 2, H / 2 + 30, 17, pal.cream);
@@ -985,41 +1029,64 @@ export function draw(canvas, s) {
   }
   drawBoss(g, world.id, layout.boss, { killed, mineSoon });
 
+  const myP = { score: v?.score, combo: v?.combo, counts: v?.counts, dmg: v?.dmg, boss_max: v?.boss_max, hp: v?.hp, hp_max: v?.hp_max, down: v?.down, killed: v?.killed };
   if (layout.mode === 'spectate') {
     const watching = t('觀戰中');
-    outlinedText(g, `${watching} · ${t(tr.title)}`, W / 2, 26, 20, '#ffd84a');
-    drawMinis(g, players, 30, 170, W - 60, H - 180, chart, ms, fall);
+    drawHeader(g, `${watching}  ${t(tr.title)}`, info.level);
+    drawRows(g, players, 24, 56, W - 48, H - 72, chart, ms, fall);
     drawCountdown(g, null, ms, bossName);
   } else {
     const f = layout.main;
-    drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
-    if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
-    drawCombo(g, f, v?.combo ?? 0, judgeShow);
-
     if (layout.mode === 'solo') {
-      drawBossBar(g, f.left - 60, 24, f.width + 120, v?.dmg ?? 0, v?.boss_max ?? 1, { name: `BOSS ${bossName}` });
-      drawMyInfo(g, 24, 170, 236, info, v);
-      drawScore(g, W - 260, 170, 236, v, info);
-      if (info.demo) outlinedText(g, t('示範中（電腦）'), f.cx, H - 18, 16, '#ffd84a');
+      drawBossBar(g, 300, 34, 360, v?.dmg ?? 0, v?.boss_max ?? 1, { name: bossName });
+      drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
+      if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
+      drawSoloInfo(g, info, v);
+      drawScoreCombo(g, 690, 200, v?.score, v?.combo, { judge: judgeShow });
+      text(g, `${t(tr.title)} / ${(info.level ?? '').toUpperCase()}`, 690, 170, 13, '#cfe0ff');
+      drawEq(g, W - 30, H - 6, ms, chart?.bpm, true);
+      drawEq(g, 24, H - 6, ms, chart?.bpm);
+      if (info.demo) text(g, t('示範中（電腦）'), f.cx, 64, 14, '#ffd84a', 'center');
     } else if (layout.mode === 'duo') {
+      drawHeader(g, t(tr.title), info.level, 'DUEL');
+      // 自己（左半邊）
+      const meP = { seat: you ?? 0, name: mine?.name ?? '', character: info.character };
+      drawPlate(g, 16, 56, 448, meP, myP, { you: true, hurt: me.hurt });
+      drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
+      if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
+      drawScoreCombo(g, 22, 130, v?.score, v?.combo, { size: 0.78, judge: judgeShow });
+      // 對手（右半邊）
       const rival = players.find((p) => p.seat === layout.rival.seat);
-      const myColor = SLOT_COLORS[(you ?? 0) % SLOT_COLORS.length];
-      drawTopBar(g, f, `${(you ?? 0) + 1}P ${displayName(mine?.name ?? '')}`, v?.score, myColor, v?.dmg ?? 0, v?.boss_max ?? 1, v?.hp ?? 100, v?.hp_max ?? 100);
       if (rival) {
         const rf = layout.rival.f;
-        drawRival(g, rf, rival, chart, ms, fall, world.id);
+        const o = drawRival(g, rf, rival, chart, ms, fall);
         const q = rival.p ?? {};
-        drawTopBar(g, rf, `${rival.seat + 1}P ${displayName(rival.name)}`, q.score, SLOT_COLORS[rival.seat % SLOT_COLORS.length], q.dmg ?? 0, q.boss_max || v?.boss_max || 1, q.hp ?? 100, q.hp_max ?? 100);
+        drawPlate(g, 496, 56, 448, rival, q, { hurt: o.hurt });
+        drawScoreCombo(g, 502, 130, q.score, q.combo, { size: 0.78, judge: o.jLife > 0 ? { j: o.j, off: 0, life: o.jLife } : null });
       }
-      outlinedText(g, `BOSS ${bossName}`, W / 2, 16, 13, '#ff8f9b');
+      drawEq(g, 20, H - 6, ms, chart?.bpm);
+      drawEq(g, W - 20, H - 6, ms, chart?.bpm, true);
     } else {
-      // 3 人以上：左邊自己的資訊、右邊大家的迷你畫面
-      drawBossBar(g, f.left - 20, 24, f.width + 40, v?.dmg ?? 0, v?.boss_max ?? 1, { name: `BOSS ${bossName}` });
-      drawMyInfo(g, 10, 170, 150, info, v, true);
-      outlinedText(g, 'SCORE', 18, 316, 11, 'rgba(245,239,223,0.7)', 'left');
-      outlinedText(g, pad7(v?.score), 18, 336, 20, '#fff', 'left');
+      // 3 人以上：左邊自己的名牌與軌道，右邊大家一列一列
+      text(g, t('多人演奏'), 22, 26, 22, '#fff');
+      text(g, `${players.length} PLAYERS`, 24, 46, 10, '#cfe0ff', 'left', 800);
+      text(g, `${t(tr.title)}  /  ${(info.level ?? '').toUpperCase()}  /  6 KEY`, 150, 28, 13, '#cfe0ff');
+      const order = [...players].sort((a, b) => (b.p?.score ?? 0) - (a.p?.score ?? 0));
+      const rank = Math.max(1, order.findIndex((p) => p.seat === you) + 1);
+      const meP = { seat: you ?? 0, name: mine?.name ?? '', character: info.character };
+      drawPlate(g, 16, 56, 440, meP, myP, { you: true, rank, total: players.length, hurt: me.hurt });
+      drawField(g, f, chart, statuses, ms, fall, { keys: s.keys });
+      if (info.character) drawMe(g, f, info.character, chart, statuses, ms, v);
+      // 自己的連擊與判定放在軌道中間
+      if (judgeShow && judgeShow.life > 0) text(g, JUDGE_TEXT[judgeShow.j], f.cx, f.judge - 70, 26, JUDGE_COLOR[judgeShow.j], 'center');
+      // 自己的分數與連擊：軌道左邊的空位
+      text(g, 'SCORE', 14, 128, 10, 'rgba(255,255,255,0.7)');
+      text(g, pad7(v?.score), 14, 146, 14, '#fff', 'left', 900, false);
+      text(g, 'COMBO', 14, 176, 10, 'rgba(255,255,255,0.7)');
+      text(g, String(v?.combo ?? 0), 14, 200, 26, '#ffd24a', 'left', 900, false);
       const rest = players.filter((p) => p.seat !== you);
-      drawMinis(g, rest, 548, 62, W - 560, H - 70, chart, ms, fall);
+      drawRows(g, rest, 472, 56, W - 488, H - 66, chart, ms, fall);
+      drawEq(g, 20, H - 6, ms, chart?.bpm);
     }
     drawCountdown(g, f, ms, bossName);
   }
