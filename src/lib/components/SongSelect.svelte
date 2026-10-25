@@ -117,9 +117,11 @@
     requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
   }
 
+  let tabs;
   function setFilter(id) {
     play('move');
     filter = id;
+    requestAnimationFrame(() => tabs?.querySelector('.on')?.scrollIntoView({ inline: 'nearest', block: 'nearest' }));
     // 選到的曲子不在篩選結果裡：改選這款遊戲的第一首
     if (id !== 'all' && track.game !== id) songId = TRACKS.find((tr) => tr.game === id).id;
     requestAnimationFrame(() => list?.querySelector('.song.sel')?.scrollIntoView({ block: 'nearest' }));
@@ -140,14 +142,17 @@
 <ScreenFrame title={t('選擇曲目')} en="SONG SELECT">
   <div class="pick">
     <div class="list-col">
-      <div class="filters" role="tablist">
+      <!-- 排序、切換原曲固定在兩頭；中間的「全部＋各遊戲」是一條：放得下就平分，遊戲多了就左右捲（兩邊淡出提示還有） -->
+      <div class="filters">
         <button type="button" class="sort" class:on={sort !== 'default'} onclick={cycleSort} title={t('排序')}>
           {t(SORT_LABEL[sort])}
         </button>
-        <button type="button" role="tab" aria-selected={filter === 'all'} class:on={filter === 'all'} onclick={() => setFilter('all')}>{t('全部')} <i>{TRACKS.length}</i></button>
-        {#each GAMES as g (g.id)}
-          <button type="button" role="tab" aria-selected={filter === g.id} class:on={filter === g.id} onclick={() => setFilter(g.id)}>{t(g.short)}</button>
-        {/each}
+        <div class="tabs" role="tablist" bind:this={tabs}>
+          <button type="button" role="tab" aria-selected={filter === 'all'} class:on={filter === 'all'} onclick={() => setFilter('all')}>{t('全部')} <i>{TRACKS.length}</i></button>
+          {#each GAMES as g (g.id)}
+            <button type="button" role="tab" aria-selected={filter === g.id} class:on={filter === g.id} onclick={() => setFilter(g.id)}>{t(g.short)}</button>
+          {/each}
+        </div>
         {#if hasOriginals}
           <button type="button" class="orig" class:on={originalMode} aria-pressed={originalMode} onclick={toggleOriginal} title={t('整個列表切換成原曲／新版')}>
             {originalMode ? t('切換新版') : t('切換原曲')}
@@ -256,6 +261,24 @@
     display: flex;
     gap: 0.3cqw;
   }
+  .tabs {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    gap: 0.3cqw;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    /* 捲得動的時候，兩邊淡出 */
+    mask-image: linear-gradient(90deg, transparent 0, #000 1.2cqh, #000 calc(100% - 2.4cqh), transparent);
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .filters .tabs button {
+    flex: 1 0 auto;
+    padding-inline: 1.2cqh;
+  }
   .filters button {
     flex: 1;
     padding: 0.6cqh 0;
@@ -272,7 +295,8 @@
     opacity: 0.7;
   }
   .filters .sort {
-    flex: 1.3;
+    flex: none;
+    padding-inline: 1.6cqh;
     background: var(--navy);
     color: #fff;
   }
@@ -602,7 +626,8 @@
   }
   /* 切換原曲／新版：比篩選寬一點、淡藍底，切到原曲時變實心 */
   .filters .orig {
-    flex: 1.8;
+    flex: none;
+    padding-inline: 1.6cqh;
     background: #d8e5ff;
     color: var(--accent);
   }
@@ -815,13 +840,11 @@
     .notes {
       font-size: 1.3cqh;
     }
-    .filters {
+    .filters,
+    .tabs {
       gap: 1cqw;
-      overflow-x: auto;
-      scrollbar-width: none;
     }
     .filters button {
-      flex: none;
       padding: 0.6cqh 2.4cqw;
       font-size: 1.5cqh;
     }
