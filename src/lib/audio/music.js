@@ -1,5 +1,5 @@
 // 曲子的播放器：把 songs.js 的曲子展開成事件，用 lookahead 排程播放。
-// 從 TaiwanMahjong（origin/master）的 src/lib/audio/music.js 搬來（曲目換成 songs.js），兩邊一起改。
+// 從 VirtualCore 的 src/audio/music.js 分出來，多了節奏遊戲要的 at／repeat 與 compile 匯出；音源用 VirtualCore 的。
 //
 // 每首曲子由幾個音軌組成：
 //   { kind: 'fm',     patch, mml, pan, vel }      FM 音色彈 MML
@@ -14,7 +14,7 @@
 //       例如 '0121'；沒給 patch 就用 SSG 方波
 // 長度（拍數）以最長的旋律音軌為準。曲子可以設 gain（0～1）調整整首的音量。
 
-import { audioContext, buses, fmNote, ssgNote, drum, parseMML, chordNotes } from './synth.js';
+import { audioContext, buses, fmNote, ssgNote, drum, parseMML, chordNotes } from 'virtual-core/audio/synth.js';
 
 import { SONGS as GAME_SONGS } from './songs.js';
 import { UI_SONGS } from './ui-songs.js';

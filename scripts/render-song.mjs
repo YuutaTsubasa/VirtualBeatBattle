@@ -1,6 +1,6 @@
 // 把 PC-98 音源的曲子離線算成音檔（給 Suno 之類的工具當參考、或拿來分享）。
 //   node scripts/render-song.mjs <曲目 id，例如 mj-title> [輪數，預設 2] [輸出檔，預設 songs-src/exports/<id>.mp3]
-// 用 node-web-audio-api 的 OfflineAudioContext 跑跟遊戲一模一樣的合成器（src/lib/audio/synth.js），
+// 用 node-web-audio-api 的 OfflineAudioContext 跑跟遊戲一模一樣的合成器（VirtualCore 的 src/audio/synth.js），
 // 把整首的音符一次排好（遊戲裡是邊播邊排），算完存成 WAV 再交給 ffmpeg 轉 MP3。
 import { OfflineAudioContext, AudioParam } from 'node-web-audio-api';
 import { writeFileSync, mkdirSync } from 'node:fs';
@@ -58,7 +58,7 @@ globalThis.window = {
     }
   },
 };
-const { audioContext, buses, fmNote, ssgNote, drum } = await import('../src/lib/audio/synth.js');
+const { audioContext, buses, fmNote, ssgNote, drum } = await import('virtual-core/audio/synth.js');
 const ctx = audioContext();
 const outGain = ctx.createGain();
 outGain.gain.value = song.gain ?? 1;
