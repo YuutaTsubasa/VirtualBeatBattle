@@ -18,7 +18,8 @@
     "import-song": "node scripts/import-audio-song.mjs"
   },
   "dependencies": {
-    "@tauri-apps/api": "~2.11.0"
+    "@tauri-apps/api": "~2.11.0",
+    "virtual-core": "github:YuutaTsubasa/VirtualCore#v0.2.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5",

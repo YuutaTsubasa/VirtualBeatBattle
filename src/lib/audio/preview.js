@@ -2,7 +2,7 @@
 //   音檔曲子（Suno）：用 <audio> 串流（不用整首下載、解碼完），從最熱鬧的一段開始播 PREVIEW_SEC 秒，淡入淡出、一直循環
 //   PC-98 曲子：用合成器從頭播（曲子本來就是短的循環）
 // 音量走背景音樂的音量（buses.bgm）。換曲子要停 DELAY 秒才真的換，按著方向鍵一路往下時不會一直重新載入。
-import { audioContext, buses } from './synth.js';
+import { audioContext, buses } from 'virtual-core/audio/synth.js';
 import { Player } from './music.js';
 import { songOf } from '../game/tracks.js';
 import { beatToMs } from '../game/chartgen.js';

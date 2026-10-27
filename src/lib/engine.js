@@ -16,7 +16,7 @@ import { COUNTDOWN } from './game/constants.js';
 import { trackOf, songOf, repeatOf } from './game/tracks.js';
 import { options, fallMs } from './game/options.svelte.js';
 import { onFrame, sendProgress } from './net.svelte.js';
-import { audioContext, buses } from './audio/synth.js';
+import { audioContext, buses } from 'virtual-core/audio/synth.js';
 import { Player } from './audio/music.js';
 import { createKeys, keySlices } from './audio/keysound.js';
 import { holdAudio } from './audio/sound.svelte.js';

@@ -96,17 +96,18 @@ npm test
 
 ### 配對服務（Cloudflare Workers）
 
-程式在 `workers/signal/`，名字是 `virtual-beat-battle-signal`，**還沒部署**（`src/lib/site.js` 的預設值已經指向它）。
+程式在 [VirtualCore](https://github.com/YuutaTsubasa/VirtualCore) 的 `workers/signal/`（Virtual 系列五款共用），本作部署的名字是 `virtual-beat-battle-signal`，**還沒部署**（`src/lib/site.js` 的預設值已經指向它）。
 配對服務連不上時，介面會自動藏起線上房間。部署（或改了程式重新部署）：
 
 ```bash
-npm --prefix workers/signal run deploy
+# 在 VirtualCore 的資料夾
+npm --prefix workers/signal run deploy:beat
 ```
 
 用量：比賽本身是 P2P、不經過這裡，只有加入房間時轉送幾則連線資訊（一次加入大約 5 個請求），
 房間開著時 WebSocket 會休眠不計費。免費方案超過每日額度只會暫時連不上、不會收費；同一個 Cloudflare 帳號的幾個遊戲共用額度。
 
-本機測試：`npm --prefix workers/signal run dev`（http://localhost:8787），在 `.env.development.local` 寫 `VITE_SIGNAL_SERVER=http://localhost:8787`。
+本機測試（VirtualCore clone 在旁邊的 `../VirtualCore`）：`npm --prefix ../VirtualCore/workers/signal run dev`（http://localhost:8787），在 `.env.development.local` 寫 `VITE_SIGNAL_SERVER=http://localhost:8787`。
 
 區網房間預設通訊埠 **7822**（台麻 7777、排球 7788，可以同時開）。
 
@@ -123,7 +124,6 @@ crates/beat-core/       遊戲引擎（Rust）
   src/characters.rs        角色的小能力
 crates/beat-wasm/       WebAssembly：自己的那一首（LocalPlay）與線上房主（HostRoom）
 src-tauri/               Tauri v2 App＋區網伺服器（axum，/ws）
-workers/signal/          線上房間的配對服務
 scripts/gen-charts.mjs   產生譜面
 src/
   App.svelte               畫面切換（標題→選角→選魔王→打歌→結算；連線：大廳→比賽→名次）
@@ -134,6 +134,17 @@ src/
   lib/game/progress.js     角色等級與經驗值、最佳成績（localStorage）
   lib/components/SongSelect.svelte  選魔王
 ```
+
+### 跟 VirtualCore 共用的部分
+
+[VirtualCore](https://github.com/YuutaTsubasa/VirtualCore) 是 Virtual 系列五款共用的程式，`package.json` 用 git tag 引用（`virtual-core`）：
+
+- `virtual-core/audio/synth.js`、`audio/music.js`：PC-98 FM 音源與曲子播放器（`play` 的 `at`／`repeat` 讓音樂跟譜面對齊；`compile` 給譜面產生器）。本作的 `src/lib/audio/music.js` 只合併曲目表再轉出它們
+- `virtual-core/net/p2p.js`、`net/site.js`：線上房間的 WebRTC 傳輸、房號與分享連結（本作的網址在 `src/lib/site.js`）
+- `workers/signal/`：配對服務
+- `.github/workflows/build-apps.yml`、`pages.yml`：這個 repo 的兩個 workflow 只是呼叫它們
+
+本機要同時改 VirtualCore 時：`npm install ../VirtualCore` 暫時換成本機版本（不要 commit 這個改動）。
 
 ## 美術
 

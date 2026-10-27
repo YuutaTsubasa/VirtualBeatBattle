@@ -3,7 +3,7 @@
 //   一段 = 這顆旋律音符的時間 → 下一顆旋律音符的時間（照這個難度的譜面算，簡單譜面一段比較長，打中照樣聽得到完整的旋律）。
 //   兩頭各提早 PRE 秒：MIDI 的時間跟分軌的實際聲音有幾十毫秒的誤差，提早一點才不會切掉撥弦的起音。
 import { beatToMs } from '../game/chartgen.js';
-import { audioContext, buses } from './synth.js';
+import { audioContext, buses } from 'virtual-core/audio/synth.js';
 
 const PRE = 0.03;
 const FADE_IN = 0.004;
