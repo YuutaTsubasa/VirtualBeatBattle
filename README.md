@@ -139,7 +139,7 @@ src/
 
 [VirtualCore](https://github.com/YuutaTsubasa/VirtualCore) 是 Virtual 系列五款共用的程式，`package.json` 用 git tag 引用（`virtual-core`）：
 
-- `virtual-core/audio/synth.js`：PC-98 FM 音源（`src/lib/audio/music.js` 是本作自己的播放器，多了跟譜面對齊的 at／repeat）
+- `virtual-core/audio/synth.js`、`audio/music.js`：PC-98 FM 音源與曲子播放器（`play` 的 `at`／`repeat` 讓音樂跟譜面對齊；`compile` 給譜面產生器）。本作的 `src/lib/audio/music.js` 只合併曲目表再轉出它們
 - `virtual-core/net/p2p.js`、`net/site.js`：線上房間的 WebRTC 傳輸、房號與分享連結（本作的網址在 `src/lib/site.js`）
 - `workers/signal/`：配對服務
 - `.github/workflows/build-apps.yml`、`pages.yml`：這個 repo 的兩個 workflow 只是呼叫它們

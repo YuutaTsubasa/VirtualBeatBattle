@@ -11,7 +11,7 @@ const CJK = /[぀-ヿ㐀-鿿！-｠]/;
 
 // 不是畫面上的字：資料清單、音色表
 // midi.js 的錯誤訊息只給匯入工具（scripts/import-audio-song.mjs）看，不會出現在畫面上
-const SKIP_FILES = new Set(['src/lib/audio/songs.js', 'src/lib/audio/music.js', 'src/lib/game/midi.js']);
+const SKIP_FILES = new Set(['src/lib/audio/songs.js', 'src/lib/game/midi.js']);
 // VirtualCore 裡會顯示在畫面上的字（用音鬥樂的翻譯，見 net.svelte.js 的 setTranslator）
 const CORE_FILES = ['net/p2p.js'].map((f) => join(ROOT, 'node_modules', 'virtual-core', 'src', f));
 // 不用翻的字：語言名稱（每種語言都用自己的寫法）、程式裡比對用的字

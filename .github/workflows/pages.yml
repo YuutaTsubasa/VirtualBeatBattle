@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   pages:
-    uses: YuutaTsubasa/VirtualCore/.github/workflows/pages.yml@v0.1.0
+    uses: YuutaTsubasa/VirtualCore/.github/workflows/pages.yml@v0.2.0
     with:
       core-crate: beat-core
       wasm-crate: beat-wasm
