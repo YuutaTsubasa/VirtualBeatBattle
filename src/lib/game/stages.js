@@ -1,5 +1,5 @@
-// 六大關 × 8 小關的名稱、配色與敵人的名字（第 8 小關是魔王關）。跑道怎麼生在 crates/beat-core/src/course.rs。
-// 敵人、魔王、背景的圖沿用虛擬闖天下（public/enemies、bosses、stages）。
+// 六大關 × 8 小關的名稱、配色與敵人的名字（第 8 小關是魔王關）。
+// 魔王、背景的圖沿用虛擬闖天下（public/bosses、stages）。
 
 export const WORLDS = [
   {
