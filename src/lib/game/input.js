@@ -3,6 +3,8 @@
 // 手把只能每個影格讀一次（誤差最多 1/60 秒）。觸控在 engine.js 依手指落在哪一條軌道判斷。
 // （選單的操作在 src/lib/components/Controls.svelte）
 
+import { padDpad } from 'virtual-core/input/controls.js';
+
 // 預設 S D F ／ J K L（左手三指、右手三指）；也可以用 A S D ／ ← ↓ →（右手方向鍵）
 export const KEYS = [
   ['KeyS', 'KeyA'],
@@ -16,11 +18,12 @@ export const KEY_LABELS = ['S', 'D', 'F', 'J', 'K', 'L'];
 
 const laneOfKey = new Map(KEYS.flatMap((codes, lane) => codes.map((c) => [c, lane])));
 
-// 手把（標準配置）：左手 ←、↑／↓、→，右手 □／X、△／Y（或 ✕／A）、○／B；LB、RB 也當最外側
+// 手把：左手 ←、↑／↓、→，右手 □／X、△／Y（或 ✕／A）、○／B；LB、RB 也當最外側
+// 字串是十字鍵的方向（用 padDpad 讀，非標準手把的十字鍵也收得到），數字是按鈕編號
 const PAD_LANES = [
-  [14, 4],
-  [12, 13],
-  [15],
+  ['left', 4],
+  ['up', 'down'],
+  ['right'],
   [2],
   [3, 0],
   [1, 5],
@@ -90,9 +93,11 @@ export function pollPads() {
   }
   const now = performance.now();
   for (const pad of pads) {
-    if (!pad?.connected || (pad.mapping && pad.mapping !== 'standard')) continue;
+    // 沒有標準配置的手把也收（十字鍵另外處理，見 padDpad）
+    if (!pad?.connected) continue;
     const prev = padPrev.get(pad.index) ?? [];
-    const cur = PAD_LANES.map((btns) => btns.some((b) => pad.buttons[b]?.pressed));
+    const dpad = padDpad(pad);
+    const cur = PAD_LANES.map((btns) => btns.some((b) => (typeof b === 'string' ? dpad[b] : pad.buttons[b]?.pressed)));
     cur.forEach((on, lane) => {
       if (on !== !!prev[lane]) emit(lane, `pad${pad.index}`, on, now);
     });
