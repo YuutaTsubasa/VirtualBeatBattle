@@ -1,5 +1,6 @@
 //! 房間：最多十二個座位（真人或電腦對手）、觀眾、聊天、開始／再一首／回大廳。
-//! 不碰網路，伺服器（src-tauri/src/server.rs）或線上房主（crates/beat-wasm）每 1/60 秒呼叫 `tick()`。
+//! 座位、房主、聊天這些共通的部分在 VirtualCore 的 virtual-room（`Lobby`），這裡只放這款的比賽。
+//! 不碰網路，伺服器（VirtualCore 的 virtual-lan）或線上房主（crates/beat-wasm）每 1/60 秒呼叫 `tick()`。
 //!
 //! 節奏遊戲每個人打的都是同一份譜，彼此不會互相影響，所以曲子不在這裡打：
 //! 每個人在自己的電腦上照自己的音樂時鐘判定（網路慢也不會影響手感），每秒幾次回報「分數、連擊、對魔王的傷害、體力」，
@@ -10,11 +11,14 @@ use crate::ai::{Bot, Difficulty};
 use crate::characters::{is_character, random_character};
 use crate::play::Play;
 use crate::songs::{is_song, song, songs, Level};
-use rand::distributions::Alphanumeric;
 use rand::rngs::SmallRng;
-use rand::{Rng, SeedableRng};
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::ops::{Deref, DerefMut};
+use virtual_room::{Game, Lobby, RoomGame};
+
+pub use virtual_room::{Seat, SeatKind};
 
 pub const MAX_PLAYERS: usize = 12;
 /// 開始前的倒數（影格）；倒數結束的那一刻就是曲子的 0 毫秒
@@ -27,13 +31,6 @@ const FRAME_EVERY: u32 = 4;
 /// 影格 → 曲子的毫秒
 pub fn song_ms(t: u32) -> i32 {
     ((t as i64 - COUNTDOWN as i64) * 1000 / 60) as i32
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "lowercase")]
-pub enum SeatKind {
-    Human,
-    Bot,
 }
 
 /// 玩家回報的進度（真人自己回報，電腦對手由房間算）
@@ -66,15 +63,6 @@ pub struct Progress {
     pub out: bool,
 }
 
-pub struct Seat {
-    pub name: String,
-    pub character: String,
-    pub kind: SeatKind,
-    pub difficulty: Difficulty,
-    pub token: String,
-    pub connected: bool,
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
@@ -91,16 +79,6 @@ impl Default for Settings {
         Settings { difficulty: Difficulty::Normal, song: songs()[0].id.clone(), level: Level::Normal }
     }
 }
-
-#[derive(Clone, Debug, Serialize)]
-struct ChatLine {
-    seat: Option<usize>,
-    name: String,
-    text: String,
-    sys: bool,
-}
-
-const MAX_CHAT: usize = 60;
 
 struct Entry {
     seat: usize,
@@ -125,15 +103,41 @@ pub struct Race {
     pub results: Option<Vec<Value>>,
 }
 
+/// 這款的房間規則
+pub struct Beat;
+
+impl Game for Beat {
+    type Settings = Settings;
+    type SeatState = ();
+    const SEATS: usize = MAX_PLAYERS;
+
+    fn joined_text(name: &str, seat: usize) -> String {
+        format!("{} 坐到了 {}P", name, seat + 1)
+    }
+    fn is_character(id: &str) -> bool {
+        is_character(id)
+    }
+    fn random_character(rng: &mut SmallRng, avoid: &[&str]) -> &'static str {
+        random_character(rng, avoid)
+    }
+    /// 不認得的曲子換回預設曲
+    fn clamp_settings(settings: Settings) -> Settings {
+        if is_song(&settings.song) {
+            settings
+        } else {
+            Settings { song: Settings::default().song, ..settings }
+        }
+    }
+    fn seat_difficulty(settings: &Settings) -> Difficulty {
+        settings.difficulty
+    }
+}
+
 pub struct Room {
-    pub seats: [Option<Seat>; MAX_PLAYERS],
-    pub host_seat: Option<usize>,
-    pub settings: Settings,
+    pub lobby: Lobby<Beat>,
     pub race: Option<Race>,
-    chat: Vec<ChatLine>,
-    rng: SmallRng,
     /// 這一格比賽剛結束（大廳資訊要更新）
-    pub ended_now: bool,
+    ended_now: bool,
 }
 
 impl Default for Room {
@@ -142,85 +146,23 @@ impl Default for Room {
     }
 }
 
+// 座位、聊天、入席這些直接用大廳的（room.join(…)、room.seats…）
+impl Deref for Room {
+    type Target = Lobby<Beat>;
+    fn deref(&self) -> &Lobby<Beat> {
+        &self.lobby
+    }
+}
+
+impl DerefMut for Room {
+    fn deref_mut(&mut self) -> &mut Lobby<Beat> {
+        &mut self.lobby
+    }
+}
+
 impl Room {
     pub fn new(settings: Settings) -> Self {
-        Room {
-            seats: Default::default(),
-            host_seat: None,
-            settings,
-            race: None,
-            chat: Vec::new(),
-            rng: SmallRng::from_entropy(),
-            ended_now: false,
-        }
-    }
-
-    pub fn playing(&self) -> bool {
-        self.race.is_some()
-    }
-
-    fn sys(&mut self, text: String) {
-        self.chat.push(ChatLine { seat: None, name: String::new(), text, sys: true });
-        if self.chat.len() > MAX_CHAT {
-            self.chat.remove(0);
-        }
-    }
-
-    pub fn push_chat(&mut self, seat: Option<usize>, text: &str) {
-        let text: String = text.trim().chars().take(300).collect();
-        if text.is_empty() {
-            return;
-        }
-        let name = seat.and_then(|s| self.seats[s].as_ref()).map(|s| s.name.clone()).unwrap_or_else(|| "觀眾".into());
-        self.chat.push(ChatLine { seat, name, text, sys: false });
-        if self.chat.len() > MAX_CHAT {
-            self.chat.remove(0);
-        }
-    }
-
-    fn pick_character(&mut self, wanted: Option<&str>) -> String {
-        match wanted {
-            Some(c) if is_character(c) => c.to_string(),
-            _ => random_character(&mut self.rng, &[]).to_string(),
-        }
-    }
-
-    /// 真人入席，回傳（座位, 重新連線用的 token）。比賽中不能入席（改成觀戰）。
-    pub fn join(&mut self, name: &str, character: Option<&str>) -> Result<(usize, String), String> {
-        if self.playing() {
-            return Err("比賽進行中".into());
-        }
-        let seat = self.seats.iter().position(|s| s.is_none()).ok_or("座位已滿")?;
-        let name: String = name.trim().chars().take(16).collect();
-        let name = if name.is_empty() { format!("玩家{}", seat + 1) } else { name };
-        let token: String = (&mut self.rng).sample_iter(&Alphanumeric).take(24).map(char::from).collect();
-        let character = self.pick_character(character);
-        self.sys(format!("{} 坐到了 {}P", name, seat + 1));
-        self.seats[seat] = Some(Seat { name, character, kind: SeatKind::Human, difficulty: self.settings.difficulty, token: token.clone(), connected: false });
-        Ok((seat, token))
-    }
-
-    pub fn seat_of_token(&self, token: &str) -> Option<usize> {
-        if token.is_empty() {
-            return None;
-        }
-        self.seats.iter().position(|s| s.as_ref().is_some_and(|s| s.kind == SeatKind::Human && s.token == token))
-    }
-
-    pub fn connect(&mut self, seat: usize) {
-        if let Some(s) = self.seats[seat].as_mut() {
-            s.connected = true;
-        }
-    }
-
-    /// 斷線：比賽中就算棄權（曲子在自己的電腦上打，接不回來）
-    pub fn disconnect(&mut self, seat: usize) {
-        let Some(s) = self.seats[seat].as_mut() else { return };
-        s.connected = false;
-        let name = s.name.clone();
-        if self.retire(seat) {
-            self.sys(format!("{} 斷線了，這一首先算棄權", name));
-        }
+        Room { lobby: Lobby::new(settings), race: None, ended_now: false }
     }
 
     /// 比賽中的這個座位算棄權；有改到就回傳 true
@@ -235,64 +177,6 @@ impl Room {
         }
     }
 
-    pub fn add_bot(&mut self, seat: Option<usize>, difficulty: Difficulty) -> Result<usize, String> {
-        if self.playing() {
-            return Err("比賽進行中".into());
-        }
-        let seat = match seat {
-            Some(s) if s < MAX_PLAYERS && self.seats[s].is_none() => s,
-            Some(_) => return Err("這個座位有人了".into()),
-            None => self.seats.iter().position(|s| s.is_none()).ok_or("座位已滿")?,
-        };
-        let taken: Vec<String> = self.seats.iter().flatten().map(|s| s.character.clone()).collect();
-        let taken: Vec<&str> = taken.iter().map(|s| s.as_str()).collect();
-        let character = random_character(&mut self.rng, &taken).to_string();
-        self.seats[seat] = Some(Seat {
-            name: format!("電腦（{}）", difficulty.label()),
-            character,
-            kind: SeatKind::Bot,
-            difficulty,
-            token: String::new(),
-            connected: true,
-        });
-        Ok(seat)
-    }
-
-    /// 離開座位（玩家自己離開或房主移除）。比賽中就算棄權。
-    pub fn remove_seat(&mut self, seat: usize) -> Result<(), String> {
-        let Some(s) = self.seats.get(seat).and_then(|s| s.as_ref()) else {
-            return Err("這個座位沒有人".into());
-        };
-        let name = s.name.clone();
-        self.retire(seat);
-        if let Some(race) = self.race.as_mut() {
-            race.entries.retain(|e| e.seat != seat);
-        }
-        self.seats[seat] = None;
-        if self.host_seat == Some(seat) {
-            self.host_seat = None;
-        }
-        self.sys(format!("{} 離開了座位", name));
-        Ok(())
-    }
-
-    pub fn set_character(&mut self, seat: usize, id: &str) -> Result<(), String> {
-        if self.playing() {
-            return Err("比賽進行中不能換角色".into());
-        }
-        if !is_character(id) {
-            return Err("沒有這個角色".into());
-        }
-        let s = self.seats[seat].as_mut().ok_or("你沒有座位")?;
-        s.character = id.to_string();
-        Ok(())
-    }
-
-    pub fn update_settings(&mut self, settings: Settings) {
-        let song = if is_song(&settings.song) { settings.song } else { self.settings.song.clone() };
-        self.settings = Settings { song, ..settings };
-    }
-
     /// 真人回報進度
     pub fn report(&mut self, seat: usize, p: Progress) {
         let Some(race) = self.race.as_mut() else { return };
@@ -303,16 +187,27 @@ impl Room {
         }
         e.p = p;
     }
+}
+
+impl RoomGame for Room {
+    type Rules = Beat;
+
+    fn lobby(&self) -> &Lobby<Beat> {
+        &self.lobby
+    }
+    fn lobby_mut(&mut self) -> &mut Lobby<Beat> {
+        &mut self.lobby
+    }
 
     /// 開始：有人的座位都上場
-    pub fn start(&mut self) -> Result<(), String> {
-        let (song_id, level) = (self.settings.song.clone(), self.settings.level);
-        let seed: u64 = self.rng.gen();
+    fn start(&mut self) -> Result<(), String> {
+        let (song_id, level) = (self.lobby.settings.song.clone(), self.lobby.settings.level);
+        let seed: u64 = self.lobby.rng.gen();
         let mut entries = Vec::new();
-        for (i, s) in self.seats.iter().enumerate() {
+        for (i, s) in self.lobby.seats.iter().enumerate() {
             let Some(s) = s else { continue };
             let bot = (s.kind == SeatKind::Bot).then(|| {
-                let play = Play::new(&song_id, level, &s.character, s.difficulty.level());
+                let play = Play::new(&song_id, level, &s.character, crate::ai::level(s.difficulty));
                 let bot = Bot::new(&play, s.difficulty, seed ^ (i as u64 + 1) * 7919);
                 (play, bot)
             });
@@ -326,16 +221,51 @@ impl Room {
             return Err("沒有人上場".into());
         }
         self.race = Some(Race { song: song_id, level, seed, t: 0, entries, results: None });
-        self.sys("魔王出現了！準備……".into());
+        self.lobby.playing = true;
+        self.lobby.sys("魔王出現了！準備……");
         Ok(())
     }
 
-    pub fn reset_to_lobby(&mut self) {
+    fn reset_to_lobby(&mut self) {
         self.race = None;
+        self.lobby.playing = false;
+    }
+
+    /// 真人回報的進度（`progress` 訊息）
+    fn input(&mut self, seat: usize, msg: &Value) {
+        if let Ok(p) = serde_json::from_value::<Progress>(msg.clone()) {
+            self.report(seat, p);
+        }
+    }
+
+    fn input_type() -> &'static str {
+        "progress"
+    }
+
+    /// 斷線：比賽中就算棄權（各自在自己的電腦上打，電腦接不了手）
+    fn disconnect(&mut self, seat: usize) {
+        let Some(s) = self.lobby.seats[seat].as_mut() else { return };
+        s.connected = false;
+        let name = s.name.clone();
+        if self.retire(seat) {
+            self.lobby.sys(format!("{} 斷線了，這一首先算棄權", name));
+        }
+    }
+
+    /// 離開座位（玩家自己離開或房主移除）。比賽中就算棄權，座位直接空出來。
+    fn remove_seat(&mut self, seat: usize) -> Result<(), String> {
+        if self.lobby.seats.get(seat).and_then(|s| s.as_ref()).is_none() {
+            return Err("這個座位沒有人".into());
+        }
+        self.retire(seat);
+        if let Some(race) = self.race.as_mut() {
+            race.entries.retain(|e| e.seat != seat);
+        }
+        self.lobby.vacate(seat).map(|_| ())
     }
 
     /// 前進一個影格。要送比賽影格的時候回傳 true。
-    pub fn tick(&mut self) -> bool {
+    fn tick(&mut self) -> bool {
         let Some(race) = self.race.as_mut() else { return false };
         race.t += 1;
         if race.results.is_none() {
@@ -353,51 +283,24 @@ impl Room {
             let all_done = race.entries.iter().all(|e| e.done());
             let late = ms > length + (END_GRACE as i32 * 1000 / 60);
             if all_done || late {
-                let results = rank(race, &self.seats);
+                let results = rank(race, &self.lobby.seats);
                 let winner = results.first().and_then(|r| r["name"].as_str()).unwrap_or("").to_string();
                 race.results = Some(results);
                 self.ended_now = true;
-                self.sys(format!("曲子結束！第一名：{}", winner));
+                self.lobby.sys(format!("曲子結束！第一名：{}", winner));
             }
         }
         self.race.as_ref().is_some_and(|r| r.t % FRAME_EVERY == 0 || r.t == 1)
     }
 
-    /// 大廳／房間資訊（有變動時送）
-    pub fn view(&self, you: Option<usize>) -> Value {
-        let seats: Vec<Value> = self
-            .seats
-            .iter()
-            .map(|s| {
-                s.as_ref().map_or(Value::Null, |s| {
-                    json!({
-                        "name": s.name,
-                        "character": s.character,
-                        "kind": s.kind,
-                        "difficulty": s.difficulty,
-                        "connected": s.connected,
-                    })
-                })
-            })
-            .collect();
-        json!({
-            "phase": if self.playing() { "playing" } else { "lobby" },
-            "seats": seats,
-            "host_seat": self.host_seat,
-            "you": you,
-            "settings": self.settings,
-            "chat": self.chat,
-        })
-    }
-
     /// 比賽影格：大家的進度
-    pub fn frame(&self) -> Option<Value> {
+    fn frame(&self) -> Option<Value> {
         let race = self.race.as_ref()?;
         let players: Vec<Value> = race
             .entries
             .iter()
             .map(|e| {
-                let s = self.seats[e.seat].as_ref();
+                let s = self.lobby.seats[e.seat].as_ref();
                 json!({
                     "seat": e.seat,
                     "name": s.map(|s| s.name.as_str()).unwrap_or(""),
@@ -416,6 +319,10 @@ impl Room {
             "players": players,
             "results": race.results,
         }))
+    }
+
+    fn just_ended(&mut self) -> bool {
+        std::mem::take(&mut self.ended_now)
     }
 }
 
@@ -444,7 +351,7 @@ pub fn progress_of(play: &Play) -> Progress {
 }
 
 /// 名次（比賽結束時）：技術分高的贏；一樣的話對魔王傷害高的在前面
-fn rank(race: &Race, seats: &[Option<Seat>; MAX_PLAYERS]) -> Vec<Value> {
+fn rank(race: &Race, seats: &[Option<Seat<()>>]) -> Vec<Value> {
     let mut order: Vec<&Entry> = race.entries.iter().collect();
     order.sort_by_key(|e| (e.p.out, std::cmp::Reverse(e.p.score), std::cmp::Reverse(e.p.dmg)));
     order

@@ -3,36 +3,22 @@
 
 use crate::play::Play;
 use crate::songs::{Kind, Rng};
-use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum Difficulty {
-    Easy,
-    #[default]
-    Normal,
-    Hard,
+/// 電腦的強度：Virtual 系列共用（virtual-room），各款自己決定每種強度的參數（見 skill）
+pub use virtual_room::Difficulty;
+
+/// （按的時間誤差的標準差 ms、漏掉的機率、角色等級）
+fn skill(difficulty: Difficulty) -> (f32, f32, u32) {
+    match difficulty {
+        Difficulty::Easy => (60.0, 0.07, 3),
+        Difficulty::Normal => (38.0, 0.025, 8),
+        Difficulty::Hard => (20.0, 0.006, 14),
+    }
 }
 
-impl Difficulty {
-    pub fn label(&self) -> &'static str {
-        match self {
-            Difficulty::Easy => "簡單",
-            Difficulty::Normal => "普通",
-            Difficulty::Hard => "困難",
-        }
-    }
-    /// （按的時間誤差的標準差 ms、漏掉的機率、角色等級）
-    fn skill(&self) -> (f32, f32, u32) {
-        match self {
-            Difficulty::Easy => (60.0, 0.07, 3),
-            Difficulty::Normal => (38.0, 0.025, 8),
-            Difficulty::Hard => (20.0, 0.006, 14),
-        }
-    }
-    pub fn level(&self) -> u32 {
-        self.skill().2
-    }
+/// 電腦這種強度用的角色等級
+pub fn level(difficulty: Difficulty) -> u32 {
+    skill(difficulty).2
 }
 
 pub struct Bot {
@@ -43,7 +29,7 @@ pub struct Bot {
 
 impl Bot {
     pub fn new(play: &Play, d: Difficulty, seed: u64) -> Bot {
-        let (sigma, miss, _) = d.skill();
+        let (sigma, miss, _) = skill(d);
         let mut rng = Rng::new(seed);
         let mut plan = Vec::new();
         for n in play.song.chart(play.level).notes.iter().filter(|n| n.kind == Kind::Tap) {
