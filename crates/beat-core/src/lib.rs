@@ -17,6 +17,7 @@ pub mod songs;
 mod tests {
     use crate::ai::{Bot, Difficulty};
     use crate::play::{boss_hp, Play, GOOD};
+    use virtual_room::RoomGame;
     use crate::room::{song_ms, Room, Settings, COUNTDOWN};
     use crate::songs::{songs, Kind, Level};
 
@@ -114,7 +115,7 @@ mod tests {
     fn bots_play_like_their_difficulty() {
         let mut scores = Vec::new();
         for d in [Difficulty::Easy, Difficulty::Normal, Difficulty::Hard] {
-            let mut p = Play::new("vr-ice", Level::Normal, "aming", d.level());
+            let mut p = Play::new("vr-ice", Level::Normal, "aming", crate::ai::level(d));
             let mut bot = Bot::new(&p, d, 7);
             let mut t = -3000;
             while !p.ended {
@@ -181,6 +182,16 @@ mod tests {
         room.tick();
         assert_eq!(room.frame().unwrap()["players"][1]["p"]["combo"], 41);
         assert!(drop_conn(&mut room, &mut guest));
+        // 比賽中斷線算棄權，不換成電腦
+        assert_eq!(room.seats[1].as_ref().unwrap().kind, crate::room::SeatKind::Human);
+        assert_eq!(room.frame().unwrap()["players"][1]["p"]["out"], true);
+        // 比賽中房主移除座位：座位直接空出來，也不在場上了
+        let (_, changed) = handle(&mut room, "key", &mut host, &json!({"type": "host", "cmd": "remove", "seat": 11}));
+        assert!(changed && room.seats[11].is_none());
+        assert!(room.frame().unwrap()["players"].as_array().unwrap().iter().all(|p| p["seat"] != 11));
+        // 不認得的曲子換回預設曲
+        handle(&mut room, "key", &mut host, &json!({"type": "host", "cmd": "settings", "settings": {"song": "沒有這首"}}));
+        assert!(crate::songs::is_song(&room.settings.song));
         let mut back = Conn::default();
         handle(&mut room, "key", &mut back, &json!({"type": "hello", "token": token}));
         assert_eq!(back.seat, Some(1));

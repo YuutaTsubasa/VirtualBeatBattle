@@ -90,7 +90,7 @@ npm test
 
 ## 連線
 
-房間與訊息的處理（`crates/beat-core/src/protocol.rs`）同一份 Rust 程式給區網伺服器（Tauri 內建）與線上房間（WASM，在房主瀏覽器的 Web Worker 裡）用。房間不判定大家的曲子，只做：大廳、聊天、開始（對時）、跑電腦對手、收集每個人的進度並每秒廣播 15 次、曲子結束排名。線上房間用 WebRTC，可靠通道走大廳與指令，不可靠通道走進度與比賽影格。
+房間與訊息的處理（座位、聊天、連線訊息在 VirtualCore 的 `virtual-room`，音鬥樂自己的部分在 `crates/beat-core/src/room.rs`）同一份 Rust 程式給區網伺服器（Tauri 內建）與線上房間（WASM，在房主瀏覽器的 Web Worker 裡）用。房間不判定大家的曲子，只做：大廳、聊天、開始（對時）、跑電腦對手、收集每個人的進度並每秒廣播 15 次、曲子結束排名。線上房間用 WebRTC，可靠通道走大廳與指令，不可靠通道走進度與比賽影格。
 
 斷線＝這一首棄權（判定在自己的電腦上，接不回來），重連會拿回座位、下一首照常。
 
@@ -119,11 +119,11 @@ crates/beat-core/       遊戲引擎（Rust）
   src/songs.rs             曲子與譜面的資料、splitmix 亂數
   src/play.rs              一個玩家打一首：判定（±42/84/125ms）、連擊、技術分、傷害、魔王血量、體力、經驗值
   src/ai.rs                電腦玩家：開場決定每顆早晚多少、漏不漏，照時間按（跟真人同一套判定）
-  src/room.rs              房間：十二個座位、電腦對手、收進度、排名
-  src/protocol.rs          連線訊息（區網伺服器與線上房間共用）
+  src/room.rs              房間（實作 virtual-room 的 RoomGame）：收進度、電腦對手、排名、斷線算棄權
+  src/protocol.rs          連線訊息（轉出 virtual-room 的，區網伺服器與線上房間共用）
   src/characters.rs        角色的小能力
 crates/beat-wasm/       WebAssembly：自己的那一首（LocalPlay）與線上房主（HostRoom）
-src-tauri/               Tauri v2 App＋區網伺服器（axum，/ws）
+src-tauri/               Tauri v2 App＋區網伺服器（VirtualCore 的 virtual-lan，/ws）
 scripts/gen-charts.mjs   產生譜面
 src/
   App.svelte               畫面切換（標題→選角→選魔王→打歌→結算；連線：大廳→比賽→名次）
@@ -142,9 +142,10 @@ src/
 - `virtual-core/audio/synth.js`、`audio/music.js`：PC-98 FM 音源與曲子播放器（`play` 的 `at`／`repeat` 讓音樂跟譜面對齊；`compile` 給譜面產生器）。本作的 `src/lib/audio/music.js` 只合併曲目表再轉出它們
 - `virtual-core/net/p2p.js`、`net/site.js`：線上房間的 WebRTC 傳輸、房號與分享連結（本作的網址在 `src/lib/site.js`）
 - `workers/signal/`：配對服務
+- Rust `crates/virtual-room`（座位、房主、聊天、連線訊息、線上房主）與 `crates/virtual-lan`（區網伺服器）：`Cargo.toml` 用 git tag 引用
 - `.github/workflows/build-apps.yml`、`pages.yml`：這個 repo 的兩個 workflow 只是呼叫它們
 
-本機要同時改 VirtualCore 時：`npm install ../VirtualCore` 暫時換成本機版本（不要 commit 這個改動）。
+本機要同時改 VirtualCore 時：`npm install ../VirtualCore` 暫時換成本機版本；Rust 在 `.cargo/config.toml` 寫 `[patch."https://github.com/YuutaTsubasa/VirtualCore"]` 指到 `../VirtualCore/crates/…`（兩者都不要 commit）。
 
 ## 美術
 
