@@ -96,7 +96,7 @@ npm test
 
 ### 配對服務（Cloudflare Workers）
 
-程式在 [VirtualCore](https://github.com/YuutaTsubasa/VirtualCore) 的 `workers/signal/`（Virtual 系列五款共用），本作部署的名字是 `virtual-beat-battle-signal`，**還沒部署**（`src/lib/site.js` 的預設值已經指向它）。
+程式在 [VirtualCore](https://github.com/YuutaTsubasa/VirtualCore) 的 `workers/signal/`（Virtual 系列五款共用），本作部署的名字是 `virtual-beat-battle-signal`，**已部署**（2026-10-29，網址 `https://virtual-beat-battle-signal.taiwan-mahjong-signal.workers.dev`，`src/lib/site.js` 的預設值）。
 配對服務連不上時，介面會自動藏起線上房間。部署（或改了程式重新部署）：
 
 ```bash
