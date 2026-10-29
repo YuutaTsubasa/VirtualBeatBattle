@@ -157,7 +157,7 @@ checksum = "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
 
 [[package]]
 name = "beat-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "getrandom 0.2.17",
  "rand 0.8.8",
@@ -3984,7 +3984,7 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "virtual-beat-battle"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "beat-core",
  "serde",
