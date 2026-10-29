@@ -1,5 +1,5 @@
 # 把 Codex 畫的原圖（raw-beat/<畫風>/...png）整理成音鬥樂要的尺寸與色盤，寫進 repo 的 public/styles/<畫風>/。
-# 像素畫風的 Logo 不用原圖（生成工具一直把「鬥」畫錯），改用 90 年代版的正確 Logo 縮成像素、壓到色盤。
+# 像素畫風的 Logo 不用原圖（生成工具一直把「鬥」畫錯），改用 90 年代版的正確 Logo 縮成像素、壓到色盤（頁面底是亮的，深藍字照用）。
 import os
 import sys
 from PIL import Image, ImageOps
@@ -82,14 +82,6 @@ for style in ['pc98', 'msdos', 'taiwan-print', 'gameboy', 'modern-paint']:
         base = Image.open(os.path.join(REPO, 'public', 'ui', 'logo.webp')).convert('RGBA')
         f = LOGO[style]
         small = quantize(style, base.resize((base.width // f, base.height // f), Image.LANCZOS))
-        if style in ('pc98', 'msdos'):
-            # 這兩種畫風的介面是深色底：90 年代版的深藍字改成米白，藍色閃電留著
-            px = small.load()
-            for y in range(small.height):
-                for x in range(small.width):
-                    r, g, b, a = px[x, y]
-                    if a and r + g + b < 200 and b < 120:
-                        px[x, y] = (0xFA, 0xE8, 0xCD, a) if style == 'pc98' else (0xF6, 0xF1, 0xD8, a)
         save(style, 'ui/logo.webp', small)
     elif os.path.exists(src := os.path.join(d, 'ui', 'logo.png')):
         save(style, 'ui/logo.webp', logo_fit(Image.open(src), (1400, 560)))

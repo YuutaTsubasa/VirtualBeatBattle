@@ -34,6 +34,9 @@
   --muted-line: #d6deea;
   --muted-text: #8d9ab3;
   --danger: #c81e4a;
+  /* 直接寫在頁面底上的字（標題畫面的小按鈕、操作提示）：深色底的畫風要換成淺色 */
+  --page-ink: var(--navy);
+  --page-ink-on: var(--on-dark);
   --font: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', 'Heiti TC', sans-serif;
   /* 斜切的角（按鈕、標籤） */
   --cut: 1.6cqh;

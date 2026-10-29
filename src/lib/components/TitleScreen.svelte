@@ -275,7 +275,7 @@
     align-items: center;
     gap: 1cqh;
     background: none;
-    color: var(--navy);
+    color: var(--page-ink);
     font-weight: 800 !important;
     font-size: 2.3cqh !important;
     letter-spacing: 0.1em;
@@ -292,8 +292,8 @@
     width: 3.2cqh;
     height: 3.2cqh;
     border-radius: 50%;
-    background: var(--navy);
-    color: var(--on-dark);
+    background: var(--page-ink);
+    color: var(--page-ink-on);
     font-size: 2cqh;
     font-weight: 900;
   }
