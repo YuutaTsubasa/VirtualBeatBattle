@@ -7,6 +7,7 @@
 //   困難：旋律空下來的地方用小鼓、大鼓補，偶爾放地雷（魔王的攻擊，不要按）
 //   極限（EXPERT）：每拍都可以同時押、鼓點補到十六分音符、Hi-hat 補八分音符，慢歌再加上琶音，地雷更多
 // 曲子重複時，第二、四次左右鏡像，免得一直是同一套。
+// 最後照「雙手」整理一次（HANDS）：同一隻手長押時不放、同一隻手一次只按一顆、同一隻手不要太密；等級超過上限就排鬆一點。
 //
 // 輸出的音符：[時間 ms, 軌道 0～5, 長押長度 ms（0 = 單點）, 種類（0 = 一般、1 = 地雷）]
 
@@ -24,6 +25,17 @@ const RULES = {
   expert: { grid: 0.25, gap: 0.25, hold: 1.5, chordEvery: 1, chordBeat: 1, fill: true, fillGrid: 0.25, hats: true, arp: { slow: 120 }, mines: 5 },
 };
 
+// 雙手的限制：0～2 是左手、3～5 是右手。手把上一隻手是十字鍵（或一組按鈕），同一隻手一次只能按一個
+//   gap：同一隻手兩顆之間（含長押放開之後）最少幾毫秒；perSec：同一隻手平均一秒最多幾顆（看任何兩秒內的數量）
+//   run：同一隻手連續幾顆（中間另一隻手沒有音符、間隔不到 STREAK_MS）就要換手
+//   cap：譜面等級的上限，超過就把 gap 拉大重排（12、13 已經很難了）
+const HANDS = {
+  easy: { gap: 400, perSec: 2, run: 4, cap: 3 },
+  normal: { gap: 250, perSec: 3, run: 4, cap: 6 },
+  hard: { gap: 180, perSec: 4, run: 5, cap: 9 },
+  expert: { gap: 140, perSec: 5, run: 6, cap: 11 },
+};
+const STREAK_MS = 600;
 
 const onGrid = (beat, grid) => Math.abs(beat / grid - Math.round(beat / grid)) < 1e-6;
 
@@ -198,13 +210,69 @@ export function chartFrom(src, level, repeat = 1) {
       const beat = n.beat + k * length;
       const ms = Math.round(msOf(beat));
       const lane = flipped ? mirror(n.lane) : n.lane;
-      notes.push([ms, lane, Math.round(msOf(beat + n.len)) - ms, n.kind]);
+      notes.push([ms, lane, Math.round(msOf(beat + n.len)) - ms, n.kind, !!n.mel]);
     }
   }
-  return { notes, lengthMs: Math.round(msOf(length * repeat)) };
+  const lengthMs = Math.round(msOf(length * repeat));
+  // 照雙手整理；等級還太高就讓同一隻手每兩秒少一顆，一步一步排鬆
+  const base = HANDS[level];
+  let out;
+  for (let per2 = base.perSec * 2; per2 >= 1; per2--) {
+    out = forHands(notes, { ...base, per2 });
+    if (ratingOf(out, lengthMs) <= base.cap) break;
+  }
+  return { notes: out, lengthMs };
 }
 
-/** 譜面等級（給玩家看的數字，大約 1～22）：用每秒音符數與同時押的比例粗估（原創曲的十六分音符譜面會到 17～22） */
+const sideOfLane = (lane) => (lane < 3 ? 0 : 1);
+
+/**
+ * 照雙手的限制整理音符（[ms, lane, len, kind, 旋律?]，回傳去掉旋律旗標的 [ms, lane, len, kind]）。
+ * 依時間一顆一顆看（同時的先看旋律）：這隻手放不下就試另一隻手對稱的那一軌，兩邊都不行就拿掉。
+ * 地雷不用按，不算在手上；但同一軌長押中不放地雷。
+ */
+function forHands(notes, hand) {
+  const order = [...notes].sort((a, b) => a[0] - b[0] || b[4] - a[4] || a[1] - b[1]);
+  // 每隻手已經放的音符：{ t, end }；streak：這隻手目前連續幾顆
+  const taken = [[], []];
+  const streak = [0, 0];
+  const out = [];
+  const fits = (t, len, side) => {
+    const xs = taken[side];
+    const prev = xs.at(-1);
+    if (prev && t < prev.end + hand.gap - 1e-6) return false;
+    let count = 0;
+    for (let i = xs.length - 1; i >= 0 && xs[i].t > t - 2000; i--) count++;
+    if (count >= hand.per2) return false;
+    const close = prev && t - prev.end < STREAK_MS;
+    return !(close && streak[side] >= hand.run);
+  };
+  const take = (n, lane, side) => {
+    const other = 1 - side;
+    const prev = taken[side].at(-1);
+    // 另一隻手在這顆之前、這隻手上一顆之後有按過，連續就斷掉
+    const broke = !prev || n[0] - prev.end >= STREAK_MS || (taken[other].at(-1)?.t ?? -Infinity) > prev.t;
+    streak[side] = broke ? 1 : streak[side] + 1;
+    taken[side].push({ t: n[0], end: n[0] + n[2] });
+    out.push([n[0], lane, n[2], n[3]]);
+  };
+  const mines = [];
+  for (const n of order) {
+    if (n[3] === 1) {
+      mines.push(n);
+      continue;
+    }
+    const side = sideOfLane(n[1]);
+    if (fits(n[0], n[2], side)) take(n, n[1], side);
+    else if (fits(n[0], n[2], 1 - side)) take(n, LANES - 1 - n[1], 1 - side);
+  }
+  for (const m of mines) {
+    if (!out.some((n) => n[1] === m[1] && m[0] >= n[0] - 120 && m[0] <= n[0] + n[2] + 120)) out.push([m[0], m[1], m[2], m[3]]);
+  }
+  return out.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+}
+
+/** 譜面等級（給玩家看的數字）：用每秒音符數與同時押的比例粗估；HANDS 的 cap 讓它最高 11 */
 export function ratingOf(notes, lengthMs) {
   const real = notes.filter((n) => n[3] === 0);
   const nps = real.length / (lengthMs / 1000);
