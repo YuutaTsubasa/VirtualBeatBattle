@@ -48,7 +48,7 @@
     font-style: italic;
     letter-spacing: 0.04em;
     color: transparent;
-    -webkit-text-stroke: 0.25cqh rgba(20, 80, 245, 0.13);
+    -webkit-text-stroke: 0.25cqh color-mix(in srgb, var(--accent) 13%, transparent);
     white-space: nowrap;
     pointer-events: none;
   }
@@ -102,7 +102,7 @@
     color: var(--accent);
     padding: 0.3cqh 2.4cqh;
     border-left: 0.6cqh solid var(--accent);
-    background: rgba(255, 255, 255, 0.85);
+    background: color-mix(in srgb, var(--paper-white) 85%, transparent);
   }
   .corner {
     position: relative;

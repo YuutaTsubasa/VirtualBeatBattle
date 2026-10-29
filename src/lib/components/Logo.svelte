@@ -45,7 +45,7 @@
     font-size: 15cqw;
     letter-spacing: -0.02em;
     white-space: nowrap;
-    text-shadow: 0.8cqw 0.8cqw 0 rgba(20, 80, 245, 0.18);
+    text-shadow: 0.8cqw 0.8cqw 0 color-mix(in srgb, var(--accent) 18%, transparent);
   }
   .bolt {
     width: 5cqw;

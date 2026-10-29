@@ -104,7 +104,7 @@
     align-items: stretch;
     justify-content: stretch;
     gap: 0;
-    background: #fff;
+    background: var(--paper-white);
   }
   .corner {
     position: absolute;
@@ -126,7 +126,7 @@
     flex-direction: column;
     padding: 1.4cqh 6cqw 1.4cqh 4cqw;
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
     clip-path: polygon(0 0, 100% 0, calc(100% - 4cqh) 100%, 0 100%);
   }
   .tag b {
@@ -159,7 +159,7 @@
     letter-spacing: -0.04em;
     /* 斜體的字會超出右邊的框，漸層（background-clip: text）只畫在框裡：右邊多留一點 */
     padding: 0 0.22em 0 0.04em;
-    background: linear-gradient(180deg, #ffe58a 0%, #ffc83d 45%, #d98a0a 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 55%, var(--paper-white)) 0%, var(--gold) 45%, var(--gold-deep) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -168,7 +168,7 @@
   }
   .rank.r-C,
   .rank.r-D {
-    background: linear-gradient(180deg, #d6deea, #8d9ab3);
+    background: linear-gradient(180deg, var(--muted-line), var(--muted-text));
     -webkit-background-clip: text;
     background-clip: text;
   }
@@ -187,7 +187,7 @@
     align-self: flex-start;
     padding: 0.2cqh 2.4cqh;
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
     font-weight: 900;
     font-style: italic;
     font-size: 2.2cqh;
@@ -235,16 +235,16 @@
   .rt em {
     font-style: normal;
     font-size: 2.2cqh;
-    color: #1fb36b;
+    color: var(--ok);
   }
   .rt .tier-green {
-    color: #1fb36b;
+    color: var(--ok);
   }
   .rt .tier-orange {
-    color: #e08a12;
+    color: var(--gold-deep);
   }
   .rt .tier-red {
-    color: #c81e4a;
+    color: var(--danger);
   }
   .rt .tier-purple {
     color: #8a3ad6;
@@ -252,11 +252,11 @@
   .fc {
     padding: 0.2cqh 1.2cqh;
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
     font-size: 1.7cqh;
   }
   .fc.ap {
-    background: linear-gradient(90deg, #ffb81c, #ffd84a);
+    background: linear-gradient(90deg, var(--gold), var(--gold));
     color: var(--navy);
   }
   .counts {
@@ -280,13 +280,13 @@
     color: var(--navy);
   }
   .counts .p {
-    color: #19a7e0;
+    color: var(--sky);
   }
   .counts .g {
-    color: #1450f5;
+    color: var(--accent);
   }
   .counts .d {
-    color: #1fb36b;
+    color: var(--ok);
   }
   .counts .m {
     color: var(--red);
@@ -297,7 +297,7 @@
     flex: 1;
     margin: 6cqh 3cqw 4cqh 0;
     padding: 5cqh 3cqw 3cqh;
-    background: rgba(255, 255, 255, 0.92);
+    background: color-mix(in srgb, var(--paper-white) 92%, transparent);
     border-left: 0.6cqh solid var(--accent);
     box-shadow: var(--soft-shadow);
     display: flex;
@@ -352,17 +352,17 @@
   .gauge {
     flex: 1;
     height: 1.6cqh;
-    background: #e6ebf5;
+    background: var(--sky-pale);
     clip-path: polygon(0.8cqh 0, 100% 0, calc(100% - 0.8cqh) 100%, 0 100%);
   }
   .gauge i {
     display: block;
     height: 100%;
-    background: repeating-linear-gradient(115deg, var(--accent) 0 3cqh, #2d64ff 3cqh 3.6cqh);
+    background: repeating-linear-gradient(115deg, var(--accent) 0 3cqh, var(--accent) 3cqh 3.6cqh);
     transition: width 0.8s ease-out;
   }
   .gauge.gold i {
-    background: linear-gradient(90deg, #2fc6ff, var(--accent));
+    background: linear-gradient(90deg, var(--sky), var(--accent));
   }
   .me {
     display: flex;
@@ -375,7 +375,7 @@
     height: 13cqh;
     object-fit: cover;
     object-position: center 15%;
-    background: #e6ebf5;
+    background: var(--sky-pale);
   }
   .me-info {
     flex: 1;
