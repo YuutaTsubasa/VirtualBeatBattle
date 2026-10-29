@@ -20,3 +20,21 @@ test('every chart has holds, chords and (on hard) mines', () => {
     }
   }
 });
+
+test('charts are playable with two hands', () => {
+  const CAP = { easy: 3, normal: 6, hard: 9, expert: 11 };
+  for (const s of buildCharts().songs) {
+    for (const [level, c] of Object.entries(s.charts)) {
+      assert.ok(c.rating <= CAP[level], `${s.id} ${level} 等級 ${c.rating} 太高`);
+      // 同一隻手（0～2 左、3～5 右）：不能同時按兩顆，長押中不能再出現
+      const real = c.notes.filter((n) => n[3] === 0);
+      for (const side of [0, 1]) {
+        const xs = real.filter((n) => (n[1] < 3 ? 0 : 1) === side);
+        for (let i = 1; i < xs.length; i++) {
+          const [t0, , len0] = xs[i - 1];
+          assert.ok(xs[i][0] > t0 + len0, `${s.id} ${level} ${xs[i][0]}ms：同一隻手按住時又出現音符`);
+        }
+      }
+    }
+  }
+});
