@@ -1,6 +1,6 @@
 [package]
 name = "virtual-beat-battle"
-version = "0.1.1"
+version = "0.1.2"
 description = "虛擬音鬥樂：虛擬台麻館的角色們打魔王的 6 鍵下落式節奏遊戲"
 edition = "2021"
 rust-version = "1.89"

@@ -1,6 +1,6 @@
 [package]
 name = "beat-wasm"
-version = "0.1.1"
+version = "0.1.2"
 description = "虛擬音鬥樂的網頁版引擎：把判定與房間包成 WebAssembly，在瀏覽器裡跑"
 edition = "2021"
 rust-version = "1.89"
