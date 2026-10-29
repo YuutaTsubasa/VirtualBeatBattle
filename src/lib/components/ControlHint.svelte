@@ -24,6 +24,8 @@
 <style>
   .control-hint {
     justify-self: end;
+    /* 放在頁面底上：深色底的畫風（PC-98、MS-DOS）字要是淺色 */
+    color: var(--page-ink);
     display: flex;
     align-items: center;
     gap: 2.2cqw;

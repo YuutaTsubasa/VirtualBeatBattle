@@ -94,7 +94,7 @@
     align-items: stretch;
     gap: 1.6cqh;
     padding: 3cqh 3cqw;
-    background: #fff;
+    background: var(--paper-white);
   }
   .watermark {
     position: absolute;
@@ -104,7 +104,7 @@
     font-weight: 900;
     font-style: italic;
     color: transparent;
-    -webkit-text-stroke: 0.25cqh rgba(20, 80, 245, 0.12);
+    -webkit-text-stroke: 0.25cqh color-mix(in srgb, var(--accent) 12%, transparent);
     pointer-events: none;
   }
   .corner {
@@ -169,7 +169,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    background: rgba(255, 255, 255, 0.92);
+    background: color-mix(in srgb, var(--paper-white) 92%, transparent);
     border: var(--line) solid var(--sky-line);
     padding: 1.6cqh 1.6cqw;
     box-shadow: var(--soft-shadow);
@@ -193,13 +193,13 @@
     font-size: 2.3cqh;
   }
   .row.head {
-    background: #eef3fb;
+    background: var(--sky-light);
     font-size: 1.8cqh;
     color: var(--navy-soft);
   }
   .row.me {
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
   }
   .row.out {
     opacity: 0.55;
@@ -214,7 +214,7 @@
     color: var(--gold-deep);
   }
   .me .rank {
-    color: #fff;
+    color: var(--on-dark);
   }
   .who {
     display: flex;
@@ -227,7 +227,7 @@
     height: 5cqh;
     object-fit: cover;
     object-position: center 15%;
-    background: #e6ebf5;
+    background: var(--sky-pale);
   }
   .who b {
     white-space: nowrap;
@@ -238,7 +238,7 @@
     font-style: normal;
     font-size: 1.5cqh;
     padding: 0 0.8cqh;
-    background: #fff;
+    background: var(--paper-white);
     color: var(--accent);
   }
   .num {
@@ -250,7 +250,7 @@
     font-weight: 900;
   }
   .me .battle.down {
-    color: #fff;
+    color: var(--on-dark);
   }
   .foot-note {
     margin: 1cqh 0 0;
@@ -283,7 +283,7 @@
     font-style: italic;
     /* 斜體超出框的部分不會被漸層畫到：右邊多留一點 */
     padding-right: 0.22em;
-    background: linear-gradient(180deg, #ffe58a, #ffc83d 45%, #d98a0a);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 55%, var(--paper-white)), var(--gold) 45%, var(--gold-deep));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -299,7 +299,7 @@
     height: 12cqh;
     object-fit: cover;
     object-position: center 15%;
-    background: #e6ebf5;
+    background: var(--sky-pale);
   }
   .who-big p {
     margin: 0;
@@ -312,7 +312,7 @@
     font-size: 2cqh;
     padding: 0.2cqh 1.4cqh;
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
   }
   .exp b,
   .lv b {
@@ -321,12 +321,12 @@
   .gauge {
     margin-top: 1cqh;
     height: 1.4cqh;
-    background: #e6ebf5;
+    background: var(--sky-pale);
   }
   .gauge i {
     display: block;
     height: 100%;
-    background: linear-gradient(90deg, #2fc6ff, var(--accent));
+    background: linear-gradient(90deg, var(--sky), var(--accent));
   }
   .watch {
     font-weight: 900;

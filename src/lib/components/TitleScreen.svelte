@@ -88,7 +88,7 @@
   .title {
     justify-content: flex-start;
     align-items: stretch;
-    background: #fff;
+    background: var(--paper-white);
   }
   /* 右邊斜切的插圖區 */
   .art {
@@ -99,7 +99,7 @@
     width: 62cqw;
     clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
     overflow: hidden;
-    background: linear-gradient(180deg, #9cc8ff, #e8f1ff);
+    background: linear-gradient(180deg, var(--sky), var(--sky-light));
   }
   .scene-img {
     position: absolute;
@@ -113,7 +113,7 @@
     right: 2cqw;
     bottom: 0;
     height: 84cqh;
-    filter: drop-shadow(0 1cqh 2cqh rgba(10, 30, 90, 0.35));
+    filter: drop-shadow(0 1cqh 2cqh color-mix(in srgb, var(--navy) 35%, transparent));
   }
   .tagline {
     position: absolute;
@@ -126,7 +126,7 @@
     font-size: 3.8cqh;
     line-height: 1.5;
     color: var(--accent);
-    text-shadow: 0 0 1cqh #fff, 0 0 2cqh #fff;
+    text-shadow: 0 0 1cqh var(--paper-white), 0 0 2cqh var(--paper-white);
     rotate: -8deg;
   }
   /* 白色的那一邊：從右往左淡出到插圖上 */
@@ -161,8 +161,8 @@
     gap: 3cqw;
     height: 21cqh;
     padding: 0 4cqw 0 6cqw;
-    background: linear-gradient(105deg, var(--accent) 0%, #2a63ff 70%, #3e8bff 100%);
-    color: #fff;
+    background: linear-gradient(105deg, var(--accent) 0%, var(--accent) 70%, var(--accent2) 100%);
+    color: var(--on-dark);
     clip-path: polygon(4cqh 0, 100% 0, calc(100% - 4cqh) 100%, 0 100%);
     box-shadow: inset 0 -1cqh 0 var(--accent-deep);
     transition: filter 0.1s, translate 0.1s;
@@ -175,7 +175,7 @@
   .play {
     width: 0;
     height: 0;
-    border-left: 6cqh solid #fff;
+    border-left: 6cqh solid var(--paper-white);
     border-top: 4cqh solid transparent;
     border-bottom: 4cqh solid transparent;
   }
@@ -207,7 +207,7 @@
   }
   .eq i {
     width: 0.7cqw;
-    background: #fff;
+    background: var(--paper-white);
     animation: eq 0.9s ease-in-out infinite alternate;
   }
   .eq i:nth-child(odd) {
@@ -235,15 +235,15 @@
     gap: 1.4cqw;
     height: 11cqh;
     padding: 0 2cqw 0 2.6cqw;
-    background: #fff;
+    background: var(--paper-white);
     color: var(--navy);
     border: var(--line) solid var(--sky-line) !important;
     clip-path: polygon(2cqh 0, 100% 0, calc(100% - 2cqh) 100%, 0 100%);
-    box-shadow: inset 0 -0.5cqh 0 rgba(20, 80, 245, 0.12);
+    box-shadow: inset 0 -0.5cqh 0 color-mix(in srgb, var(--accent) 12%, transparent);
   }
   .room:hover,
   .room:focus-visible {
-    background: #eaf0ff;
+    background: var(--sky-light);
   }
   .room .label b {
     font-size: 3.4cqh;
@@ -275,7 +275,7 @@
     align-items: center;
     gap: 1cqh;
     background: none;
-    color: var(--navy);
+    color: var(--page-ink);
     font-weight: 800 !important;
     font-size: 2.3cqh !important;
     letter-spacing: 0.1em;
@@ -292,8 +292,8 @@
     width: 3.2cqh;
     height: 3.2cqh;
     border-radius: 50%;
-    background: var(--navy);
-    color: #fff;
+    background: var(--page-ink);
+    color: var(--page-ink-on);
     font-size: 2cqh;
     font-weight: 900;
   }

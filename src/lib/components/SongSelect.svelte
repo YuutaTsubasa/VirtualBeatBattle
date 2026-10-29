@@ -303,7 +303,7 @@
     flex: 1;
     padding: 0.6cqh 0;
     border: none;
-    background: #e6ebf5;
+    background: var(--sky-pale);
     color: var(--navy-soft);
     font-weight: 900;
     font-size: 1.9cqh;
@@ -318,10 +318,10 @@
     flex: none;
     padding-inline: 1.6cqh;
     background: var(--navy);
-    color: #fff;
+    color: var(--on-dark);
   }
   .filters .sort.on {
-    background: #c81e4a;
+    background: var(--danger);
   }
   /* 這一首在選到的難度的等級 */
   .lvl {
@@ -331,21 +331,21 @@
     font-weight: 900;
     font-style: italic;
     font-size: 2.2cqh;
-    background: #e6ebf5;
+    background: var(--sky-pale);
     color: var(--navy);
   }
   /* 每個難度的顏色：右邊的難度按鈕、全難度排序時等級前面的標示都用這個 */
   .easy {
-    --lv-c: #1fb36b;
+    --lv-c: var(--ok);
   }
   .normal {
     --lv-c: var(--accent);
   }
   .hard {
-    --lv-c: #e08a12;
+    --lv-c: var(--gold-deep);
   }
   .expert {
-    --lv-c: #c81e4a;
+    --lv-c: var(--danger);
   }
   /* 全難度排序時，等級前面標難度 */
   .lvl small {
@@ -355,12 +355,12 @@
     color: var(--lv-c);
   }
   .song.sel .lvl {
-    background: #fff;
+    background: var(--paper-white);
     color: var(--accent);
   }
   .filters button.on {
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
   }
   .songs {
     flex: 1;
@@ -368,7 +368,7 @@
     flex-direction: column;
     min-height: 0;
     overflow: hidden auto;
-    background: rgba(255, 255, 255, 0.85);
+    background: color-mix(in srgb, var(--paper-white) 85%, transparent);
     border: var(--line) solid var(--sky-line);
   }
   .song {
@@ -386,11 +386,11 @@
     min-height: 8.6cqh;
   }
   .song:hover {
-    background: #eef3ff;
+    background: var(--sky-light);
   }
   .song.sel {
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
   }
   .no {
     font-weight: 900;
@@ -431,16 +431,16 @@
   }
   /* Full Combo（藍）、All Perfect（金） */
   .mark .clear.fc {
-    background: #2fc6ff;
+    background: var(--sky);
     color: var(--navy);
   }
   .mark .clear.ap {
-    background: linear-gradient(90deg, #ffb81c, #ffd84a);
+    background: linear-gradient(90deg, var(--gold), var(--gold));
     color: var(--navy);
   }
   .mark .down {
     background: var(--red);
-    color: #fff;
+    color: var(--on-dark);
   }
   .bpm {
     display: flex;
@@ -468,7 +468,7 @@
   .cover {
     position: relative;
     height: 42cqh;
-    background: #fff;
+    background: var(--paper-white);
     padding: 0.8cqh;
     box-shadow: var(--soft-shadow);
   }
@@ -480,7 +480,7 @@
   }
   /* 對手角色：紅色的光 */
   .boss-art.rival {
-    filter: drop-shadow(0 0 1cqh rgba(255, 60, 90, 0.85));
+    filter: drop-shadow(0 0 1cqh color-mix(in srgb, var(--danger) 85%, transparent));
   }
   .boss-art {
     position: absolute;
@@ -515,7 +515,7 @@
     height: 11cqh;
     max-width: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0.4cqh 0.6cqh rgba(16, 40, 110, 0.2));
+    filter: drop-shadow(0 0.4cqh 0.6cqh color-mix(in srgb, var(--navy) 20%, transparent));
     animation: logo-in 0.25s ease-out;
   }
   /* 本作的原創曲：用字排的 Logo */
@@ -568,7 +568,7 @@
     gap: 1cqh;
     padding: 1cqh 0;
     border: none;
-    background: #e6ebf5;
+    background: var(--sky-pale);
     color: var(--navy-soft);
     font-weight: 900;
     font-size: 1.6cqh;
@@ -585,10 +585,10 @@
   }
   .lv.on {
     background: var(--lv-c);
-    color: #fff;
+    color: var(--on-dark);
   }
   .lv.on b {
-    color: #fff;
+    color: var(--on-dark);
   }
   .label {
     font-weight: 900;
@@ -612,14 +612,14 @@
     color: var(--gold-deep);
   }
   .best .fc.ap {
-    background: linear-gradient(90deg, #ffb81c, #ffd84a);
+    background: linear-gradient(90deg, var(--gold), var(--gold));
     color: var(--navy);
   }
   .best .fc {
     font-size: 1.8cqh;
     padding: 0.2cqh 1cqh;
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
   }
   .notes {
     font-weight: 800;
@@ -648,12 +648,12 @@
   .filters .orig {
     flex: none;
     padding-inline: 1.6cqh;
-    background: #d8e5ff;
+    background: var(--sky-light);
     color: var(--accent);
   }
   .filters .orig.on {
     background: var(--accent);
-    color: #fff;
+    color: var(--on-dark);
   }
   /* 原曲版本的標示：列表曲名後面、右邊大曲名旁 */
   .orig-tag {
@@ -669,7 +669,7 @@
     color: var(--accent);
   }
   .song.sel .orig-tag {
-    color: #fff;
+    color: var(--on-dark);
   }
   .orig-tag.big {
     margin-left: 0;
@@ -683,7 +683,7 @@
     justify-items: center;
     padding: 0.4cqh 1.6cqh;
     border: var(--line) solid currentColor;
-    background: #fff;
+    background: var(--paper-white);
     line-height: 1.1;
     --c: var(--navy-soft);
     color: var(--c);
@@ -698,19 +698,19 @@
     font-style: italic;
   }
   .rating.tier-green {
-    --c: #1fb36b;
+    --c: var(--ok);
   }
   .rating.tier-orange {
-    --c: #e08a12;
+    --c: var(--gold-deep);
   }
   .rating.tier-red {
-    --c: #c81e4a;
+    --c: var(--danger);
   }
   .rating.tier-purple {
     --c: #8a3ad6;
   }
   .rating.tier-rainbow b {
-    background: linear-gradient(90deg, #ff3b55, #ffb020, #1fb36b, #2f7bff, #8a3ad6);
+    background: linear-gradient(90deg, var(--danger), var(--gold), var(--ok), var(--accent), #8a3ad6);
     background-clip: text;
     color: transparent;
   }
@@ -736,7 +736,7 @@
     height: 7cqh;
     object-fit: cover;
     object-position: center 15%;
-    background-color: #e6ebf5;
+    background-color: var(--sky-pale);
   }
   .boss-face {
     background-repeat: no-repeat;
@@ -761,7 +761,7 @@
     width: 13cqw;
     height: 0.9cqh;
     margin-top: 0.4cqh;
-    background: #e6ebf5;
+    background: var(--sky-pale);
     clip-path: polygon(0.4cqh 0, 100% 0, calc(100% - 0.4cqh) 100%, 0 100%);
   }
   .gauge i {
